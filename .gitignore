@@ -1,0 +1,12 @@
+.directory
+.mc-lists.el
+ac-comphist.dat
+auto-save-list/
+config/private.el.gpg
+elpa/
+eshell/
+project-explorer-cache/
+session.*
+url/
+projectile-bookmarks.eld
+*.elc
