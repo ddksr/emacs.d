@@ -38,7 +38,7 @@
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode t))
 
-(maximize)
+;(maximize)
 
 ;;
 ;; AUTOMATIC!!!!!!
