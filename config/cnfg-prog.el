@@ -187,13 +187,12 @@
 ; and uses the executable from there
 ; TODO: do the same for jedi maybe?
 (defun virtualenv-flymake ()
-  (interactive)
   (defvar virtualenv-exec (concat "~/.virtualenvs/" (projectile-project-name) "/bin/pyflakes"))
   (if (file-exists-p virtualenv-exec)
 	  (setq flymake-python-pyflakes-executable virtualenv-exec)
 	(setq flymake-python-pyflakes-executable "pyflakes"))
   (flymake-python-pyflakes-load))
-(add-hook 'python-mode-hook 'virualenv-flymake) 
+(add-hook 'python-mode-hook 'virtualenv-flymake)
 
 ;; JEDI EVALVATION
 (add-hook 'python-mode-hook 'jedi:setup)

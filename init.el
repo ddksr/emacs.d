@@ -36,7 +36,7 @@
 ;;
 
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode t))
+;(if (fboundp 'scroll-bar-mode) (scroll-bar-mode t))
 
 ;(maximize)
 
@@ -68,3 +68,5 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:foundry "unknown" :slant normal :weight normal :height 95 :width normal)))))
 (put 'downcase-region 'disabled nil)
+
+
