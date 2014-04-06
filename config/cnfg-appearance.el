@@ -58,10 +58,14 @@
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
 ;; THEMES
-;(require 'color-theme)
-;(color-theme-initialize)
-;(color-theme-arjen)
-(load-theme 'distinguished t)
+(require 'color-theme)
+(require 'moe-theme)
+(color-theme-initialize)
+(setq moe-theme-mode-line-color 'w/b)
+(powerline-moe-theme)
+(moe-dark)
+
+
  
 ;;
 ;; SPELLING

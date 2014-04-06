@@ -55,8 +55,10 @@ Return a list of installed packages or nil for every skipped package."
 						  'git-gutter-fringe
 						  'doremi
 						  'rainbow-delimiters
-;						  'color-theme
-;						  'distinguished-theme
+						  'color-theme
+;						  'color-theme-wombat
+;						  'color-theme-monokai
+						  'moe-theme
 						  'yasnippet ;; Programming
 						  'markdown-mode
 						  'pkgbuild-mode
@@ -68,6 +70,8 @@ Return a list of installed packages or nil for every skipped package."
 						  'python-pylint
 						  'jedi
 						  'js2-mode
+						  'tern
+						  'tern-auto-complete 
 						  'zencoding-mode
 						  'web-mode
 						  'multi-web-mode

@@ -247,9 +247,19 @@
 		 (progn
 		   (set-variable 'indent-tabs-mode t))
 		 (hook-mark-todo)
+		 (tern-mode t) ; install tern via npm
 		 (auto-complete-mode nil)
 		 (ac-js2-mode t)))
 
+;; TERN
+; Installation on Arch Linux:
+; sudo npm install tern
+; cd /bin
+; ln -s PATHTOTERN /bin/tern
+(eval-after-load 'tern
+   '(progn
+      (require 'tern-auto-complete)
+      (tern-ac-setup)))
 ;;
 ;; HTML
 ;;
