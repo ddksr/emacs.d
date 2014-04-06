@@ -26,9 +26,6 @@
 (require 'git-gutter-fringe)
 (global-git-gutter-mode +1)
 
-;; MAXIMIZE FRAME
-;(run-with-idle-timer 0.5 nil 'maximize-frame)
-
 ;;
 ;; BUFFERS
 ;;
@@ -69,7 +66,6 @@
 ;;
 ;; SPELLING
 ;;
-
-;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 (provide 'cnfg-appearance)

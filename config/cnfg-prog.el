@@ -180,8 +180,20 @@
 
 ;; SYNTAX
 (require 'flymake-python-pyflakes)
-(add-hook 'python-mode-hook 'flymake-python-pyflakes-load) 
+
 (add-to-list 'interpreter-mode-alist '("python" . python-mode))
+
+; this code first checks if there is a related virtual environment
+; and uses the executable from there
+; TODO: do the same for jedi maybe?
+(defun virtualenv-flymake ()
+  (interactive)
+  (defvar virtualenv-exec (concat "~/.virtualenvs/" (projectile-project-name) "/bin/pyflakes"))
+  (if (file-exists-p virtualenv-exec)
+	  (setq flymake-python-pyflakes-executable virtualenv-exec)
+	(setq flymake-python-pyflakes-executable "pyflakes"))
+  (flymake-python-pyflakes-load))
+(add-hook 'python-mode-hook 'virualenv-flymake) 
 
 ;; JEDI EVALVATION
 (add-hook 'python-mode-hook 'jedi:setup)
@@ -326,7 +338,5 @@
 (add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
 (add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
-
-(message "works")
 
 (provide 'cnfg-prog)

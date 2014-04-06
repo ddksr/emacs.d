@@ -24,7 +24,6 @@
 (global-undo-tree-mode)
 
 (key-chord-define-global "uu" 'undo)
-
 (key-chord-define-global ".-" 'undo-tree-visualize)
 
 ;; MULTIPLE CURSOR
