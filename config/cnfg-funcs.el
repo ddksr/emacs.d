@@ -3,14 +3,14 @@
 ;;
 
 ;; SHOW CURRENT FILE FILENAME
-(defun show-filename ()
+(defun own/show-filename ()
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name)))
 
 
 ;; DUPLICATE CURRENT LINE (s-d)
-(defun duplicate-line()
+(defun own/duplicate-line()
   (interactive)
   (move-beginning-of-line 1)
   (kill-line)
@@ -19,10 +19,10 @@
   (next-line 1)
   (yank)
 )
-(global-set-key (kbd "s-d") 'duplicate-line)
+(global-set-key (kbd "s-d") 'own/duplicate-line)
 
 ;; SPLIT WINDOW MULTIPLE WAYS
-(defun split-window-multiple-ways (x y)
+(defun own/split-window-multiple-ways (x y)
     "Split the current frame into a grid of X columns and Y rows."
 	  (interactive "nColumns: \nnRows: ")
 	    ;; one window
@@ -37,7 +37,7 @@
 			  (balance-windows))
 
 ;; SHOW WINDOWS WITH MAJOR MODE
-(defun show-buffers-with-major-mode (mode)
+(defun own/show-buffers-with-major-mode (mode)
     "Fill all windows of the current frame with buffers using major-mode MODE."
 	  (interactive
 	      (let* ((modes (loop for buf being the buffers
@@ -54,7 +54,7 @@
 						(setq buffers (cdr buffers))))))
 
 ;; GOOGLE SEARCH
-(defun google-search ()
+(defun own/google-search ()
   "Googles a query or region if any."
   (interactive)
   (browse-url
@@ -65,25 +65,25 @@
       (read-string "Google: ")))))
 
 ;; SWITCH DICTIONARY (<f8>)
-(defun fd-switch-dictionary()
+(defun own/fd-switch-dictionary()
   (interactive)
   (let* ((dic ispell-current-dictionary)
     	 (change (if (string= dic "slovenian") "english" "slovenian")))
 	(ispell-change-dictionary change)
 	(message "Dictionary switched from %s to %s" dic change)
 	))
-(global-set-key (kbd "<f8>")   'fd-switch-dictionary)
+(global-set-key (kbd "<f8>")   'own/fd-switch-dictionary)
 
 
 ;; FIND USER INIT FILE
-(defun find-user-init-file ()
+(defun own/find-user-init-file ()
   "Edit the `user-init-file', in another window."
   (interactive)
   (find-file-other-window user-init-file))
 
 
 ;; FIND SHELL INIT FILE
-(defun find-shell-init-file ()
+(defun own/find-shell-init-file ()
   "Edit the shell init file in another window."
   (interactive)
   (let* ((shell (car (reverse (split-string (getenv "SHELL") "/"))))
@@ -95,7 +95,7 @@
 
 
 ;; GO-TO URL
-(defun goto-url ()
+(defun own/goto-url ()
   "Open browser"
   (interactive)
   (browse-url 
@@ -103,7 +103,7 @@
 
 
 ;; DELETE CURRENT BUFFER FILE (C-x C-k)
-(defun delete-current-buffer-file ()
+(defun own/delete-current-buffer-file ()
   "Removes file connected to current buffer and kills buffer."
   (interactive)
   (let ((filename (buffer-file-name))
@@ -116,11 +116,11 @@
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-(global-set-key (kbd "C-x C-k") 'delete-current-buffer-file)
+(global-set-key (kbd "C-x C-k") 'own/delete-current-buffer-file)
 
 
 ;; RENAME CURRENT BUFFER FILE (C-x C-r)
-(defun rename-current-buffer-file ()
+(defun own/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
   (let ((name (buffer-name))
@@ -137,7 +137,7 @@
           (message "File '%s' successfully renamed to '%s'"
                    name (file-name-nondirectory new-name)))))))
 
-(global-set-key (kbd "C-x C-r") 'rename-current-buffer-file)
+(global-set-key (kbd "C-x C-r") 'own/rename-current-buffer-file)
 
 
 ;;
@@ -154,3 +154,4 @@
 
 
 (provide 'cnfg-funcs)
+

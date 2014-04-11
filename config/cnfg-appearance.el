@@ -59,12 +59,16 @@
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
 ;; THEMES
-(require 'color-theme)
-(require 'moe-theme)
-(color-theme-initialize)
-(setq moe-theme-mode-line-color 'w/b)
-(powerline-moe-theme)
-(moe-dark)
+;(require 'color-theme)
+;(require 'moe-theme)
+;(color-theme-initialize)
+;(setq moe-theme-mode-line-color 'w/b)
+;(powerline-moe-theme)
+;(moe-dark)
+
+(add-to-list 'custom-theme-load-path (concat my-emacs-d "themes/"))
+(if (display-graphic-p)
+	(load-theme 'twilight-anti-bright t))
 
 ;;
 ;; SPELLING
@@ -76,7 +80,7 @@
 ;; 
 
 (require 'projectile)
-(defun my-projectile-mode-line ()
+(defun own/projectile-mode-line ()
   "Report project in mode-line."
   (let* ((project-name (projectile-project-name)))
     (format " π[%s]" project-name)))
@@ -92,7 +96,7 @@
 	(flymake-mode . " Φ")
 	(flyspell-mode . " φ")
 	(git-gutter-mode . "")
-	(projectile-mode . my-projectile-mode-line)
+	(projectile-mode . own/projectile-mode-line)
 	(volatile-highlights-mode . "")
 	(tern-mode . " τ")
 	(skewer-mode . "")
@@ -111,7 +115,7 @@
 When you add a new element to the alist, keep in mind that you
 must pass the correct minor/major mode symbol and a string you
 want to use in the modeline *in lieu of* the original.")
-(defun clean-mode-line ()
+(defun own/clean-mode-line ()
   (interactive)
   (loop for cleaner in mode-line-cleaner-alist
         do (let* ((mode (car cleaner))
@@ -125,12 +129,13 @@ want to use in the modeline *in lieu of* the original.")
                ;; major mode
              (when (eq mode major-mode)
                (setq mode-name mode-str)))))
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
+(add-hook 'after-change-major-mode-hook 'own/clean-mode-line)
  
 ;;; alias the new `flymake-report-status-slim' to
 ;;; `flymake-report-status'
-(defalias 'flymake-report-status 'flymake-report-status-slim)
-(defun flymake-report-status-slim (e-w &optional status)
+;; TODO: need?
+(defalias 'flymake-report-status 'own/flymake-report-status-slim)
+(defun own/flymake-report-status-slim (e-w &optional status)
   "Show \"slim\" flymake status in mode line."
   (when e-w
     (setq flymake-mode-line-e-w e-w))

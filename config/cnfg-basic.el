@@ -1,5 +1,5 @@
 ;;
-;; OPTIMIZATIONS
+;; OPTIMIZATION
 ;;
 
 ;; KOMPAJLANJE
@@ -17,7 +17,14 @@
 ;; KEY CHORD
 (require 'key-chord)
 (key-chord-mode 1)
-										
+
+;; IBUFFER
+(add-hook 'ibuffer-hook
+		  (lambda ()
+			(ibuffer-vc-set-filter-groups-by-vc-root)
+			(unless (eq ibuffer-sorting-mode 'alphabetic)
+			  (ibuffer-do-sort-by-alphabetic))))
+
 
 ;; UNDO TREE AND KILL RING
 (require 'undo-tree)
@@ -99,7 +106,6 @@
 ;; ALWAYS INDENT AFTER RETURN
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
-
 ;;
 ;; PROJEKTI
 ;;
@@ -107,10 +113,11 @@
 ;; PROJECTILE
 (projectile-global-mode)
 
-;; PROJECT EXPLORER
-(require 'project-explorer)
-
-(global-set-key (kbd "s-p" ) 'project-explorer-open)
+;; PROJECT EXPLORER (graphics mode) TODO: remove
+(if (display-graphic-p)
+	(progn 
+	  (require 'project-explorer)
+	  (global-set-key (kbd "s-p" ) 'project-explorer-open)))
 
 ;;
 ;; SHELL
@@ -149,6 +156,10 @@
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;; EDIT SERVER
+(require 'edit-server)
+(edit-server-start)
 
 ;; WINDOW NUMBERS
 (require 'window-number)
