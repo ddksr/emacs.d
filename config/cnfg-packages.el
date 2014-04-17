@@ -35,7 +35,6 @@ Return a list of installed packages or nil for every skipped package."
 							   'window-number
 							   'ibuffer-vc
 							   'smex
-							   'edit-server ;; edit web pages with emacs
 							   'recentf ;; Projects and files
 							   'projectile
 							   'project-explorer

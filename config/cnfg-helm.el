@@ -15,13 +15,14 @@
 
 ;; HELM velocity
 (require 'helm-grep)
-(setq helm-velocity-dir '("~/docs/org")
+(setq helm-velocity-dir (list my-org-docs-dir)
 	  helm-velocity-ext '("*.txt" "*.org"))
-(defun helm-velocity ()
+(defun own/helm-velocity ()
   (interactive)
   (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
 
-(global-set-key (kbd "s-x v") 'helm-velocity)
+(global-set-key (kbd "s-i") 'helm-imenu)
+(global-set-key (kbd "s-x v") 'own/helm-velocity)
 (global-set-key (kbd "s-x o") 'helm-occur)
 (global-set-key (kbd "s-x g") 'helm-do-grep)
 (global-set-key (kbd "s-x p") 'helm-pydoc)

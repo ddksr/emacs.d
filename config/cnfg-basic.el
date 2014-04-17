@@ -157,10 +157,6 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; EDIT SERVER
-(require 'edit-server)
-(edit-server-start)
-
 ;; WINDOW NUMBERS
 (require 'window-number)
 (global-set-key (kbd "s-y s-y") 'window-number-switch)
