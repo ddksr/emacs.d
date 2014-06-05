@@ -1,4 +1,3 @@
-
 ;;
 ;; INTERFACE
 ;; 
@@ -67,9 +66,9 @@
 ;(moe-dark)
 
 (add-to-list 'custom-theme-load-path (concat my-emacs-d "themes/"))
-(if (display-graphic-p)
+(if (display-graphic-p) 
 	(load-theme 'twilight-anti-bright t))
-
+	
 ;;
 ;; SPELLING
 ;;

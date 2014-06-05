@@ -31,13 +31,14 @@ Return a list of installed packages or nil for every skipped package."
 							   'undo-tree
 							   'multiple-cursors
 							   'ace-jump-mode
+							   'ace-jump-buffer
+							   'ace-window
 							   'expand-region
-							   'window-number
+							   ;'window-number
 							   'ibuffer-vc
 							   'smex
 							   'recentf ;; Projects and files
 							   'projectile
-							   'project-explorer
 							   'helm ;; HELM
 							   'helm-anything
 							   'helm-dash

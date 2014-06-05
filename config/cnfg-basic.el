@@ -44,12 +44,13 @@
 
 ;; JUMP MODE
 (require 'ace-jump-mode)
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-										;(key-chord-define-global "" 'ace-jump-mode)
+(require 'ace-jump-buffer)
+(require 'ace-window)
 (key-chord-define-global "qw" 'ace-jump-char-mode)
 (key-chord-define-global "yx" 'ace-jump-word-mode)
 (key-chord-define-global "<y" 'ace-jump-line-mode)
-(key-chord-define-global "yy" 'ace-jump-buffer)
+(key-chord-define-global "+'" 'ace-jump-buffer) ; TODO: install
+(key-chord-define-global "'0" 'ace-window)
 
 ;; AUTOCOMPLETE
 										;(require 'auto-complete)
@@ -89,6 +90,11 @@
 (global-unset-key [(next)])
 (global-unset-key [(home)])
 (global-unset-key [(next)])
+(global-unset-key (kbd "<C-left>"))
+(global-unset-key (kbd "<C-right>"))
+(global-unset-key (kbd "<C-up>"))
+(global-unset-key (kbd "<C-down>"))
+
 
 ;; RECENT FILES
 (require 'recentf)
@@ -112,12 +118,6 @@
 
 ;; PROJECTILE
 (projectile-global-mode)
-
-;; PROJECT EXPLORER (graphics mode) TODO: remove
-(if (display-graphic-p)
-	(progn 
-	  (require 'project-explorer)
-	  (global-set-key (kbd "s-p" ) 'project-explorer-open)))
 
 ;;
 ;; SHELL
@@ -157,11 +157,12 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; WINDOW NUMBERS
-(require 'window-number)
-(global-set-key (kbd "s-y s-y") 'window-number-switch)
-(window-number-mode 1)
-(window-number-define-keys window-number-mode-map "s-")
+;; WINDOW NUMBERS: Replaced with ace-window
+;(require 'window-number)
+;(global-set-key (kbd "s-y s-y") 'window-number-switch)
+;(window-number-mode 1)
+;(window-number-define-keys window-number-mode-map "s-")
+
 
 ;; WINDOOW CONFIGURATIONS
 (winner-mode 1)

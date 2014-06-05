@@ -1,3 +1,4 @@
+
 ;; -*- no-byte-compile: t -*-
 
 ;;
@@ -21,16 +22,25 @@
 (add-to-list 'load-path (concat my-emacs-d "config/"))
 (add-to-list 'load-path (concat my-emacs-d "nonelpa/"))
 (add-to-list 'load-path (concat my-emacs-d "themes/"))
+(message "loading private")
 (require 'cnfg-private)
+(message "loading packages")
 (require 'cnfg-packages)
+(message "loading basic")
 (require 'cnfg-basic)
+(message "loading funcs")
 (require 'cnfg-funcs)
+(message "loading apperance")
 (require 'cnfg-appearance)
+(message "loading specific")
 (require 'cnfg-specific)
+(message "loading helm")
 (require 'cnfg-helm)
+(message "loading prog")
 (require 'cnfg-prog)
+(message "loading custom")
 (require 'cnfg-custom)
-
+(message "loading done!")
 ;;
 ;; AFTER INIT
 ;;
