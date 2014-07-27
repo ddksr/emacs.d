@@ -49,7 +49,7 @@
 (key-chord-define-global "qw" 'ace-jump-char-mode)
 (key-chord-define-global "yx" 'ace-jump-word-mode)
 (key-chord-define-global "<y" 'ace-jump-line-mode)
-(key-chord-define-global "+'" 'ace-jump-buffer) ; TODO: install
+(key-chord-define-global "+'" 'ace-jump-buffer)
 (key-chord-define-global "'0" 'ace-window)
 
 ;; AUTOCOMPLETE
@@ -74,12 +74,6 @@
 (flx-ido-mode 1)
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
-
-;; COMBINE LINES
-(global-set-key (kbd "M-j")
-				(lambda ()
-                  (interactive)
-                  (join-line -1)))
 
 ;; DISABLE ARROW KEYS
 (global-unset-key [(up)])
@@ -136,7 +130,7 @@
 
 ;; ENABLE MULTITERM WITH ZSH
 (require 'multi-term)
-(setq multi-term-program "/bin/zsh")
+(setq multi-term-program "/bin/bash")
 (add-hook 'term-mode-hook ;; make yank work
           (lambda ()
             (define-key term-raw-map (kbd "C-y") 'term-paste)))
@@ -157,18 +151,8 @@
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 
-;; WINDOW NUMBERS: Replaced with ace-window
-;(require 'window-number)
-;(global-set-key (kbd "s-y s-y") 'window-number-switch)
-;(window-number-mode 1)
-;(window-number-define-keys window-number-mode-map "s-")
-
-
 ;; WINDOOW CONFIGURATIONS
-(winner-mode 1)
-;(require 'elscreen)
-;(setq elscreen-prefix-key (kbd "C-."))
-;(elscreen-start)
+(winner-mode 1) ;TODO: kill-list;
 
 ;; RESIZING WINDOWS
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
@@ -194,5 +178,9 @@
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
 ;; if you use multiple-cursors, this is for you:
 (define-key global-map (kbd "C-S-c C-S-r") 'vr/mc-mark)
+
+;; HELP
+(require 'discover-my-major)
+(global-set-key (kbd "C-h C-m") 'discover-my-major)
 
 (provide 'cnfg-basic)

@@ -16,8 +16,10 @@
 ;; Razni drudi
 
 (global-set-key (kbd "s-o") 'other-window)
-(global-set-key (kbd "s-z") 'repeat)
+(global-set-key (kbd "C-s-u") 'repeat)
 (global-set-key (kbd "<f5>") 'rgrep)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+
 
 (provide 'cnfg-custom)

@@ -15,10 +15,12 @@
 
 ;; HELM velocity
 (require 'helm-grep)
-(setq helm-velocity-dir (list my-org-docs-dir)
+(setq helm-velocity-dir my-org-docs-dir ;(list my-org-docs-dir)
 	  helm-velocity-ext '("*.txt" "*.org"))
+
 (defun own/helm-velocity ()
   (interactive)
+  (require 'helm-mode)
   (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
 
 (global-set-key (kbd "s-a i") 'helm-imenu)

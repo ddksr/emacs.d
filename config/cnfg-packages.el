@@ -34,6 +34,7 @@ Return a list of installed packages or nil for every skipped package."
 							   'ace-jump-buffer
 							   'ace-window
 							   'expand-region
+							   'discover-my-major
 							   ;'window-number
 							   'ibuffer-vc
 							   'smex
@@ -55,11 +56,10 @@ Return a list of installed packages or nil for every skipped package."
 							   'volatile-highlights
 							   'powerline ;; Apperance
 							   'git-gutter-fringe
+							   'git-timemachine
 							   'doremi
 							   'rainbow-delimiters
 							   'color-theme
-										;						  'color-theme-wombat
-										;						  'color-theme-monokai
 							   'moe-theme
 							   'yasnippet ;; Programming
 							   'markdown-mode

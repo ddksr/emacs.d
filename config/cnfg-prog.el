@@ -122,6 +122,13 @@
 ;(mmm-add-mode-ext-class 'html-mode "\\.php\\'" 'html-php)
 
 ;;
+;; R
+;;
+(require 'ess-site)
+(require 'ess-R-object-popup)
+(define-key ess-mode-map "\C-c\C-g" 'ess-R-object-popup)
+
+;;
 ;; OCTAVE
 ;;
 
@@ -147,7 +154,7 @@
 ;;
 ;; PYTHON
 ;;
-(setq py-spaces-projects '("bobergame"))
+(setq py-spaces-projects '("bobergame" "intro-data-science-naloge" "cliist"))
 
 (setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
 (require 'projectile)
@@ -349,5 +356,10 @@
 (add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
 (add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
 (add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
+
+;; SKEWER
+(add-hook 'js2-mode-hook 'skewer-mode)
+(add-hook 'css-mode-hook 'skewer-css-mode)
+(add-hook 'html-mode-hook 'skewer-html-mode)
 
 (provide 'cnfg-prog)

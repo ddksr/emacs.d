@@ -2,6 +2,42 @@
 ;; FUNCTIONS
 ;;
 
+(defun own/new-line-after (times)
+  (interactive "p")
+  (save-excursion
+	(move-end-of-line 1)
+	(newline times)
+  ))
+(global-set-key (kbd "s-l s-l") 'own/new-line-after)
+
+(defun own/new-line-before (times)
+  (interactive "p")
+  (save-excursion
+	(move-beginning-of-line 1)
+	(newline times)
+  ))
+(global-set-key (kbd "s-M-l s-M-l") 'own/new-line-before)
+
+(defun own/reopen-file-with-sudo ()
+  "Open the currently visited file as root via sudo."
+  (interactive)
+  (if (buffer-file-name)
+    (let ((file-name (buffer-file-name)))
+      (kill-buffer (current-buffer))
+      (find-file (concat "/sudo::" file-name))
+      (message "now editing %s as root" file-name))))
+
+(defun own/sudo-find-file (file-name)
+  "Like find file, but opens the file as root."
+  (interactive "FSudo Find File: ")
+  (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
+    (find-file tramp-file-name)))
+
+(defun own/set-pyflakes (bin-path)
+  "Set the pyflakes executive"
+  (interactive "FPyflakes find file: ")
+  (setq flymake-python-pyflakes-executable bin-path))
+
 ;; SHOW CURRENT FILE FILENAME
 (defun own/show-filename ()
   "Show the full path file name in the minibuffer."
@@ -19,7 +55,14 @@
   (next-line 1)
   (yank)
 )
-(global-set-key (kbd "s-d") 'own/duplicate-line)
+(global-set-key (kbd "s-l d") 'own/duplicate-line)
+
+;; COMBINE LINES
+(defun own/combine-lines ()
+  (interactive)
+  (join-line -1))
+
+(global-set-key (kbd "s-l c") 'own/combine-lines)
 
 ;; SPLIT WINDOW MULTIPLE WAYS
 (defun own/split-window-multiple-ways (x y)

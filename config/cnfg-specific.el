@@ -11,6 +11,19 @@
 (global-set-key (kbd "s-h q") 'howdoi-query)
 
 ;;
+;; TRAMP
+;;
+(setq tramp-default-method "ssh")
+(setq tramp-verbose 6)
+;(setq tramp-shell-prompt-pattern "^[^$>\n]*[#$%>] *\\(\[[0-9;]*[a-zA-Z] *\\)*")
+;(setq shell-prompt-pattern "○")
+;;
+;; GNUS
+;;
+
+(require 'gnus)
+
+;;
 ;; IRC
 ;; 
 ; M-x start-irc

@@ -21,6 +21,11 @@
 
 ;; LINE NUMBERS
 (global-linum-mode 1)
+(defun nolinum ()
+  (global-linum-mode 0)
+)
+(require 'magit)
+(add-hook 'magit-mode-hook 'nolinum)
 
 ;; GIT GUTTER
 (require 'git-gutter-fringe)
