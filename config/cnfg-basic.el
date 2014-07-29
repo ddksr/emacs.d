@@ -8,6 +8,14 @@
 (auto-compile-on-save-mode 1)
 
 ;;
+;; WINDOWS
+;;
+(defun windows-load ()
+  (setq w32-pass-lwindow-to-system nil)
+  (setq w32-lwindow-modifier 'super))
+(if (eq system-type 'windows-nt) (windows-load))
+
+;;
 ;; EMACS TWEAKS
 ;; 
 
