@@ -1,5 +1,7 @@
 ;; private vars:
 ;; - my-nick
 ;; - my-full-name
-(load-file (concat my-emacs-d "config/private.el.gpg"))
+(setq my-nick ""
+      my-full-name "")
+(if (eq system-type 'gnu/linux) (load-file (concat my-emacs-d "config/private.el.gpg")))
 (provide 'cnfg-private)
