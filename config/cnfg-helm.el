@@ -24,8 +24,10 @@
   (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
 
 (global-set-key (kbd "s-a i") 'helm-imenu)
+(global-set-key (kbd "s-a s-a") 'helm-mini)
+(global-set-key (kbd "s-a s") 'helm-google-suggest)
 (global-set-key (kbd "s-a o") 'helm-occur)
-(global-set-key (kbd "s-a s") 'own/helm-velocity)
+(global-set-key (kbd "s-a s-a") 'own/helm-velocity)
 (global-set-key (kbd "s-a y") 'helm-yas-complete)
 (global-set-key (kbd "s-a k") 'helm-show-kill-ring)
 (global-set-key (kbd "s-a g") 'helm-do-grep)

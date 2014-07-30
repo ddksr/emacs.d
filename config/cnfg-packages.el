@@ -64,6 +64,8 @@ Return a list of installed packages or nil for every skipped package."
 							   'yasnippet ;; Programming
 							   'markdown-mode
 							   'pkgbuild-mode
+							   'ess
+							   'ess-R-object-popup
 							   'php-mode
 							   'php-extras
 							   'php-eldoc
