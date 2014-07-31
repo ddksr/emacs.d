@@ -297,12 +297,11 @@
 ;; RUBY
 ;;
 
-;; SYNTAX CHECKING
-(require 'flymake-ruby)
-(add-hook 'ruby-mode-hook 'flymake-ruby-load)
+;;
+;; RUBY
+;;
 
-(require 'inf-ruby)
-
+(setq-default indent-tabs-mode t)
 (add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
 (autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
 (add-hook 'ruby-mode-hook (lambda () 
@@ -311,19 +310,7 @@
 							(setq tab-width 4)
 							(hook-mark-todo)
 							(local-set-key "\n" 'newline-and-indent)))
-
-(setq rsense-home (expand-file-name "/opt/rsense-0.3"))
-(setq rsense-home "/opt/rsense-0.3")
-(add-to-list 'load-path (concat rsense-home "/etc"))
-(require 'rsense)
-
-;; AUTOCOMPLETE (with rsense)
-(add-hook 'ruby-mode-hook 'auto-complete-mode)
-(add-hook 'ruby-mode-hook
-		  (lambda ()
-			(add-to-list 'ac-sources 'ac-source-rsense-method)
-			(add-to-list 'ac-sources 'ac-source-rsense-constant)))
-
+(require 'ruby-electric)
 (eval-after-load "ruby-mode" 
   '(add-hook 'ruby-mode-hook 'ruby-electric-mode)) ; must have if you want brackets to work
 
@@ -333,6 +320,25 @@
   (insert "end")
   (ruby-indent-line t)
   (end-of-line))
+
+(defun own/ruby-init ()
+  (require 'flymake-ruby)
+  (add-hook 'ruby-mode-hook 'flymake-ruby-load)
+
+  (require 'inf-ruby)
+  (setq rsense-home (expand-file-name "/opt/rsense-0.3"))
+  (setq rsense-home "/opt/rsense-0.3")
+  (add-to-list 'load-path (concat rsense-home "/etc"))
+  (require 'rsense)
+
+  ;; AUTOCOMPLETE (with rsense)
+  (add-hook 'ruby-mode-hook 'auto-complete-mode)
+  (add-hook 'ruby-mode-hook
+			(lambda ()
+			  (add-to-list 'ac-sources 'ac-source-rsense-method)
+			  (add-to-list 'ac-sources 'ac-source-rsense-constant)))
+  )
+(if (eq system-type 'gnu/linux) (own/ruby-init))
 
 ;; SKEWER BROWSER TODO: check if remove
 (add-hook 'js2-mode-hook 'skewer-mode)
