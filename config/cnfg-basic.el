@@ -10,10 +10,11 @@
 ;;
 ;; WINDOWS
 ;;
-(defun windows-load ()
+(defun own/windows-load ()
+  (setq ring-bell-function 'ignore)
   (setq w32-pass-lwindow-to-system nil)
   (setq w32-lwindow-modifier 'super))
-(if (eq system-type 'windows-nt) (windows-load))
+(if (eq system-type 'windows-nt) (own/windows-load))
 
 ;;
 ;; EMACS TWEAKS
