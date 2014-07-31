@@ -81,6 +81,7 @@ Return a list of installed packages or nil for every skipped package."
 							   'multi-web-mode
 							   'ruby-mode
 							   'inf-ruby
+							   'ruby-electric
 							   'rsense
 							   'auto-complete ;; Autocomplete
 							   'auto-complete-auctex
