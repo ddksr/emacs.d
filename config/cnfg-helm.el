@@ -26,7 +26,7 @@
 (global-set-key (kbd "s-a i") 'helm-imenu)
 (global-set-key (kbd "s-a a") 'helm-mini)
 (global-set-key (kbd "s-a G") 'helm-google-suggest)
-(global-set-key (kbd "s-a s-s") 'own/helm-velocity)
+(global-set-key (kbd "s-a s") 'own/helm-velocity)
 
 
 (global-set-key (kbd "s-a o") 'helm-occur)
