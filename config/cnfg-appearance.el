@@ -63,17 +63,20 @@
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
 ;; THEMES
-;(require 'color-theme)
-;(require 'moe-theme)
-;(color-theme-initialize)
-;(setq moe-theme-mode-line-color 'w/b)
-;(powerline-moe-theme)
-;(moe-dark)
-
 (add-to-list 'custom-theme-load-path (concat my-emacs-d "themes/"))
-(if (display-graphic-p) 
-	(load-theme 'twilight-anti-bright t))
-	
+
+(load-theme 'afternoon t)
+
+
+;(require 'color-theme)
+;(color-theme-initialize)
+
+
+
+;(if (display-graphic-p) 
+;	(load-theme 'twilight-anti-bright t))
+
+
 ;;
 ;; SPELLING
 ;;

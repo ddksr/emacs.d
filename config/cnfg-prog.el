@@ -14,8 +14,9 @@
 (require 'yasnippet)
 (yas/global-mode 1) ;; load global mode ;; TODO: check if necessary
 
-(setq yas-snippet-dirs ;; load snippets 
-      '("~/.emacs.d/snippets"))
+(setq yas-snippet-dirs (append yas-snippet-dirs
+							   '("~/.emacs.d/snippets")))
+
 
 ;(add-to-list 'yas/root-directory "~/.snippets/")
 ;(yas/initialize)

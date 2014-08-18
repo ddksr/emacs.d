@@ -1,0 +1,15 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: django-command
+# key: djcmd
+# binding: direct-keybinding
+# group: django
+# --
+from django.core.management import BaseCommand
+from optparse import make_option
+class ${1:MyCommand}(BaseCommand):
+	option_list = BaseCommand.option_list + (
+		make_option('-f', '--force', dest='force', default=False, action='store_true', help=''),
+		make_option('-d', '--date', dest='date', default=None, help='')
+	)
+	def handle(self, *args, **options):
+		${0:pass}
