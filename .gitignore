@@ -10,3 +10,4 @@ session.*
 url/
 projectile-bookmarks.eld
 *.elcvar/
+emacs-init.el

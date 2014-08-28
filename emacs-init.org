@@ -1,0 +1,808 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Žiga Stopinšek
+#+EMAIL: sigi.kajzer@gmail.com
+#+OPTIONS: toc:3 num:nil ^:nil
+* Before main INIT
+Disable menu bar and toolbar and scrollbar for more prettier initialization
+#+BEGIN_SRC emacs-lisp :tangle yes
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+#+END_SRC
+* Global variables and settings
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq own/emacs-d-dirs '("" "config/" "nonelpa/" "themes/")
+	  own/nick ""
+	  own/full-name ""
+	  own/email ""
+	  own/org-docs-dir '("~")
+	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
+	  own/org-agenda-files '("~/docs/org/*.org" "~/projekti/zemanta/docs/*.org")
+	  own/org-directory "~/docs/org/"
+	  helm-delicious-user ""
+	  helm-delicious-password "")
+#+END_SRC
+Modeline shortcuts
+#+begin_src emacs-lisp :tangle yes
+(defvar own/mode-line-cleaner-alist
+  `((auto-complete-mode . " α")
+    (yas/minor-mode . "")
+	(yas-minor-mode . "")
+    (eldoc-mode . "")
+    (abbrev-mode . "")
+	(flymake-mode . " Φ")
+	(flyspell-mode . " φ")
+	(git-gutter-mode . "")
+	(projectile-mode . own/projectile-mode-line)
+	(volatile-highlights-mode . "")
+	(tern-mode . " τ")
+	(skewer-mode . "")
+	(undo-tree-mode . "")
+	(multi-web-mode . "mwm")
+	(skewer-html-mode . "")
+	(zencoding-mode . " ζ")
+    ;; Major modes
+    (lisp-interaction-mode . "λ")
+    (python-mode . "py")
+	(html-mode . "w")
+	(js2-mode . "js")
+    (emacs-lisp-mode . "el"))
+  "Alist for `clean-mode-line'.
+ 
+When you add a new element to the alist, keep in mind that you
+must pass the correct minor/major mode symbol and a string you
+want to use in the modeline *in lieu of* the original.")
+#+end_src
+Global void configuration functions that can be overwritten via private
+#+begin_src emacs-lisp :tangle yes
+(defun own/config-prodigy ())
+#+end_src
+* Load path, privates and packages
+** Add directories to load path
+#+BEGIN_SRC emacs-lisp :tangle yes
+(mapcar '(lambda (dir)
+		   (add-to-list 'load-path (concat user-emacs-directory dir)))
+		own/emacs-d-dirs)
+#+END_SRC
+** Load privates
+Load privates that will overwrite global variables
+#+begin_src emacs-lisp :tangle yes
+(if (file-exists-p (concat user-emacs-directory "config/private.el.gpg"))
+	(load-file (concat user-emacs-directory "config/private.el.gpg")))
+#+end_src
+** Load packages
+The own-packages file contains a list of packages that need to be installed
+via package.el extension.
+#+begin_src emacs-lisp :tangle yes
+(require 'own-packages)
+#+end_src
+* Basic configuration
+** Autocompile elisp files
+#+begin_src emacs-lisp :tangle yes
+(require 'auto-compile)
+(auto-compile-on-load-mode 1)
+(auto-compile-on-save-mode 1)
+#+end_src
+** MS Windows configuration
+On MS Win, disable ring-bell and try to catch
+the Windows key before OS does
+#+begin_src emacs-lisp :tangle yes
+(if (eq system-type 'windows-nt)
+	(progn 
+	  (setq ring-bell-function 'ignore)
+	  (setq w32-pass-lwindow-to-system nil)
+	  (setq w32-lwindow-modifier 'super)))
+#+end_src
+** Key chord
+Enable key chord mode
+#+begin_src emacs-lisp :tangle yes
+(require 'key-chord)
+(key-chord-mode 1)
+#+end_src
+** Ibuffer tweaks
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'ibuffer-hook
+		  (lambda ()
+			(ibuffer-vc-set-filter-groups-by-vc-root)
+			(unless (eq ibuffer-sorting-mode 'alphabetic)
+			  (ibuffer-do-sort-by-alphabetic))))
+#+end_src
+** Autocomplete
+Enable autocomplete for automatic completing of vars and funcs
+#+begin_src emacs-lisp :tangle yes
+(require 'auto-complete)
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(ac-config-default)
+(auto-complete 1) ;; da se samo nalozi vsakic
+(global-auto-complete-mode t)
+#+end_src
+Select sources for completion
+#+begin_src emacs-lisp :tangle yes
+(set-default 'ac-sources
+             '(ac-source-imenu
+               ac-source-dictionary
+               ac-source-words-in-buffer
+               ac-source-words-in-same-mode-buffers
+               ac-source-words-in-all-buffer))
+#+end_src
+** Configure IDO
+IDO fuzzy completion in minibuffer for everything possible.
+Use flx-ido to fix default IDO.
+#+begin_src emacs-lisp :tangle yes
+(require 'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights.
+(setq ido-use-faces nil)
+#+end_src
+** Various packages
+#+begin_src emacs-lisp :tangle yes
+(require 'fullscreen) ; for fullscreen support
+
+(require 'undo-tree) ; undo tree
+(global-undo-tree-mode) ; undo tree everywhere
+
+(require 'multiple-cursors) ; multiple cursors
+
+(require 'ace-jump-mode) ; ace jumping
+(require 'ace-jump-buffer)
+(require 'ace-window)
+
+(setq make-backup-files nil) ; Disable backup files
+(setq next-line-add-newlines t) ; Make newline at the bottom
+(define-key global-map (kbd "RET") 'newline-and-indent) ; Always indent after RETURN
+
+(require 'move-text) ; For text moving in buffer
+(move-text-default-bindings)
+
+(require 'volatile-highlights) ; Highlight pastes and other things
+(volatile-highlights-mode t)
+
+(require 'expand-region) ; Expand selection region
+(require 'visual-regexp) ; For better regexes
+#+end_src
+** Disable keys and funcs that make learning Emacs harder
+#+begin_src emacs-lisp :tangle yes
+(global-unset-key [(up)])
+(global-unset-key [(down)])
+(global-unset-key [(left)])
+(global-unset-key [(right)])
+(global-unset-key [(prior)])
+(global-unset-key [(next)])
+(global-unset-key [(home)])
+(global-unset-key [(next)])
+(global-unset-key (kbd "<C-left>"))
+(global-unset-key (kbd "<C-right>"))
+(global-unset-key (kbd "<C-up>"))
+(global-unset-key (kbd "<C-down>"))
+#+end_src
+** Project and file management
+Enable recent files
+#+begin_src emacs-lisp :tangle yes
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 50)
+
+(require 'projectile)
+(projectile-global-mode)
+#+end_src
+** Shell
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'comint-output-filter-functions
+		  'comint-watch-for-password-prompt) ; Hide passwords in shell
+
+(defadvice shell (around always-new-shell)
+  "Always start a new shell."
+  (let ((buffer (generate-new-buffer-name "*shell*"))) ad-do-it))
+(ad-activate 'shell) ; Always start a new shell
+#+end_src
+Enable multi-term with ZSH
+#+begin_src emacs-lisp :tangle yes
+(require 'multi-term)
+(setq multi-term-buffer-name "term"
+	  multi-term-program "/bin/zsh")
+(add-hook 'term-mode-hook ;; make yank work
+          (lambda ()
+            (define-key term-raw-map (kbd "C-y") 'term-paste)))
+(add-hook 'term-mode-hook
+          (lambda ()
+            (add-to-list 'term-bind-key-alist '("<C-s-right>" . multi-term-prev))
+            (add-to-list 'term-bind-key-alist '("<C-s-left>" . multi-term-next))))
+(add-hook 'term-mode-hook
+          (lambda ()
+            (setq term-buffer-maximum-size 10000)))
+#+end_src
+** SMEX: IDO for elisp functions
+Overwrite default M-x with smex and store 
+the default M-x into another Keybinding.
+This keybindings are not in the keybindings section because
+they overwrite default functionallity.
+#+begin_src emacs-lisp :tangle yes
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+end_src
+* Various functions
+** Text manipulation
+#+begin_src emacs-lisp :tangle yes
+(defun own/new-line-after (times)
+  "Creates a new line after current line"
+  (interactive "p")
+  (save-excursion
+	(move-end-of-line 1)
+	(newline times)))
+(defun own/new-line-before (times)
+  "Creates a new line before the current line"
+  (interactive "p")
+  (save-excursion
+	(move-beginning-of-line 1)
+	(newline times)))
+(defun own/duplicate-line()
+  (interactive)
+  (move-beginning-of-line 1)
+  (kill-line)
+  (yank)
+  (open-line 1)
+  (next-line 1)
+  (yank))
+(defun own/combine-lines ()
+  (interactive)
+  (join-line -1))
+#+end_src
+** Tramp
+#+begin_src emacs-lisp :tangle yes
+(defun own/reopen-file-with-sudo ()
+  "Open the currently visited file as root via sudo."
+  (interactive)
+  (if (buffer-file-name)
+    (let ((file-name (buffer-file-name)))
+      (kill-buffer (current-buffer))
+      (find-file (concat "/sudo::" file-name))
+      (message "now editing %s as root" file-name))))
+(defun own/sudo-find-file (file-name)
+  "Like find file, but opens the file as root."
+  (interactive "FSudo Find File: ")
+  (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
+    (find-file tramp-file-name)))
+#+end_src
+** Windows and buffers
+#+begin_src emacs-lisp :tangle yes
+(defun own/split-window-multiple-ways (x y)
+  "Split the current frame into a grid of X columns and Y rows."
+  (interactive "nColumns: \nnRows: ")
+  ;; one window
+  (delete-other-windows)
+  (dotimes (i (1- x))
+	(split-window-horizontally)
+	(dotimes (j (1- y))
+	  (split-window-vertically))
+	(other-window y))
+  (dotimes (j (1- y))
+	(split-window-vertically))
+  (balance-windows))
+(defun own/show-buffers-with-major-mode (mode)
+  "Fill all windows of the current frame with buffers using major-mode MODE."
+  (interactive
+   (let* ((modes (loop for buf being the buffers
+					   collect (symbol-name (with-current-buffer buf
+											  major-mode)))))
+	 (list (intern (completing-read "Mode: " modes)))))
+  (let ((buffers (loop for buf being the buffers
+					   when (eq mode (with-current-buffer buf
+									   major-mode))
+					   collect buf)))
+	(dolist (win (window-list))
+	  (when buffers
+		(show-buffer win (car buffers))
+		(setq buffers (cdr buffers))))))
+(defun own/delete-current-buffer-file ()
+  "Removes file connected to current buffer and kills buffer."
+  (interactive)
+  (let ((filename (buffer-file-name))
+        (buffer (current-buffer))
+        (name (buffer-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (ido-kill-buffer)
+      (when (yes-or-no-p "Are you sure you want to remove this file? ")
+        (delete-file filename)
+        (kill-buffer buffer)
+        (message "File '%s' successfully removed" filename)))))
+(defun own/rename-current-buffer-file ()
+  "Renames current buffer and file it is visiting."
+  (interactive)
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (error "Buffer '%s' is not visiting a file!" name)
+      (let ((new-name (read-file-name "New name: " filename)))
+        (if (get-buffer new-name)
+            (error "A buffer named '%s' already exists!" new-name)
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil)
+          (message "File '%s' successfully renamed to '%s'"
+                   name (file-name-nondirectory new-name)))))))
+#+end_src
+** Own extensions
+#+begin_src emacs-lisp :tangle yes
+(defun own/helm-velocity ()
+  (interactive)
+  (require 'helm-mode)
+  (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
+#+end_src
+** Various shortcuts
+#+begin_src emacs-lisp :tangle yes
+(defun own/google-search ()
+  "Googles a query or region if any."
+  (interactive)
+  (browse-url
+   (concat
+    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+    (if mark-active
+        (buffer-substring (region-beginning) (region-end))
+      (read-string "Google: ")))))
+(defun own/fd-switch-dictionary()
+  (interactive)
+  (let* ((dic ispell-current-dictionary)
+    	 (change (if (string= dic "slovenian") "english" "slovenian")))
+	(ispell-change-dictionary change)
+	(message "Dictionary switched from %s to %s" dic change)
+	))
+(defun own/find-user-init-file ()
+  "Edit the `user-init-file', in another window."
+  (interactive)
+  (find-file-other-window user-init-file))
+(defun own/find-shell-init-file ()
+  "Edit the shell init file in another window."
+  (interactive)
+  (let* ((shell (car (reverse (split-string (getenv "SHELL") "/"))))
+         (shell-init-file (cond
+                           ((string-equal "zsh" shell) ".zshrc")
+                           ((string-equal "bash" shell) ".bashrc")
+                           (t (error "Unknown shell")))))
+    (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
+(defun own/goto-url ()
+  "Open browser"
+  (interactive)
+  (browse-url 
+	 (concat "http://" (read-string "URL: ") )))
+(defun own/start-irc ()
+   "Connect to IRC."
+   (interactive)
+   (erc :server "irc.freenode.net" :port 6667
+        :nick own/nick :full-name own/full-name)
+   (setq erc-autojoin-channels-alist own/irc-channels))
+#+end_src
+** Helpers functions
+#+begin_src emacs-lisp :tangle yes
+(defun own/set-pyflakes (bin-path)
+  "Set the pyflakes executive"
+  (interactive "FPyflakes find file: ")
+  (setq flymake-python-pyflakes-executable bin-path))
+(defun own/show-filename ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (message (buffer-file-name)))
+(defun own/projectile-mode-line ()
+  "Report project in mode-line."
+  (let* ((project-name (projectile-project-name)))
+    (format " π[%s]" project-name)))
+(defun own/flymake-report-status-slim (e-w &optional status)
+  "Show \"slim\" flymake status in mode line."
+  (when e-w
+    (setq flymake-mode-line-e-w e-w))
+  (when status
+    (setq flymake-mode-line-status status))
+  (let* ((mode-line " Φ"))
+    (when (> (length flymake-mode-line-e-w) 0)
+      (setq mode-line (concat mode-line ":" flymake-mode-line-e-w)))
+    (setq mode-line (concat mode-line flymake-mode-line-status))
+    (setq flymake-mode-line mode-line)
+    (force-mode-line-update)))
+(defun own/flatten (mylist)
+  (cond
+   ((null mylist) nil)
+   ((atom mylist) (list mylist))
+   (t
+    (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
+#+end_src
+** Hooks
+#+begin_src emacs-lisp :tangle yes
+(defun own/hook-mark-todo () 
+  "A hook that sets bold reserved words FIXME, SIGITODO, TODO and BUG"
+  (font-lock-add-keywords nil
+						  '(("\\<\\(FIXME\\|SIGITODO\\|TODO\\|BUG\\):"
+							 1 font-lock-warning-face t))))
+(defun own/hook-clean-mode-line ()
+  (interactive)
+  (loop for cleaner in own/mode-line-cleaner-alist
+        do (let* ((mode (car cleaner))
+                 (mode-def (cdr cleaner))
+				 (mode-str (if (symbolp  mode-def)
+								 (funcall mode-def)
+							 mode-def))
+                 (old-mode-str (cdr (assq mode minor-mode-alist))))
+             (when old-mode-str
+                 (setcar old-mode-str mode-str))
+               ;; major mode
+             (when (eq mode major-mode)
+               (setq mode-name mode-str)))))
+#+end_src
+* Apperance
+** Modeline
+Use powerline
+#+begin_src emacs-lisp :tangle yes
+;; POWERLINE
+(require 'powerline)
+(powerline-center-theme)
+#+end_src
+When displaying project name (projectile) in modeline,
+try to shorten the mode names.
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'after-change-major-mode-hook 'own/hook-clean-mode-line)
+#+end_src
+** Buffer
+Line numbers everywhere except in magit
+#+begin_src emacs-lisp :tangle yes
+(global-linum-mode 1) ;; Line numbers
+(require 'magit) ;; disable line numbers in magit because its slower
+(add-hook 'magit-mode-hook '(lambda () (linum-mode 0)))
+#+end_src
+Git gutter (additions & deletions)
+#+begin_src emacs-lisp :tangle yes
+(require 'git-gutter-fringe)
+(global-git-gutter-mode +1)
+#+end_src
+Make buffers names unique
+#+begin_src emacs-lisp :tangle yes
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+#+end_src
+** UX
+Don't use yes-or-no but y-or-n because it's faster !!
+#+begin_src emacs-lisp :tangle yes
+(fset 'yes-or-no-p 'y-or-n-p)
+(setq confirm-nonexistent-file-or-buffer nil)
+(setq ido-create-new-buffer 'always)
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+(setq kill-buffer-query-functions
+  (remq 'process-kill-buffer-query-function
+         kill-buffer-query-functions))
+(tooltip-mode -1)
+(setq tooltip-use-echo-area t)
+#+end_src
+Display whitespaces when using whitespace mode
+#+begin_src emacs-lisp :tangle yes
+(setq whitespace-display-mappings
+       ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+      '(
+        (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+        (newline-mark 10 [182 10]) ; 10 LINE FEED
+        (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+        ))
+
+;; make whitespace-mode use just basic coloring
+(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
+#+end_src
+Spelling
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+end_src
+Syntax checking
+#+begin_src emacs-lisp :tangle yes
+(defalias 'flymake-report-status 'own/flymake-report-status-slim)
+#+end_src
+** Text
+Only use tabs with witdh 4
+#+begin_src emacs-lisp :tangle yes
+(setq default-tab-width 4
+	  tab-width 4 ;; tab size
+	  indent-tabs-mode 1) ;; use only tabs and no spaces
+#+end_src
+Delimiters (brackets, ...) with rainbow collors
+#+begin_src emacs-lisp :tangle yes
+(require 'rainbow-delimiters)
+(global-rainbow-delimiters-mode)
+
+;(require 'color-theme)
+;(color-theme-initialize)
+#+end_src
+** Themes
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
+(load-theme 'afternoon t)
+#+end_src
+
+* Configuration for specific global modes
+** TRAMP
+*** TODO fix it that it will work. this is a real must !!!
+#+begin_src emacs-lisp :tangle yes
+(require 'tramp)
+;(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+#+end_src
+** IRC
+#+begin_src emacs-lisp :tangle yes
+(require 'notifications)
+(defun own/config-erc-global-notify (match-type nick message)
+  "Notify when a message is recieved."
+  (notifications-notify
+   :title nick
+   :body message
+   :app-icon "/usr/share/notify-osd/icons/gnome/scalable/status/notification-message-im.svg"
+   :urgency 'low))
+(add-hook 'erc-text-matched-hook 'own/config-erc-global-notify)
+#+end_src
+** LaTeX
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-PDF-mode t)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+
+(eval-after-load 'latex '(latex/setup-keybinds))
+
+(setq reftex-plug-into-AUCTeX t)
+; Compile and preview with C-c C-c
+; Compile and preview and everything else with C-c C-a
+#+end_src
+Enable synctex generation. Even though the command shows
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-source-correlate-method 'synctex) ; Enable synctex correlation
+(custom-set-variables '(LaTeX-command "latex -synctex=1") ) ; 
+#+end_src
+Use Okular for viewing PDF files
+#+begin_src emacs-lisp :tangle yes
+(setq TeX-view-program-selection
+	  '((output-pdf "PDF Viewer")))
+(setq TeX-view-program-list
+	  '(("PDF Viewer" "okular --unique %o#src:%n%b")))
+#+end_src
+** ORG mode
+#+begin_src emacs-lisp :tangle yes
+(require 'org-install)
+(require 'org-habit)
+
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+(setq org-log-done t)
+(setq org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files))))
+(setq org-directory own/org-directory)
+#+end_src
+** Prodigy
+#+begin_src emacs-lisp :tangle yes
+(own/config-prodigy)
+#+end_src
+** HELM
+#+begin_src emacs-lisp :tangle yes
+(require 'ac-helm)
+(eval-after-load 'flycheck
+  '(define-key flycheck-mode-map (kbd "C-;") 'helm-flycheck))
+(require 'helm-grep)
+(setq helm-velocity-dir my-org-docs-dir ;(list my-org-docs-dir)
+	  helm-velocity-ext '("*.txt" "*.org"))
+#+end_src
+* Programming
+Add hook to mark todos and similar strings in text
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'prog-mode-hook 'own/hook-mark-todo)
+#+end_src
+** Yasnipept
+#+begin_src emacs-lisp :tangle yes
+(require 'yasnippet)
+(yas/global-mode 1) ;; load global mode ;; TODO: check if necessary
+
+(setq yas-snippet-dirs (append yas-snippet-dirs
+							   '("~/.emacs.d/snippets")))
+;; Disable TAB for yasnippets
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+#+end_src
+** SHELL
+#+begin_src emacs-lisp :tangle yes
+(require 'flymake-shell)
+(add-hook 'sh-set-shell-hook 'flymake-shell-load)
+
+(autoload 'bash-completion-dynamic-complete 
+  "bash-completion"
+  "BASH completion hook")
+
+(add-hook 'shell-dynamic-complete-functions
+		  'bash-completion-dynamic-complete)
+
+(add-hook 'shell-command-complete-functions
+		  'bash-completion-dynamic-complete)
+#+end_src
+** Markdown mode
+#+begin_src emacs-lisp :tangle yes
+(autoload 'markdown-mode "markdown-mode"
+  "Major mode for editing Markdown files" t)
+
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+#+end_src
+** C and C++
+#+begin_src emacs-lisp :tangle yes
+(setq c-default-style "linux"
+	  c-basic-offset 4
+	  tab-width 4
+	  ident-tabs-mode t)
+#+end_src
+
+** R
+#+begin_src emacs-lisp :tangle yes
+(require 'ess-site)
+(require 'ess-R-object-popup)
+#+end_src
+** Octave
+#+begin_src emacs-lisp :tangle yes
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+(cons '("\\.m$" . octave-mode) auto-mode-alist))
+(add-hook 'octave-mode-hook
+		  (lambda ()
+			(own/hook-mark-todo)
+            (abbrev-mode 1)
+            (auto-fill-mode 1)
+            (if (eq window-system 'x)
+				(font-lock-mode 1))))
+
+(require 'ac-octave)
+(defun ac-octave-mode-setup ()
+  (setq ac-sources '(ac-source-octave)))
+(add-hook 'octave-mode-hook
+		  '(lambda ()
+			 (own/hook-mark-todo)
+			 (ac-octave-mode-setup)))
+#+end_src
+** HTML & CSS
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'html-mode-hook
+          (lambda()
+			(own/hook-mark-todo)
+            (setq sgml-basic-offset 4)
+            (setq indent-tabs-mode t)))
+(require 'zencoding-mode)
+(add-hook 'sgml-mode-hook 'zencoding-mode)
+
+(require 'flymake-css)
+(add-hook 'css-mode-hook 'flymake-css-load)
+#+end_src
+** TODO Python
+** TODO Ruby
+** TODO PHP
+** TODO Javascript
+* Keybindings
+** Basic configuration
+#+begin_src emacs-lisp :tangle yes
+(key-chord-define-global "uu" 'undo)
+(key-chord-define-global ".-" 'undo-tree-visualize)
+(key-chord-define-global "qw" 'ace-jump-char-mode)
+(key-chord-define-global "yx" 'ace-jump-word-mode)
+(key-chord-define-global "<y" 'ace-jump-line-mode)
+(key-chord-define-global "+'" 'ace-jump-buffer)
+(key-chord-define-global "'0" 'ace-window)
+
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-S-r") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-S-a") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+
+;; PROJECT MANAGEMENT, VC AND SHELL
+(global-set-key (kbd "C-x C-y") 'recentf-open-files)
+(global-set-key (kbd "<f6>") 'multi-term)
+(global-set-key (kbd "s-g c") 'git-messenger:popup-message)
+
+;; WINDOW RESIZING
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+;; SELECTION
+(global-set-key (kbd "s-e") 'er/expand-region)
+(define-key global-map (kbd "C-c r") 'vr/replace)
+(define-key global-map (kbd "C-c q") 'vr/query-replace)
+;; if you use multiple-cursors, this is for you:
+(define-key global-map (kbd "C-S-c C-S-r") 'vr/mc-mark)
+
+#+end_src
+** Various functions
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "s-l s-l") 'own/new-line-after)
+(global-set-key (kbd "s-M-l s-M-l") 'own/new-line-before)
+(global-set-key (kbd "s-l d") 'own/duplicate-line)
+(global-set-key (kbd "s-l c") 'own/combine-lines)
+
+(global-set-key (kbd "<f8>")   'own/fd-switch-dictionary)
+
+(global-set-key (kbd "C-x C-k") 'own/delete-current-buffer-file)
+(global-set-key (kbd "C-x C-r") 'own/rename-current-buffer-file)
+#+end_src
+** Specific global and local major/minor modes
+#+begin_src emacs-lisp :tangle yes
+(define-key global-map (kbd "s-h s") 'howdoi-query-line-at-point-replace-by-code-snippet)
+(global-set-key (kbd "s-h q") 'howdoi-query)
+
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+#+end_src
+** HELM
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "C-:") 'ac-complete-with-helm)
+(define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
+
+(global-set-key (kbd "s-a i") 'helm-imenu)
+(global-set-key (kbd "s-a a") 'helm-mini)
+(global-set-key (kbd "s-a G") 'helm-google-suggest)
+(global-set-key (kbd "s-a s") 'own/helm-velocity)
+
+
+(global-set-key (kbd "s-a o") 'helm-occur)
+(global-set-key (kbd "s-a y") 'helm-yas-complete)
+(global-set-key (kbd "s-a k") 'helm-show-kill-ring)
+(global-set-key (kbd "s-a g") 'helm-do-grep)
+
+(global-set-key (kbd "s-x p") 'helm-projectile)
+(global-set-key (kbd "s-x s-f") 'helm-browse-project)
+(global-set-key (kbd "s-x r") 'helm-recentf)
+(global-set-key (kbd "s-x b") 'helm-buffers-list)
+
+(global-set-key (kbd "s-x h h") 'helm-helm-commands)
+(global-set-key (kbd "s-x h p") 'helm-pydoc)
+(global-set-key (kbd "s-x h t") 'helm-top)
+#+end_src
+** Programming
+#+begin_src emacs-lisp :tangle yes
+(define-key global-map (kbd "s-t") 'comment-or-uncomment-region)
+
+(define-key yas-minor-mode-map (kbd "s-SPC") 'yas-expand)
+
+(define-key ess-mode-map "\C-c\C-g" 'ess-R-object-popup)
+
+(global-set-key (kbd "s-z") 'zencoding-expand-line)
+#+end_src
+** Custom remapping of keybindings
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "M-ž") 'backward-paragraph)
+(global-set-key (kbd "C-ž") 'forward-paragraph)
+(global-set-key (kbd "M-đ") 'scroll-other-window)
+(global-set-key (kbd "C-đ") 'scroll-other-window-down)
+
+(global-set-key (kbd "s-l b") 'delete-blank-lines)
+(global-set-key (kbd "s-w") 'delete-region)
+(global-set-key (kbd "s-i") 'indent-region)
+(global-set-key (kbd "s-u") 'undo)
+#+end_src
+** Custom shortcuts
+#+begin_src emacs-lisp :tangle yes
+(global-set-key (kbd "s-o") 'other-window)
+(global-set-key (kbd "C-s-u") 'repeat)
+(global-set-key (kbd "<f5>") 'rgrep)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+#+end_src
+
+* After main INIT
+#+begin_src emacs-lisp :tangle yes
+(if (fboundp 'menu-bar-mode) (menu-bar-mode t))
+#+end_src
+* Current TODO-s:
+** TODO Enable flycheck and flyspell everywhere where possible 
+   (elisp, octave)
+
+** TODO Enable ac everywhere - for example org mode
+
