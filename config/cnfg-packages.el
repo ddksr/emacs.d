@@ -57,6 +57,7 @@ Return a list of installed packages or nil for every skipped package."
 							   'powerline ;; Apperance
 							   'git-gutter-fringe
 							   'git-timemachine
+							   'gist
 							   'doremi
 							   'rainbow-delimiters
 							   'color-theme

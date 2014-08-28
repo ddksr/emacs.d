@@ -94,7 +94,7 @@
 
 
 ;; Hide some minor modes
-(defvar mode-line-cleaner-alist
+(defvar own/mode-line-cleaner-alist
   `((auto-complete-mode . " α")
     (yas/minor-mode . "")
 	(yas-minor-mode . "")
@@ -124,7 +124,7 @@ must pass the correct minor/major mode symbol and a string you
 want to use in the modeline *in lieu of* the original.")
 (defun own/clean-mode-line ()
   (interactive)
-  (loop for cleaner in mode-line-cleaner-alist
+  (loop for cleaner in own/mode-line-cleaner-alist
         do (let* ((mode (car cleaner))
                  (mode-def (cdr cleaner))
 				 (mode-str (if (symbolp  mode-def)

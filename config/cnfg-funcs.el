@@ -6,8 +6,7 @@
   (interactive "p")
   (save-excursion
 	(move-end-of-line 1)
-	(newline times)
-  ))
+	(newline times)))
 (global-set-key (kbd "s-l s-l") 'own/new-line-after)
 
 (defun own/new-line-before (times)

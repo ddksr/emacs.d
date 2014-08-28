@@ -4,8 +4,9 @@
 (global-set-key (kbd "C-:") 'ac-complete-with-helm)
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
+
 (eval-after-load 'flycheck
-  '(define-key flycheck-mode-map (kbd "C-c ! h") 'helm-flycheck))
+  '(define-key flycheck-mode-map (kbd "C-;") 'helm-flycheck))
 
 ;; HELM COMMANDS
 

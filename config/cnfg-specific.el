@@ -13,8 +13,11 @@
 ;;
 ;; TRAMP
 ;;
-(setq tramp-default-method "ssh")
-(setq tramp-verbose 6)
+(require 'tramp)
+;(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+
 ;(setq tramp-shell-prompt-pattern "^[^$>\n]*[#$%>] *\\(\[[0-9;]*[a-zA-Z] *\\)*")
 ;(setq shell-prompt-pattern "○")
 ;;

@@ -9,4 +9,4 @@ project-explorer-cache/
 session.*
 url/
 projectile-bookmarks.eld
-*.elc
+*.elcvar/
