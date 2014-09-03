@@ -17,8 +17,10 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/email ""
 	  own/org-docs-dir '("~")
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
-	  own/org-agenda-files '("~/docs/org/*.org" "~/projekti/zemanta/docs/*.org")
+	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
 	  own/org-directory "~/docs/org/"
+	  own/py-spaces-projects '("proj1" "proj2")
+	  own/py-venvs "~/.virtualenvs"
 	  helm-delicious-user ""
 	  helm-delicious-password "")
 #+END_SRC
@@ -225,6 +227,12 @@ they overwrite default functionallity.
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 ;; This is your old M-x.
 (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+end_src
+** Typing speed
+*** TODO make better
+#+begin_src emacs-lisp :tangle yes
+(load-file (concat user-emacs-directory "nonelpa/typing-speed.el"))
+(turn-on-typing-speed)
 #+end_src
 * Various functions
 ** Text manipulation
@@ -596,6 +604,7 @@ Use Okular for viewing PDF files
 * Programming
 Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
+(message "loading programming configuration")
 (add-hook 'prog-mode-hook 'own/hook-mark-todo)
 #+end_src
 ** Yasnipept
@@ -623,6 +632,10 @@ Add hook to mark todos and similar strings in text
 
 (add-hook 'shell-command-complete-functions
 		  'bash-completion-dynamic-complete)
+#+end_src
+** SQL
+#+begin_src emacs-lisp :tangle yes
+
 #+end_src
 ** Markdown mode
 #+begin_src emacs-lisp :tangle yes
@@ -680,13 +693,178 @@ Add hook to mark todos and similar strings in text
 (require 'flymake-css)
 (add-hook 'css-mode-hook 'flymake-css-load)
 #+end_src
-** TODO Python
-** TODO Ruby
-** TODO PHP
-** TODO Javascript
+** Python
+#+begin_src emacs-lisp :tangle yes
+(setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
+
+(require 'projectile)
+(defun own/tabs-py-settings ()
+  (interactive)
+  (message "python: tabs")
+  (setq indent-tabs-mode t)
+  (setq python-indent 4)
+  (setq tab-width 4))
+(defun own/spaces-py-settings ()
+  (interactive)
+  (message "python: spaces")
+  (setq indent-tabs-mode nil)
+  (setq python-indent 4))
+(defun own/python-mode-config ()
+  (own/hook-mark-todo)
+  (if (member (projectile-project-name) own/py-spaces-projects)
+	  (own/spaces-py-settings)
+	(own/tabs-py-settings)))
+(add-hook 'python-mode-hook 'python-mode-config)
+#+end_src
+Support python virtualenvs
+#+begin_src emacs-lisp :tangle yes
+(require 'virtualenvwrapper)
+(venv-initialize-interactive-shells) ;; if you want interactive shell support
+(venv-initialize-eshell) ;; if you want eshell support
+(setq venv-location own/py-venvs)
+#+end_src
+Syntax checking with pyflakes but try to use
+the virtualenv pyflakes binary
+#+begin_src emacs-lisp :tangle yes
+(require 'flymake-python-pyflakes)
+
+(defun own/virtualenv-flymake ()
+  (defvar virtualenv-exec (concat own/py-venvs (projectile-project-name) "/bin/pyflakes"))
+  (if (file-exists-p virtualenv-exec)
+	  (setq flymake-python-pyflakes-executable virtualenv-exec)
+	(setq flymake-python-pyflakes-executable "pyflakes"))
+  (flymake-python-pyflakes-load))
+(add-hook 'python-mode-hook 'own/virtualenv-flymake)
+#+end_src
+*** Autocompletion
+**** TODO try to use jedi from virtualenv if not doing so now
+Jedi autocompletion
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:setup-keys t)                      ; optional
+(setq jedi:complete-on-dot t)                 ; optional
+#+end_src
+** Ruby
+Basic configuration
+#+begin_src emacs-lisp :tangle yes
+(setq-default indent-tabs-mode t)
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
+(add-hook 'ruby-mode-hook (lambda () 
+							(setq indent-tabs-mode t)
+							(setq ruby-indent-level 4)
+							(setq tab-width 4)
+							(hook-mark-todo)
+							(local-set-key "\n" 'newline-and-indent)))
+#+end_src
+Ruby electric for easier source code manipulation
+#+begin_src emacs-lisp :tangle yes
+(require 'ruby-electric)
+(eval-after-load "ruby-mode" 
+  '(add-hook 'ruby-mode-hook 'ruby-electric-mode)) ; must have if you want brackets to wor
+#+end_src
+Fix for void symbol in ruby electric
+#+begin_src emacs-lisp :tangle yes
+(defun ruby-insert-end ()
+  (interactive)
+  (insert "end")
+  (ruby-indent-line t)
+  (end-of-line))
+#+end_src
+Linux configuration
+#+begin_src emacs-lisp :tangle yes
+(defun own/ruby-init ()
+  (require 'flymake-ruby)
+  (add-hook 'ruby-mode-hook 'flymake-ruby-load)
+
+  (require 'inf-ruby)
+  (setq rsense-home (expand-file-name "/opt/rsense-0.3"))
+  (setq rsense-home "/opt/rsense-0.3")
+  (add-to-list 'load-path (concat rsense-home "/etc"))
+  (require 'rsense)
+
+  ;; AUTOCOMPLETE (with rsense)
+  (add-hook 'ruby-mode-hook 'auto-complete-mode)
+  (add-hook 'ruby-mode-hook
+			(lambda ()
+			  (add-to-list 'ac-sources 'ac-source-rsense-method)
+			  (add-to-list 'ac-sources 'ac-source-rsense-constant)))
+  )
+(if (eq system-type 'gnu/linux) (own/ruby-init))
+#+end_src
+** PHP
+Basic configuration and syntax checking
+#+begin_src emacs-lisp :tangle yes
+(require 'php-extras)
+(require 'php-completion) ; this sun of a bitch was missing
+(require 'flymake)
+(autoload 'php-mode "php-mode.el" "Php mode." t)
+(setq auto-mode-alist (append '(("/*.\.php[345]?$" . php-mode)) auto-mode-alist))
+
+(require 'flymake-php)
+(add-hook 'php-mode-hook 'flymake-php-load)
+#+end_src
+Source code configuration
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'php-mode-hook 'own/php-mode-hook)
+(defun own/php-mode-hook ()
+  (hook-mark-todo)
+
+  ;; Autocomplete
+  (when (require 'auto-complete nil t)
+	(make-variable-buffer-local 'ac-sources)
+	(add-to-list 'ac-sources 'ac-source-php-completion)
+	;; if you like patial match,
+	;; use `ac-source-php-completion-patial' instead of `ac-source-php-completion'.
+	;; (add-to-list 'ac-sources 'ac-source-php-completion-patial)
+	(auto-complete-mode t))
+
+  ;; Tabs and indent  
+  (setq indent-tabs-mode t)
+  (setq-default indent-tabs-mode t)
+  
+  ;; Set the tab width
+  (setq default-tab-width 4)
+  (setq tab-width 4)
+  
+  (let ((my-tab-width 4))
+    (setq tab-width my-tab-width)
+    (setq c-basic-indent my-tab-width)
+    (set (make-local-variable 'tab-stop-list)
+         (number-sequence my-tab-width 200 my-tab-width))))
+#+end_src
+** Javascript
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(setq js2-basic-offset 4)
+(setq js2-use-font-lock-faces t)
+(setq js2-mode-hook
+	  '(lambda ()
+		 (progn
+		   (set-variable 'indent-tabs-mode t))
+		 (own/hook-mark-todo)
+		 (tern-mode t) ; install tern via npm
+		 (auto-complete-mode nil)
+		 (ac-js2-mode t)))
+#+end_src
+*** TERN
+Installation
+#+begin_src sh :tangle no
+sudo npm install tern
+cd /bin
+ln -s PATHTOTERN /bin/tern
+#+end_src
+Emacs initialization
+#+begin_src emacs-lisp :tangle yes
+(eval-after-load 'tern
+   '(progn
+      (require 'tern-auto-complete)
+      (tern-ac-setup)))
+#+end_src
 * Keybindings
 ** Basic configuration
 #+begin_src emacs-lisp :tangle yes
+(message "setting up keybindings")
 (key-chord-define-global "uu" 'undo)
 (key-chord-define-global ".-" 'undo-tree-visualize)
 (key-chord-define-global "qw" 'ace-jump-char-mode)
