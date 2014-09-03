@@ -21,6 +21,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/org-directory "~/docs/org/"
 	  own/py-spaces-projects '("proj1" "proj2")
 	  own/py-venvs "~/.virtualenvs"
+	  own/sql-config nil
 	  helm-delicious-user ""
 	  helm-delicious-password "")
 #+END_SRC
@@ -418,6 +419,12 @@ they overwrite default functionallity.
    ((atom mylist) (list mylist))
    (t
     (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
+(defun own/sql-connect (product connection)
+  (interactive "sProduct:\nsConnection:")
+  (message (concat product " " connection))
+  (setq sql-product (make-symbol product))
+  (sql-connect (make-symbol connection))
+)
 #+end_src
 ** Hooks
 #+begin_src emacs-lisp :tangle yes
@@ -634,8 +641,12 @@ Add hook to mark todos and similar strings in text
 		  'bash-completion-dynamic-complete)
 #+end_src
 ** SQL
+*** TODO define servers
 #+begin_src emacs-lisp :tangle yes
-
+(defun own/sql-init ()
+  (setq sql-connection-alist own/sql-config)
+)
+(if own/sql-config (own/sql-init))
 #+end_src
 ** Markdown mode
 #+begin_src emacs-lisp :tangle yes
