@@ -2,6 +2,14 @@
 #+AUTHOR: Žiga Stopinšek
 #+EMAIL: sigi.kajzer@gmail.com
 #+OPTIONS: toc:3 num:nil ^:nil
+* Basic information
+Works on GNU/Linux and also MS/Windows (but not everything, 
+mainly because of requrements). 
+** System requirements
+- tern
+- rope
+- jedi
+- pyflakes
 * Before main INIT
 Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -21,7 +29,6 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/org-directory "~/docs/org/"
 	  own/py-spaces-projects '("proj1" "proj2")
 	  own/py-venvs "~/.virtualenvs"
-	  own/sql-config nil
 	  helm-delicious-user ""
 	  helm-delicious-password "")
 #+END_SRC
@@ -234,6 +241,7 @@ they overwrite default functionallity.
 #+begin_src emacs-lisp :tangle yes
 (load-file (concat user-emacs-directory "nonelpa/typing-speed.el"))
 (turn-on-typing-speed)
+(add-hook 'prog-mode-hook '(lambda () (typing-speed-mode)))
 #+end_src
 * Various functions
 ** Text manipulation
@@ -420,11 +428,14 @@ they overwrite default functionallity.
    (t
     (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
 (defun own/sql-connect (product connection)
-  (interactive "sProduct:\nsConnection:")
+  ;(interactive "sProduct: \nsConnection: ")
+  (interactive
+   (list
+	(completing-read "Product: " '("mysql" "postgres"))
+	(completing-read "Connection: " (mapcar '(lambda (elt) (symbol-name (car elt))) sql-connection-alist)))
   (message (concat product " " connection))
   (setq sql-product (make-symbol product))
-  (sql-connect (make-symbol connection))
-)
+  (sql-connect (make-symbol connection))))
 #+end_src
 ** Hooks
 #+begin_src emacs-lisp :tangle yes
@@ -640,14 +651,6 @@ Add hook to mark todos and similar strings in text
 (add-hook 'shell-command-complete-functions
 		  'bash-completion-dynamic-complete)
 #+end_src
-** SQL
-*** TODO define servers
-#+begin_src emacs-lisp :tangle yes
-(defun own/sql-init ()
-  (setq sql-connection-alist own/sql-config)
-)
-(if own/sql-config (own/sql-init))
-#+end_src
 ** Markdown mode
 #+begin_src emacs-lisp :tangle yes
 (autoload 'markdown-mode "markdown-mode"
@@ -725,7 +728,7 @@ Add hook to mark todos and similar strings in text
   (if (member (projectile-project-name) own/py-spaces-projects)
 	  (own/spaces-py-settings)
 	(own/tabs-py-settings)))
-(add-hook 'python-mode-hook 'python-mode-config)
+(add-hook 'python-mode-hook 'own/python-mode-config)
 #+end_src
 Support python virtualenvs
 #+begin_src emacs-lisp :tangle yes
