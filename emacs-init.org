@@ -432,10 +432,10 @@ they overwrite default functionallity.
   (interactive
    (list
 	(completing-read "Product: " '("mysql" "postgres"))
-	(completing-read "Connection: " (mapcar '(lambda (elt) (symbol-name (car elt))) sql-connection-alist)))
-  (message (concat product " " connection))
+	(completing-read "Connection: " (mapcar '(lambda (elt) (car elt)) sql-connection-alist)))
   (setq sql-product (make-symbol product))
-  (sql-connect (make-symbol connection))))
+  (sql-connect connection)))
+
 #+end_src
 ** Hooks
 #+begin_src emacs-lisp :tangle yes
