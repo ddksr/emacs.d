@@ -3,6 +3,8 @@
 			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
 			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+			 '("e6h" . "http://www.e6h.org/packages/"))
 (package-initialize)
 
 (defun own/ensure-package-installed (&rest packages)
@@ -77,8 +79,6 @@ Return a list of installed packages or nil for every skipped package."
  'yasnippet ; provide snippets for faster programming
  'markdown-mode ; MARKDOWN mode
  ;'pkgbuild-mode ; for creating packages with emacs
- 'ess ; R language mode
- 'ess-R-object-popup ; popup R object
  'php-mode ; PHP mode
  'php-extras ; PHP mode utilities
  'php-eldoc ; PHP documentation TODO: use docs

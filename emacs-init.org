@@ -26,6 +26,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/org-docs-dir '("~")
 	  own/is-nox nil
 	  own/enable-themes t
+	  own/enable-email nil
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
 	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
 	  own/org-directory "~/docs/org/"
@@ -674,12 +675,6 @@ Add hook to mark todos and similar strings in text
 	  ident-tabs-mode t)
 #+end_src
 
-** R
-#+begin_src emacs-lisp :tangle yes
-(unless own/is-nox
-  (require 'ess-site)
-  (require 'ess-R-object-popup))
-#+end_src
 ** Octave
 #+begin_src emacs-lisp :tangle yes
 (autoload 'octave-mode "octave-mod" nil t)
@@ -970,9 +965,6 @@ Emacs initialization
 (define-key global-map (kbd "s-t") 'comment-or-uncomment-region)
 
 (define-key yas-minor-mode-map (kbd "s-SPC") 'yas-expand)
-
-(unless own/is-nox
-  (define-key ess-mode-map "\C-c\C-g" 'ess-R-object-popup))
 
 (global-set-key (kbd "s-z") 'zencoding-expand-line)
 #+end_src
