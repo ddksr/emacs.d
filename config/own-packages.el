@@ -99,8 +99,8 @@ Return a list of installed packages or nil for every skipped package."
  'auto-complete-auctex ; latex autocomplete
  'ac-js2 ; autocomplete javascript
  'org-ac ; autocomplete for ORG mode TODO: set up
- ;'ac-helm
- ;'ac-c-headers
+ 'ac-helm
+ 'ac-c-headers
  'ac-octave ; autocomplete for octave
  'flyspell-lazy ; check spelling
  'flymake ; check syntax

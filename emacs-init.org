@@ -19,17 +19,19 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq own/emacs-d-dirs '("" "config/" "nonelpa/" "themes/")
+(setq own/emacs-d-dirs '("config/" "nonelpa/" "themes/")
 	  own/nick ""
 	  own/full-name ""
 	  own/email ""
 	  own/org-docs-dir '("~")
+	  own/is-nox t
+	  own/enable-themes t
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
 	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
 	  own/org-directory "~/docs/org/"
 	  own/py-spaces-projects '("proj1" "proj2")
-	  own/py-venvs "~/.virtualenvs"
-	  helm-delicious-user ""
+	  own/py-venvs "~/.virtualenvs")
+(setq helm-delicious-user ""
 	  helm-delicious-password "")
 #+END_SRC
 Modeline shortcuts
@@ -78,7 +80,9 @@ Global void configuration functions that can be overwritten via private
 Load privates that will overwrite global variables
 #+begin_src emacs-lisp :tangle yes
 (if (file-exists-p (concat user-emacs-directory "config/private.el.gpg"))
-	(load-file (concat user-emacs-directory "config/private.el.gpg")))
+	(load-file (concat user-emacs-directory "config/private.el.gpg"))
+  (if (file-exists-p (concat user-emacs-directory "config/private.el"))
+	(load-file (concat user-emacs-directory "coenfig/private.el"))))
 #+end_src
 ** Load packages
 The own-packages file contains a list of packages that need to be installed
@@ -481,8 +485,9 @@ Line numbers everywhere except in magit
 #+end_src
 Git gutter (additions & deletions)
 #+begin_src emacs-lisp :tangle yes
-(require 'git-gutter-fringe)
-(global-git-gutter-mode +1)
+(when own/is-nox 
+	(require 'git-gutter-fringe)
+	(global-git-gutter-mode +1))
 #+end_src
 Make buffers names unique
 #+begin_src emacs-lisp :tangle yes
@@ -541,8 +546,9 @@ Delimiters (brackets, ...) with rainbow collors
 #+end_src
 ** Themes
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
-(load-theme 'afternoon t)
+(when own/enable-themes
+  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
+  (load-theme 'afternoon t))
 #+end_src
 
 * Configuration for specific global modes
@@ -616,7 +622,7 @@ Use Okular for viewing PDF files
 (eval-after-load 'flycheck
   '(define-key flycheck-mode-map (kbd "C-;") 'helm-flycheck))
 (require 'helm-grep)
-(setq helm-velocity-dir my-org-docs-dir ;(list my-org-docs-dir)
+(setq helm-velocity-dir own/org-docs-dir ;(list my-org-docs-dir)
 	  helm-velocity-ext '("*.txt" "*.org"))
 #+end_src
 * Programming
@@ -768,7 +774,7 @@ Basic configuration
 							(setq indent-tabs-mode t)
 							(setq ruby-indent-level 4)
 							(setq tab-width 4)
-							(hook-mark-todo)
+							(own/hook-mark-todo)
 							(local-set-key "\n" 'newline-and-indent)))
 #+end_src
 Ruby electric for easier source code manipulation
@@ -822,7 +828,7 @@ Source code configuration
 #+begin_src emacs-lisp :tangle yes
 (add-hook 'php-mode-hook 'own/php-mode-hook)
 (defun own/php-mode-hook ()
-  (hook-mark-todo)
+  (own/hook-mark-todo)
 
   ;; Autocomplete
   (when (require 'auto-complete nil t)

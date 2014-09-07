@@ -3,6 +3,7 @@
 ac-comphist.dat
 auto-save-list/
 config/private.el.gpg
+config/private.el
 elpa/
 eshell/
 project-explorer-cache/
