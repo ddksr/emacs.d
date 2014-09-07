@@ -82,7 +82,7 @@ Load privates that will overwrite global variables
 (if (file-exists-p (concat user-emacs-directory "config/private.el.gpg"))
 	(load-file (concat user-emacs-directory "config/private.el.gpg"))
   (if (file-exists-p (concat user-emacs-directory "config/private.el"))
-	(load-file (concat user-emacs-directory "coenfig/private.el"))))
+	(load-file (concat user-emacs-directory "config/private.el"))))
 #+end_src
 ** Load packages
 The own-packages file contains a list of packages that need to be installed
