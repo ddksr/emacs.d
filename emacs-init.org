@@ -971,7 +971,8 @@ Emacs initialization
 
 (define-key yas-minor-mode-map (kbd "s-SPC") 'yas-expand)
 
-(define-key ess-mode-map "\C-c\C-g" 'ess-R-object-popup)
+(unless own/is-nox
+  (define-key ess-mode-map "\C-c\C-g" 'ess-R-object-popup))
 
 (global-set-key (kbd "s-z") 'zencoding-expand-line)
 #+end_src
