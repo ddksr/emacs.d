@@ -24,7 +24,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/full-name ""
 	  own/email ""
 	  own/org-docs-dir '("~")
-	  own/is-nox t
+	  own/is-nox nil
 	  own/enable-themes t
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
 	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
@@ -485,7 +485,7 @@ Line numbers everywhere except in magit
 #+end_src
 Git gutter (additions & deletions)
 #+begin_src emacs-lisp :tangle yes
-(when own/is-nox 
+(unless own/is-nox 
 	(require 'git-gutter-fringe)
 	(global-git-gutter-mode +1))
 #+end_src
@@ -678,6 +678,17 @@ Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
 (require 'ess-site)
 (require 'ess-R-object-popup)
+(add-to-list 'auto-mode-alist '("\\.R$" . R-mode))
+(setq inferior-R-program-name "/path/to/R");;<<CHANGE
+;;R stuff
+(setq ess-eval-visibly-p nil)
+(setq ess-ask-for-ess-directory nil)
+(require 'ess-eldoc)
+;;compile the first target in the Makefile in the current directory using F9
+(global-set-key [f9] 'compile)
+(setq compilation-read-command nil)
+;;show matching parentheses
+(show-paren-mode 1)
 #+end_src
 ** Octave
 #+begin_src emacs-lisp :tangle yes
@@ -691,14 +702,14 @@ Add hook to mark todos and similar strings in text
             (auto-fill-mode 1)
             (if (eq window-system 'x)
 				(font-lock-mode 1))))
-
-(require 'ac-octave)
-(defun ac-octave-mode-setup ()
-  (setq ac-sources '(ac-source-octave)))
-(add-hook 'octave-mode-hook
-		  '(lambda ()
-			 (own/hook-mark-todo)
-			 (ac-octave-mode-setup)))
+(unless own/is-nox
+  (require 'ac-octave)
+  (defun ac-octave-mode-setup ()
+	(setq ac-sources '(ac-source-octave)))
+  (add-hook 'octave-mode-hook
+			'(lambda ()
+			   (own/hook-mark-todo)
+			   (ac-octave-mode-setup))))
 #+end_src
 ** HTML & CSS
 #+begin_src emacs-lisp :tangle yes
