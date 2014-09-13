@@ -6,16 +6,18 @@
 Works on GNU/Linux and also MS/Windows (but not everything, 
 mainly because of requrements). 
 ** System requirements
-- tern
-- rope
-- jedi
-- pyflakes
+- tern (javascript autocomlete)
+- rope (ruby autocomplete)
+- jedi (python autocomplete)
+- pyflakes (python syntax check)
+- mu (email)
 * Before main INIT
 Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+BEGIN_SRC emacs-lisp :tangle yes
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(setq debug-on-error nil)
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -626,6 +628,7 @@ Use Okular for viewing PDF files
 (setq helm-velocity-dir own/org-docs-dir ;(list my-org-docs-dir)
 	  helm-velocity-ext '("*.txt" "*.org"))
 #+end_src
+** MU
 * Programming
 Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
@@ -657,6 +660,12 @@ Add hook to mark todos and similar strings in text
 
 (add-hook 'shell-command-complete-functions
 		  'bash-completion-dynamic-complete)
+#+end_src
+** Lisp
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
 #+end_src
 ** Markdown mode
 #+begin_src emacs-lisp :tangle yes
@@ -727,10 +736,14 @@ Add hook to mark todos and similar strings in text
   (setq python-indent 4))
 (defun own/python-mode-config ()
   (own/hook-mark-todo)
+  (pyenv-mode)
   (if (member (projectile-project-name) own/py-spaces-projects)
 	  (own/spaces-py-settings)
 	(own/tabs-py-settings)))
 (add-hook 'python-mode-hook 'own/python-mode-config)
+(add-hook 'python-mode-hook 'anaconda-mode)
+
+(add-hook 'python-mode-hook 'eldoc-mode)
 #+end_src
 Support python virtualenvs
 #+begin_src emacs-lisp :tangle yes

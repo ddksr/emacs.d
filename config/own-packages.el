@@ -3,8 +3,6 @@
 			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
 			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-			 '("e6h" . "http://www.e6h.org/packages/"))
 (package-initialize)
 
 (defun own/ensure-package-installed (&rest packages)
@@ -78,12 +76,15 @@ Return a list of installed packages or nil for every skipped package."
  'gist ; integration with GIST
  'yasnippet ; provide snippets for faster programming
  'markdown-mode ; MARKDOWN mode
+ 'es-mode ; Elasticsearch
  ;'pkgbuild-mode ; for creating packages with emacs
  'php-mode ; PHP mode
  'php-extras ; PHP mode utilities
  'php-eldoc ; PHP documentation TODO: use docs
  'python-mode ; PYTHON mode
  'virtualenvwrapper ; for python virtualenv manipulation
+ 'pyenv-mode
+ 'anaconda-mode ; python code navigation
  ;'python-pylint ; check python syntax TODO: check if using this
  'jedi ; python autocomplete
  'js2-mode ; JAVASCRIPT mode
@@ -96,6 +97,7 @@ Return a list of installed packages or nil for every skipped package."
  'ruby-electric ; faster ruby programming (autocompletion and closing)
  'rsense ; ruby development tools
  'auto-complete ; autocomplete mode for various programming languages
+; 'company ; alternative for autocomplete - use for ac-company
  'auto-complete-auctex ; latex autocomplete
  'ac-js2 ; autocomplete javascript
  'org-ac ; autocomplete for ORG mode TODO: set up
