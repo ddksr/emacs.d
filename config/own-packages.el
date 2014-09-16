@@ -43,6 +43,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; File and project management
  'recentf ; recent projects and files
  'projectile ; simple project management
+ 'grizzl ; file completion system for projectile
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
@@ -104,6 +105,7 @@ Return a list of installed packages or nil for every skipped package."
  'ac-helm
  'ac-c-headers
  'ac-octave ; autocomplete for octave
+ 'ac-anaconda ; autocomplete for anaconda
  'flyspell-lazy ; check spelling
  'flymake ; check syntax
  'flymake-shell ; syntax checking for SH

@@ -18,6 +18,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (setq debug-on-error nil)
+(setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -43,12 +44,11 @@ Modeline shortcuts
   `((auto-complete-mode . " α")
     (yas/minor-mode . "")
 	(yas-minor-mode . "")
-    (eldoc-mode . "")
+    (eldoc-mode . " eld")
     (abbrev-mode . "")
 	(flymake-mode . " Φ")
 	(flyspell-mode . " φ")
 	(git-gutter-mode . "")
-	(projectile-mode . own/projectile-mode-line)
 	(volatile-highlights-mode . "")
 	(tern-mode . " τ")
 	(skewer-mode . "")
@@ -203,7 +203,15 @@ Enable recent files
 (setq recentf-max-menu-items 50)
 
 (require 'projectile)
+
+(setq projectile-mode-line
+  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+
+(setq projectile-completion-system 'grizzl) 
 (projectile-global-mode)
+(setq projectile-mode-line
+  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+
 #+end_src
 ** Shell
 #+begin_src emacs-lisp :tangle yes
@@ -412,10 +420,7 @@ they overwrite default functionallity.
   "Show the full path file name in the minibuffer."
   (interactive)
   (message (buffer-file-name)))
-(defun own/projectile-mode-line ()
-  "Report project in mode-line."
-  (let* ((project-name (projectile-project-name)))
-    (format " π[%s]" project-name)))
+
 (defun own/flymake-report-status-slim (e-w &optional status)
   "Show \"slim\" flymake status in mode line."
   (when e-w
@@ -455,14 +460,14 @@ they overwrite default functionallity.
   (interactive)
   (loop for cleaner in own/mode-line-cleaner-alist
         do (let* ((mode (car cleaner))
-                 (mode-def (cdr cleaner))
-				 (mode-str (if (symbolp  mode-def)
-								 (funcall mode-def)
-							 mode-def))
-                 (old-mode-str (cdr (assq mode minor-mode-alist))))
+				  (mode-def (cdr cleaner))
+				  (mode-str (if (symbolp  mode-def)
+								(funcall mode-def)
+							  mode-def))
+				  (old-mode-str (cdr (assq mode minor-mode-alist))))
              (when old-mode-str
-                 (setcar old-mode-str mode-str))
-               ;; major mode
+			   (setcar old-mode-str mode-str))
+			 ;; major mode
              (when (eq mode major-mode)
                (setq mode-name mode-str)))))
 #+end_src
@@ -477,6 +482,7 @@ Use powerline
 When displaying project name (projectile) in modeline,
 try to shorten the mode names.
 #+begin_src emacs-lisp :tangle yes
+; THIS HOOK HAS PROBLEMS WITH TRAMP !!!!
 (add-hook 'after-change-major-mode-hook 'own/hook-clean-mode-line)
 #+end_src
 ** Buffer
@@ -553,16 +559,16 @@ Delimiters (brackets, ...) with rainbow collors
   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
   (load-theme 'afternoon t))
 #+end_src
-
 * Configuration for specific global modes
 ** TRAMP
 *** TODO fix it that it will work. this is a real must !!!
 #+begin_src emacs-lisp :tangle yes
 (require 'tramp)
-;(setq tramp-default-method "ssh")
+(setq tramp-default-method "ssh")
 (setq tramp-verbose 10)
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 #+end_src
+
 ** IRC
 #+begin_src emacs-lisp :tangle yes
 (require 'notifications)
