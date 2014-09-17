@@ -482,7 +482,6 @@ Use powerline
 When displaying project name (projectile) in modeline,
 try to shorten the mode names.
 #+begin_src emacs-lisp :tangle yes
-; THIS HOOK HAS PROBLEMS WITH TRAMP !!!!
 (add-hook 'after-change-major-mode-hook 'own/hook-clean-mode-line)
 #+end_src
 ** Buffer
@@ -561,9 +560,9 @@ Delimiters (brackets, ...) with rainbow collors
 #+end_src
 * Configuration for specific global modes
 ** TRAMP
-*** TODO fix it that it will work. this is a real must !!!
 #+begin_src emacs-lisp :tangle yes
 (require 'tramp)
+(setq password-cache-expiry nil)
 (setq tramp-default-method "ssh")
 (setq tramp-verbose 10)
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
