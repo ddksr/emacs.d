@@ -3,6 +3,8 @@
 			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives 
 			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+			 '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 
 (defun own/ensure-package-installed (&rest packages)
@@ -45,6 +47,11 @@ Return a list of installed packages or nil for every skipped package."
  'projectile ; simple project management
  'grizzl ; file completion system for projectile
 
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ;;;;;;;;; ORG-MODE (latest)
+ 'org
+ 'org2blog
+ 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
  'helm ; default helm
