@@ -91,6 +91,14 @@ Load privates that will overwrite global variables
 The own-packages file contains a list of packages that need to be installed
 via package.el extension.
 #+begin_src emacs-lisp :tangle yes
+(require 'package)
+(add-to-list 'package-archives
+			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives 
+			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+			 '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
 (require 'own-packages)
 #+end_src
 * Basic configuration
@@ -552,6 +560,14 @@ Delimiters (brackets, ...) with rainbow collors
 ;(require 'color-theme)
 ;(color-theme-initialize)
 #+end_src
+Wrapping lines
+#+begin_src emacs-lisp :tangle yes
+(global-visual-line-mode)
+;(add-hook 'text-mode-hook
+;		  '(lambda () (setq word-wrap t)))
+;(add-hook 'org-mode-hook
+;		  '(lambda () (setq word-wrap t)))
+#+end_src
 ** Themes
 #+begin_src emacs-lisp :tangle yes
 (when own/enable-themes
@@ -763,7 +779,9 @@ the virtualenv pyflakes binary
 (require 'flymake-python-pyflakes)
 
 (defun own/virtualenv-flymake ()
-  (defvar virtualenv-exec (concat own/py-venvs (projectile-project-name) "/bin/pyflakes"))
+  (interactive)
+  (setq virtualenv-exec (concat own/py-venvs "/" (projectile-project-name) "/bin/pyflakes"))
+  (message virtualenv-exec)
   (if (file-exists-p virtualenv-exec)
 	  (setq flymake-python-pyflakes-executable virtualenv-exec)
 	(setq flymake-python-pyflakes-executable "pyflakes"))
@@ -962,7 +980,7 @@ Emacs initialization
 (global-set-key (kbd "s-a a") 'helm-mini)
 (global-set-key (kbd "s-a G") 'helm-google-suggest)
 (global-set-key (kbd "s-a s") 'own/helm-velocity)
-
+(global-set-key (kbd "s-a q") 'helm-semantic-or-imenu)
 
 (global-set-key (kbd "s-a o") 'helm-occur)
 (global-set-key (kbd "s-a y") 'helm-yas-complete)
