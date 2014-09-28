@@ -14,3 +14,5 @@ projectile-bookmarks.eld
 emacs-init.el
 var/
 *.elc
+tramp
+.python-environments/
