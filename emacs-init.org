@@ -10,6 +10,7 @@ mainly because of requrements).
 - rope (ruby autocomplete)
 - jedi (python autocomplete)
 - pyflakes (python syntax check)
+- gnu global source code tagging
 - mu (email)
 * Before main INIT
 Disable menu bar and toolbar and scrollbar for more prettier initialization
@@ -93,7 +94,7 @@ via package.el extension.
 #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
+			 '("melpa" . "http://melpa.org/") t)
 (add-to-list 'package-archives 
 			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
@@ -555,24 +556,29 @@ Only use tabs with witdh 4
 Delimiters (brackets, ...) with rainbow collors
 #+begin_src emacs-lisp :tangle yes
 (require 'rainbow-delimiters)
-(global-rainbow-delimiters-mode)
-
-;(require 'color-theme)
-;(color-theme-initialize)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;(global-rainbow-delimiters-mode)
 #+end_src
 Wrapping lines
 #+begin_src emacs-lisp :tangle yes
-(global-visual-line-mode)
-;(add-hook 'text-mode-hook
-;		  '(lambda () (setq word-wrap t)))
-;(add-hook 'org-mode-hook
-;		  '(lambda () (setq word-wrap t)))
+(setq truncate-lines nil)
+(setq fill-column 80)
+(add-hook 'text-mode-hook '(lambda ()
+    (setq truncate-lines nil
+          word-wrap t)))
+(add-hook 'prog-mode-hook '(lambda ()
+    (setq truncate-lines nil
+          word-wrap nil)))
 #+end_src
 ** Themes
 #+begin_src emacs-lisp :tangle yes
 (when own/enable-themes
-  (add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
-  (load-theme 'afternoon t))
+  ;(add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
+  ;(load-theme 'afternoon t)
+  (load-theme 'pastels-on-dark t)
+)
+;(require 'color-theme)
+;(color-theme-initialize)
 #+end_src
 * Configuration for specific global modes
 ** TRAMP
@@ -635,6 +641,8 @@ Use Okular for viewing PDF files
 (setq org-log-done t)
 (setq org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files))))
 (setq org-directory own/org-directory)
+
+(add-hook 'org-mode-hook 'flyspell-mode)
 #+end_src
 ** Prodigy
 #+begin_src emacs-lisp :tangle yes
@@ -650,6 +658,32 @@ Use Okular for viewing PDF files
 	  helm-velocity-ext '("*.txt" "*.org"))
 #+end_src
 ** MU
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; make sure mu4e is in your load-path
+(require 'mu4e)
+
+;; Only needed if your maildir is _not_ ~/Maildir
+;; (setq mu4e-maildir "")
+
+;; these must start with a "/", and must exist
+;; (i.e.. /home/user/Maildir/sent must exist)
+;; you use e.g. 'mu mkdir' to make the Maildirs if they don't
+;; already exist
+
+;; below are the defaults; if they do not exist yet, mu4e offers to
+;; create them. they can also functions; see their docstrings.
+(setq mu4e-sent-folder   "/Sent")
+(setq mu4e-drafts-folder "/Drafts")
+(setq mu4e-trash-folder  "/Trash")
+
+;; smtp mail setting; these are the same that `gnus' uses.
+(setq
+   message-send-mail-function   'smtpmail-send-it
+   smtpmail-default-smtp-server "mail.stopinsek.eu"
+   smtpmail-smtp-server         "mail.stopinsek.eu"
+   smtpmail-local-domain        "stopinsek.eu")
+#+end_src
 * Programming
 Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
@@ -699,32 +733,31 @@ Add hook to mark todos and similar strings in text
 #+end_src
 ** C and C++
 #+begin_src emacs-lisp :tangle yes
-(setq c-default-style "linux"
-	  c-basic-offset 4
+(require 'cc-mode)
+(setq c-basic-offset 4
 	  tab-width 4
 	  ident-tabs-mode t)
 #+end_src
-
-** Octave
+** TODO Octave - problems with emacs 24.4
 #+begin_src emacs-lisp :tangle yes
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-(cons '("\\.m$" . octave-mode) auto-mode-alist))
-(add-hook 'octave-mode-hook
-		  (lambda ()
-			(own/hook-mark-todo)
-            (abbrev-mode 1)
-            (auto-fill-mode 1)
-            (if (eq window-system 'x)
-				(font-lock-mode 1))))
-(unless own/is-nox
-  (require 'ac-octave)
-  (defun ac-octave-mode-setup ()
-	(setq ac-sources '(ac-source-octave)))
-  (add-hook 'octave-mode-hook
-			'(lambda ()
-			   (own/hook-mark-todo)
-			   (ac-octave-mode-setup))))
+;(autoload 'octave-mode "octave-mod" nil t)
+;(setq auto-mode-alist
+;(cons '("\\.m$" . octave-mode) auto-mode-alist))
+;(add-hook 'octave-mode-hook
+;		  (lambda ()
+;			(own/hook-mark-todo)
+;            (abbrev-mode 1)
+;            (auto-fill-mode 1)
+;            (if (eq window-system 'x)
+;				(font-lock-mode 1))))
+;(unless own/is-nox
+;  (require 'ac-octave)
+;  (defun ac-octave-mode-setup ()
+;	(setq ac-sources '(ac-source-octave)))
+;  (add-hook 'octave-mode-hook
+;			'(lambda ()
+;			   (own/hook-mark-todo)
+;			   (ac-octave-mode-setup))))
 #+end_src
 ** HTML & CSS
 #+begin_src emacs-lisp :tangle yes
@@ -762,9 +795,9 @@ Add hook to mark todos and similar strings in text
 	  (own/spaces-py-settings)
 	(own/tabs-py-settings)))
 (add-hook 'python-mode-hook 'own/python-mode-config)
-(add-hook 'python-mode-hook 'anaconda-mode)
+;(add-hook 'python-mode-hook 'anaconda-mode)
 
-(add-hook 'python-mode-hook 'eldoc-mode)
+;(add-hook 'python-mode-hook 'eldoc-mode)
 #+end_src
 Support python virtualenvs
 #+begin_src emacs-lisp :tangle yes
@@ -789,8 +822,6 @@ the virtualenv pyflakes binary
 (add-hook 'python-mode-hook 'own/virtualenv-flymake)
 #+end_src
 *** Autocompletion
-**** TODO try to use jedi from virtualenv if not doing so now
-Jedi autocompletion
 #+begin_src emacs-lisp :tangle yes
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:setup-keys t)                      ; optional
@@ -829,18 +860,18 @@ Linux configuration
   (require 'flymake-ruby)
   (add-hook 'ruby-mode-hook 'flymake-ruby-load)
 
-  (require 'inf-ruby)
-  (setq rsense-home (expand-file-name "/opt/rsense-0.3"))
-  (setq rsense-home "/opt/rsense-0.3")
-  (add-to-list 'load-path (concat rsense-home "/etc"))
-  (require 'rsense)
+;  (require 'inf-ruby)
+;  (setq rsense-home (expand-file-name "/opt/rsense-0.3"))
+;  (setq rsense-home "/opt/rsense-0.3")
+;  (add-to-list 'load-path (concat rsense-home "/etc"))
+;  (require 'rsense)
 
   ;; AUTOCOMPLETE (with rsense)
-  (add-hook 'ruby-mode-hook 'auto-complete-mode)
-  (add-hook 'ruby-mode-hook
-			(lambda ()
-			  (add-to-list 'ac-sources 'ac-source-rsense-method)
-			  (add-to-list 'ac-sources 'ac-source-rsense-constant)))
+;  (add-hook 'ruby-mode-hook 'auto-complete-mode)
+;  (add-hook 'ruby-mode-hook
+;  		(lambda ()
+;  			  (add-to-list 'ac-sources 'ac-source-rsense-method)
+;  			  (add-to-list 'ac-sources 'ac-source-rsense-constant)))
   )
 (if (eq system-type 'gnu/linux) (own/ruby-init))
 #+end_src
@@ -861,7 +892,6 @@ Source code configuration
 (add-hook 'php-mode-hook 'own/php-mode-hook)
 (defun own/php-mode-hook ()
   (own/hook-mark-todo)
-
   ;; Autocomplete
   (when (require 'auto-complete nil t)
 	(make-variable-buffer-local 'ac-sources)
@@ -870,15 +900,12 @@ Source code configuration
 	;; use `ac-source-php-completion-patial' instead of `ac-source-php-completion'.
 	;; (add-to-list 'ac-sources 'ac-source-php-completion-patial)
 	(auto-complete-mode t))
-
   ;; Tabs and indent  
   (setq indent-tabs-mode t)
   (setq-default indent-tabs-mode t)
-  
   ;; Set the tab width
   (setq default-tab-width 4)
   (setq tab-width 4)
-  
   (let ((my-tab-width 4))
     (setq tab-width my-tab-width)
     (setq c-basic-indent my-tab-width)
@@ -895,9 +922,10 @@ Source code configuration
 		 (progn
 		   (set-variable 'indent-tabs-mode t))
 		 (own/hook-mark-todo)
-		 (tern-mode t) ; install tern via npm
+		 (tern-mode t) ; install tern via npm ; TODO: check if this is the problem
 		 (auto-complete-mode nil)
-		 (ac-js2-mode t)))
+;		 (ac-js2-mode t)
+))
 #+end_src
 *** TERN
 Installation
@@ -1015,6 +1043,8 @@ Emacs initialization
 (global-set-key (kbd "s-w") 'delete-region)
 (global-set-key (kbd "s-i") 'indent-region)
 (global-set-key (kbd "s-u") 'undo)
+
+(global-set-key (kbd "s-k") 'kill-whole-line)
 #+end_src
 ** Custom shortcuts
 #+begin_src emacs-lisp :tangle yes
@@ -1027,10 +1057,12 @@ Emacs initialization
 * After main INIT
 #+begin_src emacs-lisp :tangle yes
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 #+end_src
 * Current TODO-s:
 ** TODO Enable flycheck and flyspell everywhere where possible 
    (elisp, octave)
 
-** TODO Enable ac everywhere - for example org mode
+** TODO Enable ac everywhere - for example org mo
 

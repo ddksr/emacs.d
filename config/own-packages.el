@@ -42,6 +42,8 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; ORG-MODE (latest)
  'org
  'org2blog
+ 'outorg
+ 'outshine
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
@@ -56,7 +58,6 @@ Return a list of installed packages or nil for every skipped package."
  'helm-pydoc ; search python documentation
  'helm-c-yasnippet ; yasnippet with helm
  'helm-helm-commands ; list all helm commands
-
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Text manipulation and search
  'move-text ; move text up and down on buffer TODO: check if keybindings
@@ -94,7 +95,7 @@ Return a list of installed packages or nil for every skipped package."
  'ruby-mode ; RUBY mode
  'inf-ruby ; ruby console
  'ruby-electric ; faster ruby programming (autocompletion and closing)
- 'rsense ; ruby development tools
+; 'rsense ; ruby development tools
  'auto-complete ; autocomplete mode for various programming languages
 ; 'company ; alternative for autocomplete - use for ac-company
  'auto-complete-auctex ; latex autocomplete
@@ -116,6 +117,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; Themes
  ;'color-theme ; color theme helper package
  'afternoon-theme
+ 'pastels-on-dark-theme
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Applications and their additions
@@ -125,7 +127,7 @@ Return a list of installed packages or nil for every skipped package."
  'notifications ; for notifications via emacs
  'howdoi ; get stack overflow answers trough emacs
  ;'httprepl ; HTTP repl
- ;'prodigy ; manage services trouhg emacs
+ 'prodigy ; manage services trouhg emacs
  'multi-term ; terminal emulator via emacs
 )
 
