@@ -18,7 +18,6 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(setq custom-file (concat user-emacs-directory "config/custom.el"))
 (setq debug-on-error nil)
 (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 #+END_SRC
@@ -95,7 +94,7 @@ via package.el extension.
 #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (add-to-list 'package-archives
-			 '("melpa" . "http://melpa.org/") t)
+			 '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives 
 			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
@@ -1060,6 +1059,8 @@ Emacs initialization
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(setq custom-file (concat user-emacs-directory "config/custom.el"))
+(load custom-file)
 #+end_src
 * Current TODO-s:
 ** TODO Enable flycheck and flyspell everywhere where possible 

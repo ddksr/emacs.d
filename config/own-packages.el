@@ -126,9 +126,9 @@ Return a list of installed packages or nil for every skipped package."
  'latex-extra ; extra latex commands
  'notifications ; for notifications via emacs
  'howdoi ; get stack overflow answers trough emacs
- ;'httprepl ; HTTP repl
  'prodigy ; manage services trouhg emacs
  'multi-term ; terminal emulator via emacs
+ 'restclient ; RESTful emacs client
 )
 
 ;; Packages I used but didn't serve my needs:
