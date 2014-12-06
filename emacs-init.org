@@ -267,6 +267,10 @@ they overwrite default functionallity.
 (turn-on-typing-speed)
 (add-hook 'prog-mode-hook '(lambda () (typing-speed-mode)))
 #+end_src
+** Navigate changes
+#+begin_src emacs-lisp :tangle yes
+(require 'goto-chg)
+#+end_src
 * Various functions
 ** Text manipulation
 #+begin_src emacs-lisp :tangle yes
@@ -683,6 +687,21 @@ Use Okular for viewing PDF files
    smtpmail-default-smtp-server "mail.stopinsek.eu"
    smtpmail-smtp-server         "mail.stopinsek.eu"
    smtpmail-local-domain        "stopinsek.eu")
+
+;; enable inline images
+(setq mu4e-view-show-images t)
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+   (imagemagick-register-types))
+#+end_src
+** Elastic
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.elastic\\'" . es-mode))
+(add-to-list 'auto-mode-alist '("\\.es\\'" . es-mode))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((elasticsearch . t)))
 #+end_src
 * Programming
 Add hook to mark todos and similar strings in text
@@ -976,6 +995,11 @@ Emacs initialization
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
 ;; if you use multiple-cursors, this is for you:
 (define-key global-map (kbd "C-S-c C-S-r") 'vr/mc-mark)
+
+;; JUMPING AROUND
+(global-set-key (kbd "s-.") 'goto-last-change)
+(global-set-key (kbd "s-,") 'goto-last-change-reverse)
+
 
 #+end_src
 ** Various functions
