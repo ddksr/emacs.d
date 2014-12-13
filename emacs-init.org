@@ -31,6 +31,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/is-nox nil
 	  own/enable-themes t
 	  own/enable-email nil
+	  own/global-set-key-prefix "C-č C-"
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
 	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
 	  own/org-directory "~/docs/org/"
@@ -484,6 +485,21 @@ they overwrite default functionallity.
              (when (eq mode major-mode)
                (setq mode-name mode-str)))))
 #+end_src
+
+** Keybindings
+#+begin_src emacs-lisp :tangle yes
+(defun own/global-set-key (keys-str fun)
+  (let* ((alt-keys-str (mapconcat 'identity
+					  (mapcar (lambda (key) 
+								(if (string-prefix-p "s-" key)
+									(concat own/global-set-key-prefix (substring key 2))
+								  key))
+								(split-string keys-str " "))
+					  " ")))
+	(global-set-key (kbd keys-str) fun)
+	(unless (string= keys-str alt-keys-str)
+	  (global-set-key (kbd alt-keys-str) fun))))
+#+end_src
 * Apperance
 ** Modeline
 Use powerline
@@ -642,11 +658,12 @@ Use Okular for viewing PDF files
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
-(setq org-log-done t)
-(setq org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files))))
-(setq org-directory own/org-directory)
-
 (add-hook 'org-mode-hook 'flyspell-mode)
+
+(setq org-log-done t
+	  org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
+	  org-directory own/org-directory
+	  org-src-fontify-natively t)
 #+end_src
 ** Prodigy
 #+begin_src emacs-lisp :tangle yes
@@ -756,6 +773,16 @@ Add hook to mark todos and similar strings in text
 (setq c-basic-offset 4
 	  tab-width 4
 	  ident-tabs-mode t)
+
+(setq compile-c-opts "-lm")
+(defun compile-c ()
+  (interactive)
+  (compile (format "gcc %s -o %s %s"
+				   compile-c-opts
+				   (file-name-sans-extension (buffer-name))
+				   (buffer-name)))
+  (shell-command (format "chmod +x %s" (buffer-name))))
+
 #+end_src
 ** TODO Octave - problems with emacs 24.4
 #+begin_src emacs-lisp :tangle yes
