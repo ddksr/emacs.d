@@ -74,6 +74,7 @@ Return a list of installed packages or nil for every skipped package."
  'git-timemachine ; move trough file git history
  'git-messenger ; see line commit
  'gist ; integration with GIST
+ 'emr ; emacs refactoring lib
  'yasnippet ; provide snippets for faster programming
  'markdown-mode ; MARKDOWN mode
  'es-mode ; Elasticsearch
@@ -88,12 +89,14 @@ Return a list of installed packages or nil for every skipped package."
  ;'python-pylint ; check python syntax TODO: check if using this
  'jedi ; python autocomplete
  'js2-mode ; JAVASCRIPT mode
+ 'js2-refactor ; refactoring lib for javascript
  'tern ; javascript environment
  'tern-auto-complete ; TERN javascript autocomplete
  'zencoding-mode ; code with ZEN (for creating html using selectors)
  'web-mode ; for editing web files (html, css)
  'ruby-mode ; RUBY mode
  'inf-ruby ; ruby console
+ 'ruby-refactor ; ruby refactoring lib
  'ruby-electric ; faster ruby programming (autocompletion and closing)
 ; 'rsense ; ruby development tools
  'auto-complete ; autocomplete mode for various programming languages

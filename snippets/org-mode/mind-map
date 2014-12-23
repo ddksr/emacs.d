@@ -1,0 +1,11 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: mind-map
+# key: mm
+# binding: direct-keybinding
+# group: org-mode
+# --
+#+TITLE: ${1:Mind map title}
+#+AUTHOR: Žiga Stopinšek
+#+ROOT: ${1}
+
+$0

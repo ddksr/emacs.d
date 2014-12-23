@@ -33,12 +33,11 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/enable-email nil
 	  own/global-set-key-prefix "C-č C-"
 	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
-	  own/org-agenda-files '("~/docs/*.org" "~/*.org")
+	  own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
 	  own/org-directory "~/docs/org/"
 	  own/py-spaces-projects '("proj1" "proj2")
 	  own/py-venvs "~/.virtualenvs")
-(setq helm-delicious-user ""
-	  helm-delicious-password "")
+
 #+END_SRC
 Modeline shortcuts
 #+begin_src emacs-lisp :tangle yes
@@ -664,6 +663,8 @@ Use Okular for viewing PDF files
 	  org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
 	  org-directory own/org-directory
 	  org-src-fontify-natively t)
+
+(require 'ox-freemind)
 #+end_src
 ** Prodigy
 #+begin_src emacs-lisp :tangle yes
@@ -684,6 +685,8 @@ Use Okular for viewing PDF files
 ;; make sure mu4e is in your load-path
 (require 'mu4e)
 
+
+
 ;; Only needed if your maildir is _not_ ~/Maildir
 ;; (setq mu4e-maildir "")
 
@@ -700,10 +703,13 @@ Use Okular for viewing PDF files
 
 ;; smtp mail setting; these are the same that `gnus' uses.
 (setq
+   mu4e-get-mail-command "offlineimap -q"
    message-send-mail-function   'smtpmail-send-it
    smtpmail-default-smtp-server "mail.stopinsek.eu"
    smtpmail-smtp-server         "mail.stopinsek.eu"
    smtpmail-local-domain        "stopinsek.eu")
+
+(mu4e-update-mail-and-index t)
 
 ;; enable inline images
 (setq mu4e-view-show-images t)
@@ -725,6 +731,9 @@ Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
 (message "loading programming configuration")
 (add-hook 'prog-mode-hook 'own/hook-mark-todo)
+
+(define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
+(add-hook 'prog-mode-hook 'emr-initialize)
 #+end_src
 ** Yasnipept
 #+begin_src emacs-lisp :tangle yes
@@ -960,6 +969,7 @@ Source code configuration
 #+end_src
 ** Javascript
 #+begin_src emacs-lisp :tangle yes
+(require 'js2-refactor)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (setq js2-basic-offset 4)
 (setq js2-use-font-lock-faces t)
@@ -998,6 +1008,13 @@ Emacs initialization
 (key-chord-define-global "<y" 'ace-jump-line-mode)
 (key-chord-define-global "+'" 'ace-jump-buffer)
 (key-chord-define-global "'0" 'ace-window)
+
+(global-set-key (kbd "s-1") 'ace-jump-char-mode)
+(global-set-key (kbd "s-2") 'ace-jump-word-mode)
+(global-set-key (kbd "s-3") 'ace-jump-line-mode)
+(global-set-key (kbd "s-4") 'ace-jump-buffer)
+(global-set-key (kbd "s-5") 'ace-window)
+
 
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
@@ -1118,4 +1135,5 @@ Emacs initialization
    (elisp, octave)
 
 ** TODO Enable ac everywhere - for example org mo
+
 
