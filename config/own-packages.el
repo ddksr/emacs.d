@@ -25,7 +25,9 @@ Return a list of installed packages or nil for every skipped package."
  'multiple-cursors ; enable multiple cursors
  'ace-jump-mode ; enable jumping around in buffer
  'ace-jump-buffer ; enable jumping over buffers
+ 'ace-jump-zap ; enable jumping in windows
  'ace-window ; enable jumping in windows
+ 'ace-isearch ; enable jumping in windows
  'ibuffer-vc ; organize ibuffer using version control
  'smex ; ido for elisp interactive functions
  'expand-region ; expand region (s-e)

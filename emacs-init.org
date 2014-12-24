@@ -175,6 +175,10 @@ Use flx-ido to fix default IDO.
 (require 'ace-jump-mode) ; ace jumping
 (require 'ace-jump-buffer)
 (require 'ace-window)
+(require 'ace-isearch)
+(setq ace-isearch-input-idle-delay 1)
+(global-ace-isearch-mode +1)
+
 
 (setq make-backup-files nil) ; Disable backup files
 (setq next-line-add-newlines t) ; Make newline at the bottom
@@ -1015,6 +1019,9 @@ Emacs initialization
 (global-set-key (kbd "s-4") 'ace-jump-buffer)
 (global-set-key (kbd "s-5") 'ace-window)
 
+(global-set-key (kbd "s-8") 'ace-jump-zap-up-to-char)
+(global-set-key (kbd "s-9") 'ace-jump-zap-to-char)
+
 
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
@@ -1119,6 +1126,7 @@ Emacs initialization
 (global-set-key (kbd "s-o") 'other-window)
 (global-set-key (kbd "C-s-u") 'repeat)
 (global-set-key (kbd "<f5>") 'rgrep)
+(global-set-key (kbd "<f7>") 'mu4e)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
 
