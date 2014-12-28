@@ -139,6 +139,3 @@ Return a list of installed packages or nil for every skipped package."
 ;; Packages I used but didn't serve my needs:
 ;; - window-number
 ;; - multi-web-mode
-
-(provide 'own-packages)
-;;; own-packages ends here

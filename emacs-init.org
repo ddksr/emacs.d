@@ -23,7 +23,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq own/emacs-d-dirs '("etc/" "lib/ext/" "etc/themes/")
+(setq own/emacs-d-dirs '("lib/ext/" "etc/themes/")
 	  own/nick ""
 	  own/full-name ""
 	  own/email ""
@@ -73,6 +73,17 @@ Global void configuration functions that can be overwritten via private
 #+begin_src emacs-lisp :tangle yes
 (defun own/config-prodigy ())
 #+end_src
+* Basic functions
+#+begin_src emacs-lisp :tangle yes
+(defun own/etc-load (file)
+  (let ((etc-path (concat user-emacs-directory "etc/" file)))
+	(message etc-path)
+	(if (file-exists-p etc-path)
+		(progn
+		  (load-file etc-path)
+		  t)
+	  nil)))
+#+end_src
 * Load path, privates and packages
 ** Add directories to load path
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -83,10 +94,8 @@ Global void configuration functions that can be overwritten via private
 ** Load privates
 Load privates that will overwrite global variables
 #+begin_src emacs-lisp :tangle yes
-(if (file-exists-p (concat user-emacs-directory "etc/private.el.gpg"))
-	(load-file (concat user-emacs-directory "etc/private.el.gpg"))
-  (if (file-exists-p (concat user-emacs-directory "etc/private.el"))
-	(load-file (concat user-emacs-directory "etc/private.el"))))
+(unless (own/etc-load "private.el.gpg")
+  (own/etc-load "private.el"))
 #+end_src
 ** Load packages
 The own-packages file contains a list of packages that need to be installed
@@ -100,7 +109,7 @@ via package.el extension.
 (add-to-list 'package-archives
 			 '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
-(require 'own-packages)
+(own/etc-load "packages.el")
 #+end_src
 * Basic configuration
 ** Autocompile elisp files
