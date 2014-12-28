@@ -23,7 +23,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq own/emacs-d-dirs '("config/" "nonelpa/" "themes/")
+(setq own/emacs-d-dirs '("etc/" "lib/ext/" "etc/themes/")
 	  own/nick ""
 	  own/full-name ""
 	  own/email ""
@@ -83,10 +83,10 @@ Global void configuration functions that can be overwritten via private
 ** Load privates
 Load privates that will overwrite global variables
 #+begin_src emacs-lisp :tangle yes
-(if (file-exists-p (concat user-emacs-directory "config/private.el.gpg"))
-	(load-file (concat user-emacs-directory "config/private.el.gpg"))
-  (if (file-exists-p (concat user-emacs-directory "config/private.el"))
-	(load-file (concat user-emacs-directory "config/private.el"))))
+(if (file-exists-p (concat user-emacs-directory "etc/private.el.gpg"))
+	(load-file (concat user-emacs-directory "etc/private.el.gpg"))
+  (if (file-exists-p (concat user-emacs-directory "etc/private.el"))
+	(load-file (concat user-emacs-directory "etc/private.el"))))
 #+end_src
 ** Load packages
 The own-packages file contains a list of packages that need to be installed
@@ -267,7 +267,7 @@ they overwrite default functionallity.
 ** Typing speed
 *** TODO make better
 #+begin_src emacs-lisp :tangle yes
-(load-file (concat user-emacs-directory "nonelpa/typing-speed.el"))
+(load-file (concat user-emacs-directory "lib/ext/typing-speed.el"))
 (turn-on-typing-speed)
 (add-hook 'prog-mode-hook '(lambda () (typing-speed-mode)))
 #+end_src
@@ -596,8 +596,6 @@ Wrapping lines
 ** Themes
 #+begin_src emacs-lisp :tangle yes
 (when own/enable-themes
-  ;(add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes/"))
-  ;(load-theme 'afternoon t)
   (load-theme 'pastels-on-dark t)
 )
 ;(require 'color-theme)
@@ -780,21 +778,31 @@ Add hook to mark todos and similar strings in text
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 #+end_src
-** C and C++
+** C and C++ and derivates
 #+begin_src emacs-lisp :tangle yes
 (require 'cc-mode)
 (setq c-basic-offset 4
 	  tab-width 4
 	  ident-tabs-mode t)
 
-(setq compile-c-opts "-lm")
-(defun compile-c ()
+(setq own/compile-c-opts "-lm")
+(defun own/compile-c ()
   (interactive)
   (compile (format "gcc %s -o %s %s"
-				   compile-c-opts
+				   own/compile-c-opts
 				   (file-name-sans-extension (buffer-name))
 				   (buffer-name)))
   (shell-command (format "chmod +x %s" (buffer-name))))
+
+(setq own/compile-cello-opts "-lCello -lm -lpthread -ldl")
+(defun own/compile-cello ()
+  (interactive)
+  (compile (format "gcc -std=gnu99 %s %s -o %s"
+				   (buffer-name)
+				   own/compile-cello-opts
+				   (file-name-sans-extension (buffer-name))))
+  (shell-command (format "chmod +x %s" (buffer-name))))
+
 
 #+end_src
 ** TODO Octave - problems with emacs 24.4
@@ -1135,7 +1143,7 @@ Emacs initialization
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(setq custom-file (concat user-emacs-directory "config/custom.el"))
+(setq custom-file (concat user-emacs-directory "etc/custom.el"))
 (load custom-file)
 #+end_src
 * Current TODO-s:

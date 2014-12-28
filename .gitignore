@@ -2,8 +2,8 @@
 .mc-lists.el
 ac-comphist.dat
 auto-save-list/
-config/private.el.gpg
-config/private.el
+etc/private.el.gpg
+etc/private.el
 elpa/
 eshell/
 project-explorer-cache/
