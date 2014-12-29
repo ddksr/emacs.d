@@ -23,7 +23,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq own/emacs-d-dirs '("lib/ext/" "etc/themes/")
+(setq own/emacs-d-dirs '("lib/" "lib/ext/" "etc/themes/")
 	  own/nick ""
 	  own/full-name ""
 	  own/email ""
@@ -736,6 +736,10 @@ Use Okular for viewing PDF files
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((elasticsearch . t)))
+#+end_src
+** Cliist
+#+begin_src emacs-lisp :tangle yes
+(require 'cliist)
 #+end_src
 * Programming
 Add hook to mark todos and similar strings in text
