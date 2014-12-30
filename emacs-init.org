@@ -36,7 +36,8 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 	  own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
 	  own/org-directory "~/docs/org/"
 	  own/py-spaces-projects '("proj1" "proj2")
-	  own/py-venvs "~/.virtualenvs")
+	  own/py-venvs "~/.virtualenvs"
+      paradox-github-token "")
 
 #+END_SRC
 Modeline shortcuts
@@ -696,8 +697,6 @@ Use Okular for viewing PDF files
 ;; make sure mu4e is in your load-path
 (require 'mu4e)
 
-
-
 ;; Only needed if your maildir is _not_ ~/Maildir
 ;; (setq mu4e-maildir "")
 
@@ -720,7 +719,8 @@ Use Okular for viewing PDF files
    smtpmail-smtp-server         "mail.stopinsek.eu"
    smtpmail-local-domain        "stopinsek.eu")
 
-(mu4e-update-mail-and-index t)
+(if window-system
+  (mu4e-update-mail-and-index t))
 
 ;; enable inline images
 (setq mu4e-view-show-images t)
@@ -740,6 +740,7 @@ Use Okular for viewing PDF files
 ** Cliist
 #+begin_src emacs-lisp :tangle yes
 (require 'cliist)
+(cliist-mode t)
 #+end_src
 * Programming
 Add hook to mark todos and similar strings in text
@@ -1156,8 +1157,13 @@ Emacs initialization
 (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
+(own/etc-load "patches.el")
+
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 (load custom-file)
+
+(message "Initialization finished sucessfully")
 #+end_src
 * Current TODO-s:
 ** TODO Enable flycheck and flyspell everywhere where possible 

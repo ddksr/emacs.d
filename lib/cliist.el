@@ -66,4 +66,17 @@
   (interactive "sCommand: ")
   (shell-command (format cliist/exec command)))
 
+(define-minor-mode cliist-mode
+  "Communicate with cliist via Emacs"
+  :lighter " cliist"
+  :global t
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "C-c c r") 'cliist/run)
+			(define-key map (kbd "C-c c t") 'cliist/today-and-overdue)
+			(define-key map (kbd "C-c c c") 'cliist/completed)
+			(define-key map (kbd "C-c c p") 'cliist/project)
+			(define-key map (kbd "C-c c q") 'cliist/query)
+			(define-key map (kbd "C-c c a") 'cliist/view-all)
+            map))
+
 (provide 'cliist)

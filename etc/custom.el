@@ -4,6 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "latex -synctex=1")
+ '(paradox-automatically-star t)
  '(safe-local-variable-values
    (quote
 	((python-shell-completion-string-code . "';'.join(get_ipython().Completer.all_completions('''%s'''))

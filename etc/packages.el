@@ -17,6 +17,10 @@ Return a list of installed packages or nil for every skipped package."
 
 (own/ensure-package-installed
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ ;;;;;;;;; Libraries
+ 'async
+ 'dash
+ ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Basic
  'auto-compile ; auto compile elisp files
  'flx-ido ; improve IDO minibuffer mode
@@ -33,7 +37,7 @@ Return a list of installed packages or nil for every skipped package."
  'expand-region ; expand region (s-e)
  'visual-regexp ; for better regexes
  ;'doremi ; change things incrementally 
-
+ 'paradox ; improved package management
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; File and project management
  'recentf ; recent projects and files
@@ -134,6 +138,7 @@ Return a list of installed packages or nil for every skipped package."
  'prodigy ; manage services trouhg emacs
  'multi-term ; terminal emulator via emacs
  'restclient ; RESTful emacs client
+ 'hackernews
 )
 
 ;; Packages I used but didn't serve my needs:
