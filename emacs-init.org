@@ -23,21 +23,21 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+END_SRC
 * Global variables and settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq own/emacs-d-dirs '("lib/" "lib/ext/" "etc/themes/")
-	  own/nick ""
-	  own/full-name ""
-	  own/email ""
-	  own/org-docs-dir '("~")
-	  own/is-nox nil
-	  own/enable-themes t
-	  own/enable-email nil
-	  own/global-set-key-prefix "C-č C-"
-	  own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
-	  own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
-	  own/org-directory "~/docs/org/"
-	  own/py-spaces-projects '("proj1" "proj2")
-	  own/py-venvs "~/.virtualenvs"
-      paradox-github-token "")
+  (setq own/emacs-d-dirs '("lib/" "lib/ext/" "etc/themes/")
+        own/nick ""
+        own/full-name ""
+        own/email ""
+        own/enable-email nil
+        own/org-docs-dir '("~")
+        own/is-nox nil
+        own/enable-themes t
+        own/global-set-key-prefix "C-¸ C-"
+        own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
+        own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
+        own/org-directory "~/docs/org/"
+        own/py-spaces-projects '("proj1" "proj2")
+        own/py-venvs "~/.virtualenvs"
+        paradox-github-token "")
 
 #+END_SRC
 Modeline shortcuts
@@ -185,9 +185,6 @@ Use flx-ido to fix default IDO.
 (require 'ace-jump-mode) ; ace jumping
 (require 'ace-jump-buffer)
 (require 'ace-window)
-(require 'ace-isearch)
-(setq ace-isearch-input-idle-delay 1)
-(global-ace-isearch-mode +1)
 
 
 (setq make-backup-files nil) ; Disable backup files
@@ -511,6 +508,7 @@ they overwrite default functionallity.
 					  " ")))
 	(global-set-key (kbd keys-str) fun)
 	(unless (string= keys-str alt-keys-str)
+      (message "setting alternative keys %s" alt-keys-str)
 	  (global-set-key (kbd alt-keys-str) fun))))
 #+end_src
 * Apperance
@@ -661,6 +659,11 @@ Use Okular for viewing PDF files
 	  '((output-pdf "PDF Viewer")))
 (setq TeX-view-program-list
 	  '(("PDF Viewer" "okular --unique %o#src:%n%b")))
+
+(require 'latex-wrap)
+(eval-after-load 'latex 
+                    '(define-key LaTeX-mode-map (kbd "s-E") 'latex-wrap-region))
+
 #+end_src
 ** ORG mode
 #+begin_src emacs-lisp :tangle yes
@@ -693,40 +696,42 @@ Use Okular for viewing PDF files
 #+end_src
 ** MU
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
-;; make sure mu4e is in your load-path
-(require 'mu4e)
+  (when own/enable-email
+    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    ;; make sure mu4e is in your load-path
+    (require 'mu4e)
 
-;; Only needed if your maildir is _not_ ~/Maildir
-;; (setq mu4e-maildir "")
+    ;; Only needed if your maildir is _not_ ~/Maildir
+    ;; (setq mu4e-maildir "")
 
-;; these must start with a "/", and must exist
-;; (i.e.. /home/user/Maildir/sent must exist)
-;; you use e.g. 'mu mkdir' to make the Maildirs if they don't
-;; already exist
+    ;; these must start with a "/", and must exist
+    ;; (i.e.. /home/user/Maildir/sent must exist)
+    ;; you use e.g. 'mu mkdir' to make the Maildirs if they don't
+    ;; already exist
 
-;; below are the defaults; if they do not exist yet, mu4e offers to
-;; create them. they can also functions; see their docstrings.
-(setq mu4e-sent-folder   "/Sent")
-(setq mu4e-drafts-folder "/Drafts")
-(setq mu4e-trash-folder  "/Trash")
+    ;; below are the defaults; if they do not exist yet, mu4e offers to
+    ;; create them. they can also functions; see their docstrings.
+    (setq mu4e-sent-folder   "/Sent")
+    (setq mu4e-drafts-folder "/Drafts")
+    (setq mu4e-trash-folder  "/Trash")
 
-;; smtp mail setting; these are the same that `gnus' uses.
-(setq
-   mu4e-get-mail-command "offlineimap -q"
-   message-send-mail-function   'smtpmail-send-it
-   smtpmail-default-smtp-server "mail.stopinsek.eu"
-   smtpmail-smtp-server         "mail.stopinsek.eu"
-   smtpmail-local-domain        "stopinsek.eu")
+    ;; smtp mail setting; these are the same that `gnus' uses.
+    (setq
+     mu4e-get-mail-command "offlineimap -q"
+     message-send-mail-function   'smtpmail-send-it
+     smtpmail-default-smtp-server "mail.stopinsek.eu"
+     smtpmail-smtp-server         "mail.stopinsek.eu"
+     smtpmail-local-domain        "stopinsek.eu")
 
-(if window-system
-  (mu4e-update-mail-and-index t))
+    (if window-system ;; this is a workaround because emacs instances could deadlock mu
+        (mu4e-update-mail-and-index t))
 
-;; enable inline images
-(setq mu4e-view-show-images t)
-;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-   (imagemagick-register-types))
+    ;; enable inline images
+    (setq mu4e-view-show-images t)
+    ;; use imagemagick, if available
+    (when (fboundp 'imagemagick-register-types)
+      (imagemagick-register-types)))
+
 #+end_src
 ** Elastic
 #+begin_src emacs-lisp :tangle yes
@@ -1027,129 +1032,129 @@ Emacs initialization
 ** Basic configuration
 #+begin_src emacs-lisp :tangle yes
 (message "setting up keybindings")
-(key-chord-define-global "uu" 'undo)
-(key-chord-define-global ".-" 'undo-tree-visualize)
-(key-chord-define-global "qw" 'ace-jump-char-mode)
-(key-chord-define-global "yx" 'ace-jump-word-mode)
-(key-chord-define-global "<y" 'ace-jump-line-mode)
-(key-chord-define-global "+'" 'ace-jump-buffer)
-(key-chord-define-global "'0" 'ace-window)
+(key-chord-define-global "uu" 'undo) ;; DEPRECATED
+(key-chord-define-global ".-" 'undo-tree-visualize)  ;; DEPRECATED
+(key-chord-define-global "qw" 'ace-jump-char-mode)  ;; DEPRECATED
+(key-chord-define-global "yx" 'ace-jump-word-mode)  ;; DEPRECATED 
+(key-chord-define-global "<y" 'ace-jump-line-mode)  ;; DEPRECATED 
+(key-chord-define-global "+'" 'ace-jump-buffer)  ;; DEPRECATED
+(key-chord-define-global "'0" 'ace-window)  ;; DEPRECATED
 
-(global-set-key (kbd "s-1") 'ace-jump-char-mode)
-(global-set-key (kbd "s-2") 'ace-jump-word-mode)
-(global-set-key (kbd "s-3") 'ace-jump-line-mode)
-(global-set-key (kbd "s-4") 'ace-jump-buffer)
-(global-set-key (kbd "s-5") 'ace-window)
+(own/global-set-key "s-1" 'ace-jump-char-mode)
+(own/global-set-key "s-2" 'ace-jump-word-mode)
+(own/global-set-key "s-3" 'ace-jump-line-mode)
+(own/global-set-key "s-4" 'ace-jump-buffer)
+(own/global-set-key "s-5" 'ace-window)
+(own/global-set-key "s-8" 'ace-jump-zap-up-to-char)
+(own/global-set-key "s-9" 'ace-jump-zap-to-char)
 
-(global-set-key (kbd "s-8") 'ace-jump-zap-up-to-char)
-(global-set-key (kbd "s-9") 'ace-jump-zap-to-char)
-
-
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-S-r") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-S-a") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+(own/global-set-key "C-S-c C-S-c" 'mc/edit-lines)
+(own/global-set-key "C-S-s" 'mc/mark-next-like-this)
+(own/global-set-key "C-S-r" 'mc/mark-previous-like-this)
+(own/global-set-key "C-S-a" 'mc/mark-all-like-this)
+(own/global-set-key "C-S-<mouse-1>" 'mc/add-cursor-on-click)
 
 ;; PROJECT MANAGEMENT, VC AND SHELL
-(global-set-key (kbd "C-x C-y") 'recentf-open-files)
-(global-set-key (kbd "<f6>") 'multi-term)
-(global-set-key (kbd "s-g c") 'git-messenger:popup-message)
+(own/global-set-key "C-x C-y" 'recentf-open-files)
+(own/global-set-key "<f6>" 'multi-term)
+(own/global-set-key "s-g c" 'git-messenger:popup-message)
 
 ;; WINDOW RESIZING
-(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-C-<down>") 'shrink-window)
-(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+(own/global-set-key "S-C-<left>" 'shrink-window-horizontally)
+(own/global-set-key "S-C-<right>" 'enlarge-window-horizontally)
+(own/global-set-key "S-C-<down>" 'shrink-window)
+(own/global-set-key "S-C-<up>" 'enlarge-window)
 
 ;; SELECTION
-(global-set-key (kbd "s-e") 'er/expand-region)
+(own/global-set-key "s-e" 'er/expand-region)
+
 (define-key global-map (kbd "C-c r") 'vr/replace)
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
 ;; if you use multiple-cursors, this is for you:
 (define-key global-map (kbd "C-S-c C-S-r") 'vr/mc-mark)
 
 ;; JUMPING AROUND
-(global-set-key (kbd "s-.") 'goto-last-change)
-(global-set-key (kbd "s-,") 'goto-last-change-reverse)
+(own/global-set-key "s-." 'goto-last-change)
+(own/global-set-key "s-," 'goto-last-change-reverse)
 
 
 #+end_src
 ** Various functions
 #+begin_src emacs-lisp :tangle yes
-(global-set-key (kbd "s-l s-l") 'own/new-line-after)
-(global-set-key (kbd "s-M-l s-M-l") 'own/new-line-before)
-(global-set-key (kbd "s-l d") 'own/duplicate-line)
-(global-set-key (kbd "s-l c") 'own/combine-lines)
+(own/global-set-key "s-l s-l" 'own/new-line-after)
+(own/global-set-key "s-M-l s-M-l" 'own/new-line-before)
+(own/global-set-key "s-l d" 'own/duplicate-line)
+(own/global-set-key "s-l c" 'own/combine-lines)
 
-(global-set-key (kbd "<f8>")   'own/fd-switch-dictionary)
+(own/global-set-key "<f8>"   'own/fd-switch-dictionary)
 
-(global-set-key (kbd "C-x C-k") 'own/delete-current-buffer-file)
-(global-set-key (kbd "C-x C-r") 'own/rename-current-buffer-file)
+(own/global-set-key "C-x C-k" 'own/delete-current-buffer-file)
+(own/global-set-key "C-x C-r" 'own/rename-current-buffer-file)
 #+end_src
 ** Specific global and local major/minor modes
 #+begin_src emacs-lisp :tangle yes
-(define-key global-map (kbd "s-h s") 'howdoi-query-line-at-point-replace-by-code-snippet)
-(global-set-key (kbd "s-h q") 'howdoi-query)
+(own/global-set-key "s-h s" 'howdoi-query-line-at-point-replace-by-code-snippet)
+(own/global-set-key "s-h q" 'howdoi-query)
 
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+
 #+end_src
 ** HELM
 #+begin_src emacs-lisp :tangle yes
-(global-set-key (kbd "C-:") 'ac-complete-with-helm)
+(own/global-set-key "C-:" 'ac-complete-with-helm)
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
-(global-set-key (kbd "s-a i") 'helm-imenu)
-(global-set-key (kbd "s-a a") 'helm-mini)
-(global-set-key (kbd "s-a G") 'helm-google-suggest)
-(global-set-key (kbd "s-a s") 'own/helm-velocity)
-(global-set-key (kbd "s-a q") 'helm-semantic-or-imenu)
+(own/global-set-key "s-a i" 'helm-imenu)
+(own/global-set-key "s-a a" 'helm-mini)
+(own/global-set-key "s-a G" 'helm-google-suggest)
+(own/global-set-key "s-a s" 'own/helm-velocity)
+(own/global-set-key "s-a q" 'helm-semantic-or-imenu)
 
-(global-set-key (kbd "s-a o") 'helm-occur)
-(global-set-key (kbd "s-a y") 'helm-yas-complete)
-(global-set-key (kbd "s-a k") 'helm-show-kill-ring)
-(global-set-key (kbd "s-a g") 'helm-do-grep)
+(own/global-set-key "s-a o" 'helm-occur)
+(own/global-set-key "s-a y" 'helm-yas-complete)
+(own/global-set-key "s-a k" 'helm-show-kill-ring)
+(own/global-set-key "s-a g" 'helm-do-grep)
 
-(global-set-key (kbd "s-x p") 'helm-projectile)
-(global-set-key (kbd "s-x s-f") 'helm-browse-project)
-(global-set-key (kbd "s-x r") 'helm-recentf)
-(global-set-key (kbd "s-x b") 'helm-buffers-list)
+(own/global-set-key "s-x p" 'helm-projectile)
+(own/global-set-key "s-x s-f" 'helm-browse-project)
+(own/global-set-key "s-x r" 'helm-recentf)
+(own/global-set-key "s-x b" 'helm-buffers-list)
 
-(global-set-key (kbd "s-x h h") 'helm-helm-commands)
-(global-set-key (kbd "s-x h p") 'helm-pydoc)
-(global-set-key (kbd "s-x h t") 'helm-top)
+(own/global-set-key "s-x h h" 'helm-helm-commands)
+(own/global-set-key "s-x h p" 'helm-pydoc)
+(own/global-set-key "s-x h t" 'helm-top)
 #+end_src
 ** Programming
 #+begin_src emacs-lisp :tangle yes
-(define-key global-map (kbd "s-t") 'comment-or-uncomment-region)
+(own/global-set-key "s-t" 'comment-or-uncomment-region)
 
 (define-key yas-minor-mode-map (kbd "s-SPC") 'yas-expand)
 
-(global-set-key (kbd "s-z") 'zencoding-expand-line)
+(own/global-set-key "s-z" 'zencoding-expand-line)
 #+end_src
 ** Custom remapping of keybindings
 #+begin_src emacs-lisp :tangle yes
-(global-set-key (kbd "M-ž") 'backward-paragraph)
-(global-set-key (kbd "C-ž") 'forward-paragraph)
-(global-set-key (kbd "M-đ") 'scroll-other-window)
-(global-set-key (kbd "C-đ") 'scroll-other-window-down)
+(own/global-set-key "M-ž" 'backward-paragraph)
+(own/global-set-key "C-ž" 'forward-paragraph)
+(own/global-set-key "M-đ" 'scroll-other-window)
+(own/global-set-key "C-đ" 'scroll-other-window-down)
 
-(global-set-key (kbd "s-l b") 'delete-blank-lines)
-(global-set-key (kbd "s-w") 'delete-region)
-(global-set-key (kbd "s-i") 'indent-region)
-(global-set-key (kbd "s-u") 'undo)
+(own/global-set-key "s-l b" 'delete-blank-lines)
+(own/global-set-key "s-w" 'delete-region)
+(own/global-set-key "s-i" 'indent-region)
+(own/global-set-key "s-u" 'undo)
 
-(global-set-key (kbd "s-k") 'kill-whole-line)
+(own/global-set-key "s-k" 'kill-whole-line)
 #+end_src
 ** Custom shortcuts
 #+begin_src emacs-lisp :tangle yes
-(global-set-key (kbd "s-o") 'other-window)
-(global-set-key (kbd "C-s-u") 'repeat)
-(global-set-key (kbd "<f5>") 'rgrep)
-(global-set-key (kbd "<f7>") 'mu4e)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(own/global-set-key "s-o" 'other-window)
+(own/global-set-key "C-s-u" 'repeat)
+(own/global-set-key "<f5>" 'rgrep)
+(own/global-set-key "<f7>" 'mu4e)
+(own/global-set-key "C-x C-b" 'ibuffer)
 #+end_src
 
 * After main INIT
