@@ -11,7 +11,9 @@ mainly because of requrements).
 - jedi (python autocomplete)
 - pyflakes (python syntax check)
 - gnu global source code tagging
+*** Optional
 - mu (email)
+  - html2text
 * Before main INIT
 Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -700,6 +702,8 @@ Use Okular for viewing PDF files
     (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
     ;; make sure mu4e is in your load-path
     (require 'mu4e)
+
+    (setq mu4e-html2text-command "html2text -b 72")
 
     ;; Only needed if your maildir is _not_ ~/Maildir
     ;; (setq mu4e-maildir "")
