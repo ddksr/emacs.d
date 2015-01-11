@@ -16,3 +16,6 @@ var/
 *.elc
 tramp
 .python-environments/
+ido.last
+recentf
+smex-items
