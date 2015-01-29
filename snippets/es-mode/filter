@@ -1,0 +1,15 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: filter
+# key: filter
+# binding: direct-keybinding
+# group: es-mode
+# --
+{
+  "query": {
+    "filtered": {
+      "filter": {
+        $0
+      }
+    }
+  }
+}

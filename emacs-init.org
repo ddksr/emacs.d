@@ -284,6 +284,11 @@ they overwrite default functionallity.
 #+begin_src emacs-lisp :tangle yes
 (require 'goto-chg)
 #+end_src
+** Minibuffer
+#+begin_src emacs-lisp :tangle yes
+;(require 'symon)
+;(symon-initialize)
+#+end_src
 * Various functions
 ** Text manipulation
 #+begin_src emacs-lisp :tangle yes

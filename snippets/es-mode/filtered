@@ -1,0 +1,17 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: filtered
+# key: filtered
+# binding: direct-keybinding
+# --
+{
+  "query": {
+	"filtered": {
+	  "filter": {
+		$1
+	  },
+	  "query": {
+        $0
+      }
+	}
+  }
+}
