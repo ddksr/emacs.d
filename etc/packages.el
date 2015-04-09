@@ -88,7 +88,6 @@ Return a list of installed packages or nil for every skipped package."
  'php-mode ; PHP mode
  'php-extras ; PHP mode utilities
  'php-eldoc ; PHP documentation TODO: use docs
- 'python-mode ; PYTHON mode
  'virtualenvwrapper ; for python virtualenv manipulation
  'pyenv-mode
  'anaconda-mode ; python code navigation

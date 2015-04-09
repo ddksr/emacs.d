@@ -440,6 +440,11 @@ they overwrite default functionallity.
    (erc :server "irc.freenode.net" :port 6667
         :nick own/nick :full-name own/full-name)
    (setq erc-autojoin-channels-alist own/irc-channels))
+
+(defun own/figlet-region (&optional b e)
+  (interactive "r")
+  (shell-command-on-region b e "toilet" (current-buffer) t))
+
 #+end_src
 ** Helpers functions
 #+begin_src emacs-lisp :tangle yes
@@ -700,6 +705,8 @@ Use Okular for viewing PDF files
 (require 'helm-grep)
 (setq helm-velocity-dir own/org-docs-dir ;(list my-org-docs-dir)
 	  helm-velocity-ext '("*.txt" "*.org"))
+(require 'swiper)
+
 #+end_src
 ** MU
 #+begin_src emacs-lisp :tangle yes
@@ -720,9 +727,9 @@ Use Okular for viewing PDF files
 
     ;; below are the defaults; if they do not exist yet, mu4e offers to
     ;; create them. they can also functions; see their docstrings.
-    (setq mu4e-sent-folder   "/Sent")
-    (setq mu4e-drafts-folder "/Drafts")
-    (setq mu4e-trash-folder  "/Trash")
+    (setq mu4e-sent-folder   "/sigi/Sent")
+    (setq mu4e-drafts-folder "/sigi/Drafts")
+    (setq mu4e-trash-folder  "/sigi/Trash")
 
     ;; smtp mail setting; these are the same that `gnus' uses.
     (setq
