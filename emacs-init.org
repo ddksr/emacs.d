@@ -29,6 +29,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
         own/nick ""
         own/full-name ""
         own/email ""
+        own/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e"
         own/enable-email nil
         own/org-docs-dir '("~")
         own/is-nox nil
@@ -400,6 +401,15 @@ they overwrite default functionallity.
 #+end_src
 ** Various shortcuts
 #+begin_src emacs-lisp :tangle yes
+(defun own/dict (query)
+  "Search dictionaries for word"
+  (interactive "sQuery: \n")
+  (switch-to-buffer (get-buffer-create "*Dicts*"))
+  (erase-buffer)
+  (insert (shell-command-to-string (format "dis \"%s\"" query)))
+  (insert (shell-command-to-string (format "termania \"%s\"" query))))
+
+
 (defun own/google-search ()
   "Googles a query or region if any."
   (interactive)
@@ -523,7 +533,7 @@ they overwrite default functionallity.
       (message "setting alternative keys %s" alt-keys-str)
 	  (global-set-key (kbd alt-keys-str) fun))))
 #+end_src
-* Apperance
+* Appearance
 ** Modeline
 Use powerline
 #+begin_src emacs-lisp :tangle yes
@@ -589,6 +599,17 @@ Syntax checking
 #+begin_src emacs-lisp :tangle yes
 (defalias 'flymake-report-status 'own/flymake-report-status-slim)
 #+end_src
+** Window behaviour
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'display-buffer-alist
+             `(,(rx bos "*Flycheck errors*" eos)
+               (display-buffer-reuse-window
+                display-buffer-in-side-window)
+               (reusable-frames . visible)
+               (side            . bottom)
+               (window-height   . 0.4)))
+#+end_src
+
 ** Text
 Only use tabs with witdh 4
 #+begin_src emacs-lisp :tangle yes
@@ -711,35 +732,15 @@ Use Okular for viewing PDF files
 ** MU
 #+begin_src emacs-lisp :tangle yes
   (when own/enable-email
-    (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+    (add-to-list 'load-path own/mu4e-load-path)
     ;; make sure mu4e is in your load-path
     (require 'mu4e)
 
     (setq mu4e-html2text-command "html2text -b 72")
 
-    ;; Only needed if your maildir is _not_ ~/Maildir
-    ;; (setq mu4e-maildir "")
-
-    ;; these must start with a "/", and must exist
-    ;; (i.e.. /home/user/Maildir/sent must exist)
-    ;; you use e.g. 'mu mkdir' to make the Maildirs if they don't
-    ;; already exist
-
-    ;; below are the defaults; if they do not exist yet, mu4e offers to
-    ;; create them. they can also functions; see their docstrings.
-    (setq mu4e-sent-folder   "/sigi/Sent")
-    (setq mu4e-drafts-folder "/sigi/Drafts")
-    (setq mu4e-trash-folder  "/sigi/Trash")
-
-    ;; smtp mail setting; these are the same that `gnus' uses.
-    (setq
-     mu4e-get-mail-command "offlineimap -q"
-     message-send-mail-function   'smtpmail-send-it
-     smtpmail-default-smtp-server "mail.stopinsek.eu"
-     smtpmail-smtp-server         "mail.stopinsek.eu"
-     smtpmail-local-domain        "stopinsek.eu")
-
-    (if window-system ;; this is a workaround because emacs instances could deadlock mu
+    (when window-system ;; this is a workaround because emacs instances could deadlock mu
+        (setq mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
+              mu4e-update-interval 600)
         (mu4e-update-mail-and-index t))
 
     ;; enable inline images
@@ -747,6 +748,10 @@ Use Okular for viewing PDF files
     ;; use imagemagick, if available
     (when (fboundp 'imagemagick-register-types)
       (imagemagick-register-types)))
+
+    (add-hook 'mu4e-index-updated-hook
+      (defun own/mail-updated ()
+         (shell-command "notify-send \"Mail index updated\"")))
 
 #+end_src
 ** Elastic
@@ -1191,5 +1196,6 @@ Emacs initialization
    (elisp, octave)
 
 ** TODO Enable ac everywhere - for example org mo
+
 
 

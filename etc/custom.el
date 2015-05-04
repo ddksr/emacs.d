@@ -15,7 +15,8 @@
 	 (python-shell-prompt-output-regexp . "Out\\[[0-9]+\\]: ")
 	 (python-shell-prompt-regexp . "In \\[[0-9]+\\]: ")
 	 (python-shell-interpreter-args . "/home/fgallina/Code/Projects/anue-site/anue/manage.py shell")
-	 (python-shell-interpreter . "python")))))
+	 (python-shell-interpreter . "python"))))
+ '(send-mail-function (quote smtpmail-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

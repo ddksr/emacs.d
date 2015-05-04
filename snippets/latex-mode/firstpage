@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: firstpage
+# key: firstpage
+# binding: direct-keybinding
+# --
+\clearpage\maketitle
+\thispagestyle{empty}
+\newpage
