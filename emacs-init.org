@@ -1035,6 +1035,15 @@ Source code configuration
 		 (auto-complete-mode nil)
 ;		 (ac-js2-mode t)
 ))
+(defun own/toggle-tabs ()
+  (interactive)
+  (set-variable 'indent-tabs-mode (not indent-tabs-mode)))
+(defun own/tabs-on ()
+  (interactive)
+  (set-variable 'indent-tabs-mode t))
+(defun own/tabs-off ()
+  (interactive)
+  (set-variable 'indent-tabs-mode nil))
 #+end_src
 *** TERN
 Installation
