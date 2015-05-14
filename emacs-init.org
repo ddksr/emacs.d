@@ -6,7 +6,7 @@
 Works on GNU/Linux and also MS/Windows (but not everything, 
 mainly because of requrements). 
 ** System requirements
-- tern (javascript autocomlete)
+- tern (javascript autocomlete), tern-highlight
 - rope (ruby autocomplete)
 - jedi (python autocomplete)
 - pyflakes (python syntax check)
@@ -1023,6 +1023,7 @@ Source code configuration
 #+begin_src emacs-lisp :tangle yes
 (require 'js2-refactor)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
 (setq js2-basic-offset 4)
 (setq js2-use-font-lock-faces t)
 (setq js2-mode-hook
@@ -1061,13 +1062,13 @@ Emacs initialization
 (key-chord-define-global "+'" 'ace-jump-buffer)  ;; DEPRECATED
 (key-chord-define-global "'0" 'ace-window)  ;; DEPRECATED
 
-(own/global-set-key "s-1" 'ace-jump-char-mode)
-(own/global-set-key "s-2" 'ace-jump-word-mode)
-(own/global-set-key "s-3" 'ace-jump-line-mode)
-(own/global-set-key "s-4" 'ace-jump-buffer)
-(own/global-set-key "s-5" 'ace-window)
-(own/global-set-key "s-8" 'ace-jump-zap-up-to-char)
-(own/global-set-key "s-9" 'ace-jump-zap-to-char)
+(own/global-set-key "s-j s-c" 'ace-jump-char-mode)
+(own/global-set-key "s-j s-j" 'ace-jump-word-mode)
+(own/global-set-key "s-j s-l" 'ace-jump-line-mode)
+(own/global-set-key "s-j s-b" 'ace-jump-buffer)
+(own/global-set-key "s-j w" 'ace-window)
+(own/global-set-key "s-j u" 'ace-jump-zap-up-to-char)
+(own/global-set-key "s-j z" 'ace-jump-zap-to-char)
 
 (own/global-set-key "C-S-c C-S-c" 'mc/edit-lines)
 (own/global-set-key "C-S-s" 'mc/mark-next-like-this)
