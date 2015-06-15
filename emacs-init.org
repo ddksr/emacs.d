@@ -39,6 +39,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
         own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
         own/org-directory "~/docs/org/"
         own/py-spaces-projects '("proj1" "proj2")
+        own/py-spaces-projects '("jsproj1")
         own/py-venvs "~/.virtualenvs"
         paradox-github-token "")
 
@@ -1028,8 +1029,9 @@ Source code configuration
 (setq js2-use-font-lock-faces t)
 (setq js2-mode-hook
 	  '(lambda ()
-		 (progn
-		   (set-variable 'indent-tabs-mode t))
+		 (if (member (projectile-project-name) own/js-spaces-projects)
+			 (own/tabs-off)
+		   (own/tabs-on))
 		 (own/hook-mark-todo)
 		 (tern-mode t) ; install tern via npm ; TODO: check if this is the problem
 		 (auto-complete-mode nil)

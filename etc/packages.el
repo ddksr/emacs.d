@@ -97,7 +97,7 @@ Return a list of installed packages or nil for every skipped package."
  'js2-refactor ; refactoring lib for javascript
  'tern ; javascript environment
  'tern-auto-complete ; TERN javascript autocomplete
- 'tj-mode ; tj-mode
+; 'tj-mode ; tj-mode
  'zencoding-mode ; code with ZEN (for creating html using selectors)
  'web-mode ; for editing web files (html, css)
  'ruby-mode ; RUBY mode
