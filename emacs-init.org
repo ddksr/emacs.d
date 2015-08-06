@@ -11,6 +11,7 @@ mainly because of requrements).
 - jedi (python autocomplete)
 - pyflakes (python syntax check)
 - gnu global source code tagging
+- gocode (GO)
 *** Optional
 - mu (email)
   - html2text
@@ -41,6 +42,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
         own/py-spaces-projects '("proj1" "proj2")
         own/py-spaces-projects '("jsproj1")
         own/py-venvs "~/.virtualenvs"
+		own/go-path "~/env/go"
         paradox-github-token "")
 
 #+END_SRC
@@ -291,6 +293,7 @@ they overwrite default functionallity.
 ;(require 'symon)
 ;(symon-initialize)
 #+end_src
+
 * Various functions
 ** Text manipulation
 #+begin_src emacs-lisp :tangle yes
@@ -1068,6 +1071,18 @@ Emacs initialization
 #+begin_src emacs-lisp :tangle yes
 (eval-after-load "go-mode"
   '(require 'flymake-go))
+(require 'go-autocomplete)
+
+(setq exec-path (cons "/usr/local/go/bin" exec-path))
+(add-to-list 'exec-path (concat own/go-path "/bin"))
+(add-hook 'go-mode-hook '(lambda ()
+						   (add-hook 'before-save-hook 'gofmt-before-save)
+										; Customize compile command to run go build
+						   (if (not (string-match "go" compile-command))
+							   (set (make-local-variable 'compile-command)
+									"go generate && go build -v && go test -v && go vet"))
+						   (local-set-key (kbd "M-.") 'godef-jump)))
+
 #+end_src
 * Keybindings
 ** Basic configuration
