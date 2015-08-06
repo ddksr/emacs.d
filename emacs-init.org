@@ -452,6 +452,9 @@ they overwrite default functionallity.
         :nick own/nick :full-name own/full-name)
    (setq erc-autojoin-channels-alist own/irc-channels))
 
+(setq erc-server-history-list '("irc.freenode.net"
+                                 "irc.sioff.net"))
+
 (defun own/figlet-region (&optional b e)
   (interactive "r")
   (shell-command-on-region b e "toilet" (current-buffer) t))
