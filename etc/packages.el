@@ -122,6 +122,9 @@ Return a list of installed packages or nil for every skipped package."
  'flymake-ruby ; ruby syntax checking
  'flymake-css ; check css syntax
 
+ 'go-mode
+ 'flymake-go
+
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Themes
  ;'color-theme ; color theme helper package

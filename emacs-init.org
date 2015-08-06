@@ -1064,6 +1064,11 @@ Emacs initialization
       (require 'tern-auto-complete)
       (tern-ac-setup)))
 #+end_src
+** GO
+#+begin_src emacs-lisp :tangle yes
+(eval-after-load "go-mode"
+  '(require 'flymake-go))
+#+end_src
 * Keybindings
 ** Basic configuration
 #+begin_src emacs-lisp :tangle yes
