@@ -4,6 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(LaTeX-command "latex -synctex=1")
+ '(custom-safe-themes
+   (quote
+	("f0ea6118d1414b24c2e4babdc8e252707727e7b4ff2e791129f240a2b3093e32" default)))
  '(paradox-automatically-star t)
  '(safe-local-variable-values
    (quote
