@@ -12,6 +12,7 @@ mainly because of requrements).
 - pyflakes (python syntax check)
 - gnu global source code tagging
 - gocode (GO)
+- golint (GO)
 *** Optional
 - mu (email)
   - html2text
@@ -1083,7 +1084,25 @@ Emacs initialization
 									"go generate && go build -v && go test -v && go vet"))
 						   (local-set-key (kbd "M-.") 'godef-jump)))
 
+(add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
+(require 'golint)
+
 #+end_src
+** YAML
+
+#+begin_src emacs-lisp :tangle yes
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+(add-hook 'yaml-mode-hook
+    '(lambda ()
+       (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+
+(require 'flymake-yaml) ;; Not necessary if using ELPA package
+(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+#+end_src
+
 * Keybindings
 ** Basic configuration
 #+begin_src emacs-lisp :tangle yes

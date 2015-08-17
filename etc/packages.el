@@ -123,7 +123,11 @@ Return a list of installed packages or nil for every skipped package."
  'flymake-css ; check css syntax
 
  'go-mode
+ 'go-autocomplete
  'flymake-go
+
+ 'yaml-mode
+ '
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Themes
