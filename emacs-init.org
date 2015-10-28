@@ -540,6 +540,8 @@ they overwrite default functionallity.
 	(unless (string= keys-str alt-keys-str)
       (message "setting alternative keys %s" alt-keys-str)
 	  (global-set-key (kbd alt-keys-str) fun))))
+
+
 #+end_src
 * Appearance
 ** Modeline
@@ -1072,10 +1074,12 @@ Emacs initialization
 #+begin_src emacs-lisp :tangle yes
 (eval-after-load "go-mode"
   '(require 'flymake-go))
+
 (require 'go-autocomplete)
 
 (setq exec-path (cons "/usr/local/go/bin" exec-path))
 (add-to-list 'exec-path (concat own/go-path "/bin"))
+
 (add-hook 'go-mode-hook '(lambda ()
 						   (add-hook 'before-save-hook 'gofmt-before-save)
 										; Customize compile command to run go build
@@ -1085,6 +1089,7 @@ Emacs initialization
 						   (local-set-key (kbd "M-.") 'godef-jump)))
 
 (add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
+(add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
 (require 'golint)
 
 #+end_src
@@ -1107,13 +1112,6 @@ Emacs initialization
 ** Basic configuration
 #+begin_src emacs-lisp :tangle yes
 (message "setting up keybindings")
-(key-chord-define-global "uu" 'undo) ;; DEPRECATED
-(key-chord-define-global ".-" 'undo-tree-visualize)  ;; DEPRECATED
-(key-chord-define-global "qw" 'ace-jump-char-mode)  ;; DEPRECATED
-(key-chord-define-global "yx" 'ace-jump-word-mode)  ;; DEPRECATED 
-(key-chord-define-global "<y" 'ace-jump-line-mode)  ;; DEPRECATED 
-(key-chord-define-global "+'" 'ace-jump-buffer)  ;; DEPRECATED
-(key-chord-define-global "'0" 'ace-window)  ;; DEPRECATED
 
 (own/global-set-key "s-j s-c" 'ace-jump-char-mode)
 (own/global-set-key "s-j s-j" 'ace-jump-word-mode)
@@ -1130,15 +1128,15 @@ Emacs initialization
 (own/global-set-key "C-S-<mouse-1>" 'mc/add-cursor-on-click)
 
 ;; PROJECT MANAGEMENT, VC AND SHELL
-(own/global-set-key "C-x C-y" 'recentf-open-files)
-(own/global-set-key "<f6>" 'multi-term)
-(own/global-set-key "s-g c" 'git-messenger:popup-message)
+;(own/global-set-key "C-x C-y" 'recentf-open-files)
+;(own/global-set-key "<f6>" 'multi-term)
+;(own/global-set-key "s-g c" 'git-messenger:popup-message)
 
 ;; WINDOW RESIZING
-(own/global-set-key "S-C-<left>" 'shrink-window-horizontally)
-(own/global-set-key "S-C-<right>" 'enlarge-window-horizontally)
-(own/global-set-key "S-C-<down>" 'shrink-window)
-(own/global-set-key "S-C-<up>" 'enlarge-window)
+;(own/global-set-key "S-C-<left>" 'shrink-window-horizontally)
+;(own/global-set-key "S-C-<right>" 'enlarge-window-horizontally)
+;(own/global-set-key "S-C-<down>" 'shrink-window)
+;(own/global-set-key "S-C-<up>" 'enlarge-window)
 
 ;; SELECTION
 (own/global-set-key "s-e" 'er/expand-region)

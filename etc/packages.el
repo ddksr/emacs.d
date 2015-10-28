@@ -38,6 +38,7 @@ Return a list of installed packages or nil for every skipped package."
  'visual-regexp ; for better regexes
  ;'doremi ; change things incrementally 
  'paradox ; improved package management
+ 'hydra ; keybinding management
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; File and project management
  'recentf ; recent projects and files
