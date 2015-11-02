@@ -831,9 +831,9 @@ Add hook to mark todos and similar strings in text
 ** C and C++ and derivates
 #+begin_src emacs-lisp :tangle yes
 (require 'cc-mode)
-(setq c-basic-offset 4
-	  tab-width 4
-	  ident-tabs-mode t)
+(setq c-basic-offset 2
+	  tab-width 2
+	  ident-tabs-mode nil)
 
 (setq own/compile-c-opts "-lm")
 (defun own/compile-c ()
