@@ -406,6 +406,15 @@ they overwrite default functionallity.
 #+end_src
 ** Various shortcuts
 #+begin_src emacs-lisp :tangle yes
+(defun own/toggle-tabs ()
+  (interactive)
+  (set-variable 'indent-tabs-mode (not indent-tabs-mode)))
+(defun own/tabs-on ()
+  (interactive)
+  (set-variable 'indent-tabs-mode t))
+(defun own/tabs-off ()
+  (interactive)
+  (set-variable 'indent-tabs-mode nil))
 (defun own/dict (query)
   "Search dictionaries for word"
   (interactive "sQuery: \n")
@@ -722,7 +731,6 @@ Use Okular for viewing PDF files
 	  org-directory own/org-directory
 	  org-src-fontify-natively t)
 
-(require 'ox-freemind)
 #+end_src
 ** Prodigy
 #+begin_src emacs-lisp :tangle yes
@@ -893,6 +901,9 @@ Add hook to mark todos and similar strings in text
 #+begin_src emacs-lisp :tangle yes
 (setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
 
+;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(setq py-autopep8-options '("--max-line-length=120"))
+
 (require 'projectile)
 (defun own/tabs-py-settings ()
   (interactive)
@@ -1046,15 +1057,6 @@ Source code configuration
 		 (auto-complete-mode nil)
 ;		 (ac-js2-mode t)
 ))
-(defun own/toggle-tabs ()
-  (interactive)
-  (set-variable 'indent-tabs-mode (not indent-tabs-mode)))
-(defun own/tabs-on ()
-  (interactive)
-  (set-variable 'indent-tabs-mode t))
-(defun own/tabs-off ()
-  (interactive)
-  (set-variable 'indent-tabs-mode nil))
 #+end_src
 *** TERN
 Installation
@@ -1113,13 +1115,17 @@ Emacs initialization
 #+begin_src emacs-lisp :tangle yes
 (message "setting up keybindings")
 
-(own/global-set-key "s-j s-c" 'ace-jump-char-mode)
-(own/global-set-key "s-j s-j" 'ace-jump-word-mode)
-(own/global-set-key "s-j s-l" 'ace-jump-line-mode)
-(own/global-set-key "s-j s-b" 'ace-jump-buffer)
-(own/global-set-key "s-j w" 'ace-window)
-(own/global-set-key "s-j u" 'ace-jump-zap-up-to-char)
-(own/global-set-key "s-j z" 'ace-jump-zap-to-char)
+(defhydra hydra-ace (:exit t)
+  "ace-jump"
+  ("c" ace-jump-char-mode "char")
+  ("j" ace-jump-word-mode "word")
+  ("l" ace-jump-line-mode "line")
+  ("b" ace-jump-buffer "buffer")
+  ("w" ace-window "window")
+  ("u" ace-jump-zap-up-to-char "zap up to char")
+  ("z" ace-jump-zap-to-char "zap to char")
+  )
+(own/global-set-key "s-j" 'hydra-ace/body)
 
 (own/global-set-key "C-S-c C-S-c" 'mc/edit-lines)
 (own/global-set-key "C-S-s" 'mc/mark-next-like-this)
@@ -1154,10 +1160,15 @@ Emacs initialization
 #+end_src
 ** Various functions
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "s-l s-l" 'own/new-line-after)
-(own/global-set-key "s-M-l s-M-l" 'own/new-line-before)
-(own/global-set-key "s-l d" 'own/duplicate-line)
-(own/global-set-key "s-l c" 'own/combine-lines)
+
+(defhydra hydra-lines ()
+  "Editing lines"
+  ("a" own/new-line-after "new line after")
+  ("b" own/new-line-before "new line before")
+  ("d" own/duplicate-line "duplicate")
+  ("w" delete-blank-lines "delete blank lines around line")
+  ("c" own/combine-lines "combine with next line"))
+(own/global-set-key "s-l" 'hydra-lines/body)
 
 (own/global-set-key "<f8>"   'own/fd-switch-dictionary)
 
@@ -1179,25 +1190,24 @@ Emacs initialization
 (own/global-set-key "C-:" 'ac-complete-with-helm)
 (define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
-(own/global-set-key "s-a i" 'helm-imenu)
-(own/global-set-key "s-a a" 'helm-mini)
-(own/global-set-key "s-a G" 'helm-google-suggest)
-(own/global-set-key "s-a s" 'own/helm-velocity)
-(own/global-set-key "s-a q" 'helm-semantic-or-imenu)
+(defhydra hydra-helm (:exit t)
+  "Helms"
+  ("i" helm-imenu "imenu")
+  ("a" helm-mini "mini")
+  ("g" helm-google-suggest "google suggest")
+  ("s" own/helm-velocity "velocity")
+  ("q" helm-semantic-or-imenu "semantic or imenu")
+  ("o" helm-occur "occur")
+  ("y" helm-yas-complete "yas")
+  ("k" helm-show-kill-ring "kill ring")
+  ("f" helm-projectile "projectile")
+  ("r" helm-recentf "recent files")
+  ("b" helm-buffers-list "buffers")
+  ("h" helm-helm-commands "helm commands")
+  ("t" helm-top "top")
+  ("d" helm-do-grep "do grep"))
+(own/global-set-key "s-a" 'hydra-helm/body)
 
-(own/global-set-key "s-a o" 'helm-occur)
-(own/global-set-key "s-a y" 'helm-yas-complete)
-(own/global-set-key "s-a k" 'helm-show-kill-ring)
-(own/global-set-key "s-a g" 'helm-do-grep)
-
-(own/global-set-key "s-x p" 'helm-projectile)
-(own/global-set-key "s-x s-f" 'helm-browse-project)
-(own/global-set-key "s-x r" 'helm-recentf)
-(own/global-set-key "s-x b" 'helm-buffers-list)
-
-(own/global-set-key "s-x h h" 'helm-helm-commands)
-(own/global-set-key "s-x h p" 'helm-pydoc)
-(own/global-set-key "s-x h t" 'helm-top)
 #+end_src
 ** Programming
 #+begin_src emacs-lisp :tangle yes
@@ -1214,7 +1224,6 @@ Emacs initialization
 (own/global-set-key "M-đ" 'scroll-other-window)
 (own/global-set-key "C-đ" 'scroll-other-window-down)
 
-(own/global-set-key "s-l b" 'delete-blank-lines)
 (own/global-set-key "s-w" 'delete-region)
 (own/global-set-key "s-i" 'indent-region)
 (own/global-set-key "s-u" 'undo)

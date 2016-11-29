@@ -48,6 +48,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; ORG-MODE (latest)
  'org
+ 'orglink
  'org2blog
  'outorg
  'outshine
@@ -90,6 +91,7 @@ Return a list of installed packages or nil for every skipped package."
  'php-extras ; PHP mode utilities
  'php-eldoc ; PHP documentation TODO: use docs
  'virtualenvwrapper ; for python virtualenv manipulation
+ 'py-autopep8 ; peeeeeep
  'pyenv-mode
  'anaconda-mode ; python code navigation
  ;'python-pylint ; check python syntax TODO: check if using this
@@ -122,7 +124,8 @@ Return a list of installed packages or nil for every skipped package."
  'flymake-python-pyflakes ; use pyflakes via flymake for python
  'flymake-ruby ; ruby syntax checking
  'flymake-css ; check css syntax
-
+ 'flymake-yaml ; yaml
+ 
  'go-mode
  'go-autocomplete
  'flymake-go
