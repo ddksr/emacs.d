@@ -7,6 +7,7 @@
  '(custom-safe-themes
    (quote
 	("f0ea6118d1414b24c2e4babdc8e252707727e7b4ff2e791129f240a2b3093e32" default)))
+ '(js2-basic-offset 4)
  '(paradox-automatically-star t)
  '(safe-local-variable-values
    (quote

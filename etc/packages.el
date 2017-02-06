@@ -125,7 +125,7 @@ Return a list of installed packages or nil for every skipped package."
  'flymake-ruby ; ruby syntax checking
  'flymake-css ; check css syntax
  'flymake-yaml ; yaml
- 
+ 'flymake-less
  'go-mode
  'go-autocomplete
  'flymake-go
