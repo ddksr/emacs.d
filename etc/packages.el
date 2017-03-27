@@ -87,6 +87,15 @@ Return a list of installed packages or nil for every skipped package."
  'go-snippets
  'company-go
  'golint
+ ;; JavaScript
+ 'js2-mode
+; 'flymake-jslint
+ 'tern
+ 'company-tern
+ ;; Other
+ 'json-mode
+ 'less-css-mode
+ 'yaml-mode
 
  ;; JavaScript
  'js2-mode
