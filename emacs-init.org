@@ -6,9 +6,11 @@
 Works on GNU/Linux and also MS/Windows (but not everything, 
 mainly because of requrements). 
 ** System requirements
-TODO
+- tern
+- go, gofmt
+- github.com/golang/lint
+- pyflakes
 *** Optional
-TODO
 - mu (email)
   - html2text
 * Before main INIT
@@ -59,6 +61,9 @@ Modeline shortcuts
     (abbrev-mode . "")
 	(flymake-mode . " Φ")
 	(flyspell-mode . " φ")
+    (company-mode . " α")
+    (anaconda-mode . "")
+    (auto-revert-mode . "")
 	(git-gutter-mode . "")
 	(volatile-highlights-mode . "")
 	(tern-mode . " τ")
@@ -640,6 +645,31 @@ General
 (add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
 (require 'golint)
 #+end_src
+
+** Javascript
+#+begin_src emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
+(setq js2-basic-offset 4)
+(setq js2-use-font-lock-faces t)
+(setq js2-mode-hook
+	  '(lambda ()
+		 (if (member (projectile-project-name) own/js-spaces-projects)
+			 (own/tabs-off)
+		   (own/tabs-on))
+		 (own/hook-mark-todo)
+		 (tern-mode t) 
+;		 (ac-js2-mode t)
+))
+
+;(require 'flymake-jslint) ;; Not necessary if using ELPA package
+;(setq flymake-jslint-args ())
+;(add-hook 'js2-mode-hook 'flymake-jslint-load)
+
+(add-to-list 'company-backends 'company-tern)
+#+end_src
+
+
 
 * Major modes
 
