@@ -77,6 +77,7 @@ Return a list of installed packages or nil for every skipped package."
  'flymake-python-pyflakes
  'anaconda-mode ; semantic autocomplete
  'company-anaconda ; semantic autocomplete
+
  'django-snippets
 
  ;; GO
@@ -86,6 +87,7 @@ Return a list of installed packages or nil for every skipped package."
  'go-snippets
  'company-go
  'golint
+
  ;; JavaScript
  'js2-mode
  'tern
