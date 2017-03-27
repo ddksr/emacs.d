@@ -68,13 +68,19 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; Programming
  'yasnippet
  'flymake
- 
  ;; Python
  'python-mode
  'py-autopep8 ; peeeeeep
  'flymake-python-pyflakes
  'anaconda-mode ; semantic autocomplete
  'company-anaconda ; semantic autocomplete
+ ;; GO
+ 'go-mode
+ 'golint
+ 'go-playground
+ 'go-snippets
+ 'company-go
+ 'golint
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Appearance
@@ -97,3 +103,4 @@ Return a list of installed packages or nil for every skipped package."
 ;; Packages I used but didn't serve my needs:
 ;; - window-number
 ;; - multi-web-mode
+

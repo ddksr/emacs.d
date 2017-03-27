@@ -619,6 +619,28 @@ General
  '(add-to-list 'company-backends 'company-anaconda))
 #+end_src
 
+** GO
+
+#+begin_src emacs-lisp :tangle yes
+(eval-after-load "go-mode"
+  '(require 'flymake-go))
+
+(setq exec-path (cons "/usr/local/go/bin" exec-path))
+(add-to-list 'exec-path (concat own/go-path "/bin"))
+
+(add-hook 'go-mode-hook '(lambda ()
+						   (add-hook 'before-save-hook 'gofmt-before-save)
+										; Customize compile command to run go build
+						   (if (not (string-match "go" compile-command))
+							   (set (make-local-variable 'compile-command)
+									"go generate && go build -v && go test -v && go vet"))
+						   (local-set-key (kbd "M-.") 'godef-jump)))
+
+(add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
+(add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
+(require 'golint)
+#+end_src
+
 * Major modes
 
 ** ORG mode
