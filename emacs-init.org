@@ -6,14 +6,9 @@
 Works on GNU/Linux and also MS/Windows (but not everything, 
 mainly because of requrements). 
 ** System requirements
-- tern (javascript autocomlete), tern-highlight
-- rope (ruby autocomplete)
-- jedi (python autocomplete)
-- pyflakes (python syntax check)
-- gnu global source code tagging
-- gocode (GO)
-- golint (GO)
+TODO
 *** Optional
+TODO
 - mu (email)
   - html2text
 * Before main INIT
@@ -26,27 +21,34 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 #+END_SRC
 * Global variables and settings
+Global own variables
 #+BEGIN_SRC emacs-lisp :tangle yes
   (setq own/emacs-d-dirs '("lib/" "lib/ext/" "etc/themes/")
+        own/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e"
+
         own/nick ""
         own/full-name ""
         own/email ""
-        own/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e"
-        own/enable-email nil
-        own/org-docs-dir '("~")
-        own/is-nox nil
-        own/enable-themes t
-        own/global-set-key-prefix "C-¸ C-"
-        own/irc-channels '(("freenode.net" "#coderdojo.si" "#emacs"))
-        own/org-agenda-files '("~/docs/*.org" "~/*.org" "~/docs/mindmaps/*.org")
-        own/org-directory "~/docs/org/"
-        own/py-spaces-projects '("proj1" "proj2")
-        own/py-spaces-projects '("jsproj1")
-        own/py-venvs "~/.virtualenvs"
-		own/go-path "~/env/go"
-        paradox-github-token "")
 
+        own/is-nox nil
+        own/enable-email nil
+        own/enable-themes t
+
+        own/org-docs-dir '("~")
+		own/org-directory "~/docs/org/"
+        
+        own/spaces-projects '("proj1" "proj2")
+        own/tabs-projects '("jsproj1")
+
+        own/py-venvs "~/.virtualenvs"
+		own/go-path "~/env/go")
 #+END_SRC
+
+Mode configuration variables
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (setq paradox-github-token "")
+#+END_SRC
+
 Modeline shortcuts
 #+begin_src emacs-lisp :tangle yes
 (defvar own/mode-line-cleaner-alist
@@ -79,8 +81,9 @@ want to use in the modeline *in lieu of* the original.")
 #+end_src
 Global void configuration functions that can be overwritten via private
 #+begin_src emacs-lisp :tangle yes
-(defun own/config-prodigy ())
+
 #+end_src
+
 * Basic functions
 #+begin_src emacs-lisp :tangle yes
 (defun own/etc-load (file)
@@ -110,104 +113,99 @@ The own-packages file contains a list of packages that need to be installed
 via package.el extension.
 #+begin_src emacs-lisp :tangle yes
 (require 'package)
-(add-to-list 'package-archives
-			 '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives 
-			 '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives
-			 '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (own/etc-load "packages.el")
 #+end_src
+
+
 * Basic configuration
-** Autocompile elisp files
+
+** Global preferences
+
+Preferences
+#+begin_src emacs-lisp :tangle yes
+(setq make-backup-files nil ; Disable backup files
+      next-line-add-newlines t) ; Make newline at the bottom
+
+(define-key global-map (kbd "RET") 'newline-and-indent) ; indent after RETURN
+
+#+end_src
+
+Libraries
+#+begin_src emacs-lisp :tangle yes
+(require 'cl)
+(require 'fullscreen) ; M-x maximize
+#+end_src
+
+** File & project management
+
+Recent files
+#+begin_src emacs-lisp :tangle yes
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 50)
+#+end_src
+
+Projectile
+#+begin_src emacs-lisp :tangle yes
+(require 'projectile)
+
+(setq projectile-mode-line
+  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+
+(setq projectile-completion-system 'grizzl) 
+(projectile-global-mode)
+(setq projectile-mode-line
+  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+#+end_src
+
+** Various
+
+Autocompile elisp files
 #+begin_src emacs-lisp :tangle yes
 (require 'auto-compile)
 (auto-compile-on-load-mode 1)
 (auto-compile-on-save-mode 1)
 #+end_src
-** MS Windows configuration
-On MS Win, disable ring-bell and try to catch
-the Windows key before OS does
+
+Enable key chord mode TODO: revisit
 #+begin_src emacs-lisp :tangle yes
-(if (eq system-type 'windows-nt)
-	(progn 
-	  (setq ring-bell-function 'ignore)
-	  (setq w32-pass-lwindow-to-system nil)
-	  (setq w32-lwindow-modifier 'super)))
+;(require 'key-chord)
+;(key-chord-mode 1)
 #+end_src
-** Key chord
-Enable key chord mode
-#+begin_src emacs-lisp :tangle yes
-(require 'key-chord)
-(key-chord-mode 1)
-#+end_src
-** Ibuffer tweaks
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'ibuffer-hook
-		  (lambda ()
-			(ibuffer-vc-set-filter-groups-by-vc-root)
-			(unless (eq ibuffer-sorting-mode 'alphabetic)
-			  (ibuffer-do-sort-by-alphabetic))))
-#+end_src
-** Autocomplete
-Enable autocomplete for automatic completing of vars and funcs
-#+begin_src emacs-lisp :tangle yes
-(require 'auto-complete)
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-(ac-config-default)
-(auto-complete 1) ;; da se samo nalozi vsakic
-(global-auto-complete-mode t)
-#+end_src
-Select sources for completion
-#+begin_src emacs-lisp :tangle yes
-(set-default 'ac-sources
-             '(ac-source-imenu
-               ac-source-dictionary
-               ac-source-words-in-buffer
-               ac-source-words-in-same-mode-buffers
-               ac-source-words-in-all-buffer))
-#+end_src
-** Configure IDO
-IDO fuzzy completion in minibuffer for everything possible.
-Use flx-ido to fix default IDO.
+
+IDO
 #+begin_src emacs-lisp :tangle yes
 (require 'flx-ido)
 (ido-mode 1)
 (ido-everywhere 1)
 (flx-ido-mode 1)
-;; disable ido faces to see flx highlights.
-(setq ido-use-faces nil)
+(setq ido-use-faces nil) ;; disable ido faces to see flx highlights.
 #+end_src
-** Various packages
-#+begin_src emacs-lisp :tangle yes
-(require 'fullscreen) ; for fullscreen support
 
+SMEX: IDO for elisp functions
+Overwrite default M-x with smex and store the default M-x into another Keybinding. This keybindings are not in the keybindings section because they overwrite default functionallity.
+
+#+begin_src emacs-lisp :tangle yes
+(smex-initialize)
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+end_src
+
+UNDO
+
+#+begin_src emacs-lisp :tangle yes
 (require 'undo-tree) ; undo tree
 (global-undo-tree-mode) ; undo tree everywhere
-
-(require 'multiple-cursors) ; multiple cursors
-
-(require 'ace-jump-mode) ; ace jumping
-(require 'ace-jump-buffer)
-(require 'ace-window)
-
-
-(setq make-backup-files nil) ; Disable backup files
-(setq next-line-add-newlines t) ; Make newline at the bottom
-(define-key global-map (kbd "RET") 'newline-and-indent) ; Always indent after RETURN
-
-(require 'move-text) ; For text moving in buffer
-(move-text-default-bindings)
-
-(require 'volatile-highlights) ; Highlight pastes and other things
-(volatile-highlights-mode t)
-
-(require 'expand-region) ; Expand selection region
-(require 'visual-regexp) ; For better regexes
 #+end_src
-** Disable keys and funcs that make learning Emacs harder
+
+Disable default features
+
 #+begin_src emacs-lisp :tangle yes
 (global-unset-key [(up)])
 (global-unset-key [(down)])
@@ -222,80 +220,15 @@ Use flx-ido to fix default IDO.
 (global-unset-key (kbd "<C-up>"))
 (global-unset-key (kbd "<C-down>"))
 #+end_src
-** Project and file management
-Enable recent files
-#+begin_src emacs-lisp :tangle yes
-(require 'recentf)
-(recentf-mode 1)
-(setq recentf-max-menu-items 50)
 
-(require 'projectile)
-
-(setq projectile-mode-line
-  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
-
-(setq projectile-completion-system 'grizzl) 
-(projectile-global-mode)
-(setq projectile-mode-line
-  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
-
-#+end_src
-** Shell
+Other
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'comint-output-filter-functions
-		  'comint-watch-for-password-prompt) ; Hide passwords in shell
-
-(defadvice shell (around always-new-shell)
-  "Always start a new shell."
-  (let ((buffer (generate-new-buffer-name "*shell*"))) ad-do-it))
-(ad-activate 'shell) ; Always start a new shell
-#+end_src
-Enable multi-term with ZSH
-#+begin_src emacs-lisp :tangle yes
-(require 'multi-term)
-(setq multi-term-buffer-name "term"
-	  multi-term-program "/bin/zsh")
-(add-hook 'term-mode-hook ;; make yank work
-          (lambda ()
-            (define-key term-raw-map (kbd "C-y") 'term-paste)))
-(add-hook 'term-mode-hook
-          (lambda ()
-            (add-to-list 'term-bind-key-alist '("<C-s-right>" . multi-term-prev))
-            (add-to-list 'term-bind-key-alist '("<C-s-left>" . multi-term-next))))
-(add-hook 'term-mode-hook
-          (lambda ()
-            (setq term-buffer-maximum-size 10000)))
-#+end_src
-** SMEX: IDO for elisp functions
-Overwrite default M-x with smex and store 
-the default M-x into another Keybinding.
-This keybindings are not in the keybindings section because
-they overwrite default functionallity.
-#+begin_src emacs-lisp :tangle yes
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-#+end_src
-** Typing speed
-*** TODO make better
-#+begin_src emacs-lisp :tangle yes
-(load-file (concat user-emacs-directory "lib/ext/typing-speed.el"))
-(turn-on-typing-speed)
-(add-hook 'prog-mode-hook '(lambda () (typing-speed-mode)))
-#+end_src
-** Navigate changes
-#+begin_src emacs-lisp :tangle yes
-(require 'goto-chg)
-#+end_src
-** Minibuffer
-#+begin_src emacs-lisp :tangle yes
-;(require 'symon)
-;(symon-initialize)
+(require 'expand-region) ; Expand selection region
 #+end_src
 
-* Various functions
+
+* Functions & hooks
+
 ** Text manipulation
 #+begin_src emacs-lisp :tangle yes
 (defun own/new-line-after (times)
@@ -322,22 +255,7 @@ they overwrite default functionallity.
   (interactive)
   (join-line -1))
 #+end_src
-** Tramp
-#+begin_src emacs-lisp :tangle yes
-(defun own/reopen-file-with-sudo ()
-  "Open the currently visited file as root via sudo."
-  (interactive)
-  (if (buffer-file-name)
-    (let ((file-name (buffer-file-name)))
-      (kill-buffer (current-buffer))
-      (find-file (concat "/sudo::" file-name))
-      (message "now editing %s as root" file-name))))
-(defun own/sudo-find-file (file-name)
-  "Like find file, but opens the file as root."
-  (interactive "FSudo Find File: ")
-  (let ((tramp-file-name (concat "/sudo::" (expand-file-name file-name))))
-    (find-file tramp-file-name)))
-#+end_src
+
 ** Windows and buffers
 #+begin_src emacs-lisp :tangle yes
 (defun own/split-window-multiple-ways (x y)
@@ -398,11 +316,13 @@ they overwrite default functionallity.
                    name (file-name-nondirectory new-name)))))))
 #+end_src
 ** Own extensions
+Velocity
+TODO: revisit
 #+begin_src emacs-lisp :tangle yes
-(defun own/helm-velocity ()
-  (interactive)
-  (require 'helm-mode)
-  (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
+;(defun own/helm-velocity ()
+;  (interactive)
+;  (require 'helm-mode)
+;  (helm-do-grep-1 helm-velocity-dir t nil helm-velocity-ext))
 #+end_src
 ** Various shortcuts
 #+begin_src emacs-lisp :tangle yes
@@ -415,14 +335,6 @@ they overwrite default functionallity.
 (defun own/tabs-off ()
   (interactive)
   (set-variable 'indent-tabs-mode nil))
-(defun own/dict (query)
-  "Search dictionaries for word"
-  (interactive "sQuery: \n")
-  (switch-to-buffer (get-buffer-create "*Dicts*"))
-  (erase-buffer)
-  (insert (shell-command-to-string (format "dis \"%s\"" query)))
-  (insert (shell-command-to-string (format "termania \"%s\"" query))))
-
 
 (defun own/google-search ()
   "Googles a query or region if any."
@@ -433,6 +345,7 @@ they overwrite default functionallity.
     (if mark-active
         (buffer-substring (region-beginning) (region-end))
       (read-string "Google: ")))))
+
 (defun own/fd-switch-dictionary()
   (interactive)
   (let* ((dic ispell-current-dictionary)
@@ -440,10 +353,12 @@ they overwrite default functionallity.
 	(ispell-change-dictionary change)
 	(message "Dictionary switched from %s to %s" dic change)
 	))
+
 (defun own/find-user-init-file ()
   "Edit the `user-init-file', in another window."
   (interactive)
   (find-file-other-window user-init-file))
+
 (defun own/find-shell-init-file ()
   "Edit the shell init file in another window."
   (interactive)
@@ -453,24 +368,17 @@ they overwrite default functionallity.
                            ((string-equal "bash" shell) ".bashrc")
                            (t (error "Unknown shell")))))
     (find-file-other-window (expand-file-name shell-init-file (getenv "HOME")))))
+
 (defun own/goto-url ()
   "Open browser"
   (interactive)
   (browse-url 
 	 (concat "http://" (read-string "URL: ") )))
-(defun own/start-irc ()
-   "Connect to IRC."
-   (interactive)
-   (erc :server "irc.freenode.net" :port 6667
-        :nick own/nick :full-name own/full-name)
-   (setq erc-autojoin-channels-alist own/irc-channels))
 
-(setq erc-server-history-list '("irc.freenode.net"
-                                 "irc.sioff.net"))
-
-(defun own/figlet-region (&optional b e)
-  (interactive "r")
-  (shell-command-on-region b e "toilet" (current-buffer) t))
+(defun own/show-filename ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (message (buffer-file-name)))
 
 #+end_src
 ** Helpers functions
@@ -479,10 +387,6 @@ they overwrite default functionallity.
   "Set the pyflakes executive"
   (interactive "FPyflakes find file: ")
   (setq flymake-python-pyflakes-executable bin-path))
-(defun own/show-filename ()
-  "Show the full path file name in the minibuffer."
-  (interactive)
-  (message (buffer-file-name)))
 
 (defun own/flymake-report-status-slim (e-w &optional status)
   "Show \"slim\" flymake status in mode line."
@@ -496,29 +400,29 @@ they overwrite default functionallity.
     (setq mode-line (concat mode-line flymake-mode-line-status))
     (setq flymake-mode-line mode-line)
     (force-mode-line-update)))
+
 (defun own/flatten (mylist)
   (cond
    ((null mylist) nil)
    ((atom mylist) (list mylist))
    (t
     (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
-(defun own/sql-connect (product connection)
-  ;(interactive "sProduct: \nsConnection: ")
-  (interactive
-   (list
-	(completing-read "Product: " '("mysql" "postgres"))
-	(completing-read "Connection: " (mapcar '(lambda (elt) (car elt)) sql-connection-alist)))
-  (setq sql-product (make-symbol product))
-  (sql-connect connection)))
 
 #+end_src
 ** Hooks
+
+Mark FIXME, SIGITODO, TODO and BUG
 #+begin_src emacs-lisp :tangle yes
 (defun own/hook-mark-todo () 
   "A hook that sets bold reserved words FIXME, SIGITODO, TODO and BUG"
   (font-lock-add-keywords nil
 						  '(("\\<\\(FIXME\\|SIGITODO\\|TODO\\|BUG\\):"
 							 1 font-lock-warning-face t))))
+
+#+end_src
+
+Clean Modeline
+#+begin_src emacs-lisp :tangle yes
 (defun own/hook-clean-mode-line ()
   (interactive)
   (loop for cleaner in own/mode-line-cleaner-alist
@@ -535,54 +439,42 @@ they overwrite default functionallity.
                (setq mode-name mode-str)))))
 #+end_src
 
-** Keybindings
-#+begin_src emacs-lisp :tangle yes
-(defun own/global-set-key (keys-str fun)
-  (let* ((alt-keys-str (mapconcat 'identity
-					  (mapcar (lambda (key) 
-								(if (string-prefix-p "s-" key)
-									(concat own/global-set-key-prefix (substring key 2))
-								  key))
-								(split-string keys-str " "))
-					  " ")))
-	(global-set-key (kbd keys-str) fun)
-	(unless (string= keys-str alt-keys-str)
-      (message "setting alternative keys %s" alt-keys-str)
-	  (global-set-key (kbd alt-keys-str) fun))))
 
 
-#+end_src
+
 * Appearance
-** Modeline
-Use powerline
+** Basic
+
+Modeline
 #+begin_src emacs-lisp :tangle yes
 ;; POWERLINE
 (require 'powerline)
 (powerline-center-theme)
-#+end_src
-When displaying project name (projectile) in modeline,
-try to shorten the mode names.
-#+begin_src emacs-lisp :tangle yes
+
 (add-hook 'after-change-major-mode-hook 'own/hook-clean-mode-line)
 #+end_src
-** Buffer
-Line numbers everywhere except in magit
+
+Buffer
 #+begin_src emacs-lisp :tangle yes
 (global-linum-mode 1) ;; Line numbers
 (require 'magit) ;; disable line numbers in magit because its slower
 (add-hook 'magit-mode-hook '(lambda () (linum-mode 0)))
 #+end_src
-Git gutter (additions & deletions)
+
+Git
 #+begin_src emacs-lisp :tangle yes
 (unless own/is-nox 
 	(require 'git-gutter-fringe)
 	(global-git-gutter-mode +1))
 #+end_src
-Make buffers names unique
+
+Unique buffer names
+
 #+begin_src emacs-lisp :tangle yes
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 #+end_src
+
 ** UX
 Don't use yes-or-no but y-or-n because it's faster !!
 #+begin_src emacs-lisp :tangle yes
@@ -597,6 +489,7 @@ Don't use yes-or-no but y-or-n because it's faster !!
 (tooltip-mode -1)
 (setq tooltip-use-echo-area t)
 #+end_src
+
 Display whitespaces when using whitespace mode
 #+begin_src emacs-lisp :tangle yes
 (setq whitespace-display-mappings
@@ -610,15 +503,20 @@ Display whitespaces when using whitespace mode
 ;; make whitespace-mode use just basic coloring
 (setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 #+end_src
+
 Spelling
+TODO: revisit
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
-Syntax checking
+
+Syntax checking appearance
 #+begin_src emacs-lisp :tangle yes
 (defalias 'flymake-report-status 'own/flymake-report-status-slim)
 #+end_src
-** Window behaviour
+
+Buffers
+TODO: revisit
 #+begin_src emacs-lisp :tangle yes
 (add-to-list 'display-buffer-alist
              `(,(rx bos "*Flycheck errors*" eos)
@@ -630,11 +528,11 @@ Syntax checking
 #+end_src
 
 ** Text
-Only use tabs with witdh 4
+Only use spaces with witdh 4
 #+begin_src emacs-lisp :tangle yes
+(setq-default indent-tabs-mode nil)
 (setq default-tab-width 4
-	  tab-width 4 ;; tab size
-	  indent-tabs-mode 1) ;; use only tabs and no spaces
+	  tab-width 4) ;; use only tabs and no spaces
 #+end_src
 Delimiters (brackets, ...) with rainbow collors
 #+begin_src emacs-lisp :tangle yes
@@ -658,65 +556,71 @@ Wrapping lines
 (when own/enable-themes
   (load-theme 'pastels-on-dark t)
 )
-;(require 'color-theme)
-;(color-theme-initialize)
-#+end_src
-* Configuration for specific global modes
-** TRAMP
-#+begin_src emacs-lisp :tangle yes
-(require 'tramp)
-(setq password-cache-expiry nil)
-(setq tramp-default-method "ssh")
-(setq tramp-verbose 10)
-(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 #+end_src
 
-** IRC
-#+begin_src emacs-lisp :tangle yes
-(require 'notifications)
-(defun own/config-erc-global-notify (match-type nick message)
-  "Notify when a message is recieved."
-  (notifications-notify
-   :title nick
-   :body message
-   :app-icon "/usr/share/notify-osd/icons/gnome/scalable/status/notification-message-im.svg"
-   :urgency 'low))
-(add-hook 'erc-text-matched-hook 'own/config-erc-global-notify)
-#+end_src
-** LaTeX
-#+begin_src emacs-lisp :tangle yes
-(setq TeX-PDF-mode t)
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
-(add-hook 'LaTeX-mode-hook 'flyspell-mode)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+** Various
+Highlight pastes and other things
 
-(eval-after-load 'latex '(latex/setup-keybinds))
-
-(setq reftex-plug-into-AUCTeX t)
-; Compile and preview with C-c C-c
-; Compile and preview and everything else with C-c C-a
-#+end_src
-Enable synctex generation. Even though the command shows
 #+begin_src emacs-lisp :tangle yes
-(setq TeX-source-correlate-method 'synctex) ; Enable synctex correlation
-(custom-set-variables '(LaTeX-command "latex -synctex=1") ) ; 
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
 #+end_src
-Use Okular for viewing PDF files
-#+begin_src emacs-lisp :tangle yes
-(setq TeX-view-program-selection
-	  '((output-pdf "PDF Viewer")))
-(setq TeX-view-program-list
-	  '(("PDF Viewer" "okular --unique %o#src:%n%b")))
 
-(require 'latex-wrap)
-(eval-after-load 'latex 
-                    '(define-key LaTeX-mode-map (kbd "s-E") 'latex-wrap-region))
+
+* Programming
+
+
+General
+
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'prog-mode-hook 'own/hook-mark-todo)
+#+end_src
+
+** Yasnippet
+#+begin_src emacs-lisp :tangle yes
+(require 'yasnippet)
+(yas/global-mode 1)
+
+(setq yas-snippet-dirs (append yas-snippet-dirs
+                         '("~/.emacs.d/snippets")))
+;; Disable TAB for yasnippets
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
 
 #+end_src
+
+** Autocomplete
+#+begin_src emacs-lisp :tangle yes
+(add-hook 'after-init-hook 'global-company-mode)
+#+end_src
+
+** Python
+
+#+begin_src emacs-lisp :tangle yes
+(setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
+
+;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(setq py-autopep8-options '("--max-line-length=120"))
+
+(require 'flymake-python-pyflakes)
+
+(defun own/virtualenv-flymake ()
+  (interactive)
+  (setq virtualenv-exec (concat own/py-venvs "/" (projectile-project-name) "/bin/pyflakes"))
+  (message virtualenv-exec)
+  (if (file-exists-p virtualenv-exec)
+	  (setq flymake-python-pyflakes-executable virtualenv-exec)
+	(setq flymake-python-pyflakes-executable "pyflakes"))
+  (flymake-python-pyflakes-load))
+(add-hook 'python-mode-hook 'own/virtualenv-flymake)
+
+(add-hook 'python-mode-hook 'anaconda-mode)
+(eval-after-load "company"
+ '(add-to-list 'company-backends 'company-anaconda))
+#+end_src
+
+* Major modes
+
 ** ORG mode
 #+begin_src emacs-lisp :tangle yes
 (require 'org-install)
@@ -732,382 +636,42 @@ Use Okular for viewing PDF files
 	  org-src-fontify-natively t)
 
 #+end_src
-** Prodigy
-#+begin_src emacs-lisp :tangle yes
-(own/config-prodigy)
-#+end_src
-** HELM
-#+begin_src emacs-lisp :tangle yes
-(require 'ac-helm)
-(eval-after-load 'flycheck
-  '(define-key flycheck-mode-map (kbd "C-;") 'helm-flycheck))
-(require 'helm-grep)
-(setq helm-velocity-dir own/org-docs-dir ;(list my-org-docs-dir)
-	  helm-velocity-ext '("*.txt" "*.org"))
-(require 'swiper)
 
-#+end_src
 ** MU
 #+begin_src emacs-lisp :tangle yes
-  (when own/enable-email
-    (add-to-list 'load-path own/mu4e-load-path)
-    ;; make sure mu4e is in your load-path
-    (require 'mu4e)
+(when own/enable-email
+  (add-to-list 'load-path own/mu4e-load-path)
+  ;; make sure mu4e is in your load-path
+  (require 'mu4e)
 
-    (setq mu4e-html2text-command "html2text -b 72")
+  (setq mu4e-html2text-command "html2text -b 72")
 
-    (when window-system ;; this is a workaround because emacs instances could deadlock mu
-        (setq mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
-              mu4e-update-interval 600)
-        (mu4e-update-mail-and-index t))
+  (when window-system ;; this is a workaround because emacs instances could deadlock mu
+    (setq mu4e-get-mail-command "offlineimap"   ;; or fetchmail, or ...
+          mu4e-update-interval 600)
+    (mu4e-update-mail-and-index t))
 
-    ;; enable inline images
-    (setq mu4e-view-show-images t)
-    ;; use imagemagick, if available
-    (when (fboundp 'imagemagick-register-types)
-      (imagemagick-register-types)))
-
-    (add-hook 'mu4e-index-updated-hook
-      (defun own/mail-updated ()
-         (shell-command "notify-send \"Mail index updated\"")))
+  ;; enable inline images
+  (setq mu4e-view-show-images t)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+    (imagemagick-register-types)))
+  
+  (add-hook 'mu4e-index-updated-hook
+    (defun own/mail-updated ()
+      (shell-command "notify-send \"Mail index updated\"")))
 
 #+end_src
-** Elastic
+
+* Tweaks
+
+IBUFFER
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'auto-mode-alist '("\\.elastic\\'" . es-mode))
-(add-to-list 'auto-mode-alist '("\\.es\\'" . es-mode))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((elasticsearch . t)))
-#+end_src
-** Cliist
-#+begin_src emacs-lisp :tangle yes
-(require 'cliist)
-(cliist-mode t)
-#+end_src
-* Programming
-Add hook to mark todos and similar strings in text
-#+begin_src emacs-lisp :tangle yes
-(message "loading programming configuration")
-(add-hook 'prog-mode-hook 'own/hook-mark-todo)
-
-(define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu)
-(add-hook 'prog-mode-hook 'emr-initialize)
-#+end_src
-** Yasnipept
-#+begin_src emacs-lisp :tangle yes
-(require 'yasnippet)
-(yas/global-mode 1) ;; load global mode ;; TODO: check if necessary
-
-(setq yas-snippet-dirs (append yas-snippet-dirs
-							   '("~/.emacs.d/snippets")))
-;; Disable TAB for yasnippets
-(define-key yas-minor-mode-map (kbd "<tab>") nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-#+end_src
-** SHELL
-#+begin_src emacs-lisp :tangle yes
-(require 'flymake-shell)
-(add-hook 'sh-set-shell-hook 'flymake-shell-load)
-
-(autoload 'bash-completion-dynamic-complete 
-  "bash-completion"
-  "BASH completion hook")
-
-(add-hook 'shell-dynamic-complete-functions
-		  'bash-completion-dynamic-complete)
-
-(add-hook 'shell-command-complete-functions
-		  'bash-completion-dynamic-complete)
-#+end_src
-** Lisp
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
-#+end_src
-** Markdown mode
-#+begin_src emacs-lisp :tangle yes
-(autoload 'markdown-mode "markdown-mode"
-  "Major mode for editing Markdown files" t)
-
-(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-#+end_src
-** C and C++ and derivates
-#+begin_src emacs-lisp :tangle yes
-(require 'cc-mode)
-(setq c-basic-offset 2
-	  tab-width 2
-	  ident-tabs-mode nil)
-
-(setq own/compile-c-opts "-lm")
-(defun own/compile-c ()
-  (interactive)
-  (compile (format "gcc %s -o %s %s"
-				   own/compile-c-opts
-				   (file-name-sans-extension (buffer-name))
-				   (buffer-name)))
-  (shell-command (format "chmod +x %s" (buffer-name))))
-
-(setq own/compile-cello-opts "-lCello -lm -lpthread -ldl")
-(defun own/compile-cello ()
-  (interactive)
-  (compile (format "gcc -std=gnu99 %s %s -o %s"
-				   (buffer-name)
-				   own/compile-cello-opts
-				   (file-name-sans-extension (buffer-name))))
-  (shell-command (format "chmod +x %s" (buffer-name))))
-
-
-#+end_src
-** TODO Octave - problems with emacs 24.4
-#+begin_src emacs-lisp :tangle yes
-;(autoload 'octave-mode "octave-mod" nil t)
-;(setq auto-mode-alist
-;(cons '("\\.m$" . octave-mode) auto-mode-alist))
-;(add-hook 'octave-mode-hook
-;		  (lambda ()
-;			(own/hook-mark-todo)
-;            (abbrev-mode 1)
-;            (auto-fill-mode 1)
-;            (if (eq window-system 'x)
-;				(font-lock-mode 1))))
-;(unless own/is-nox
-;  (require 'ac-octave)
-;  (defun ac-octave-mode-setup ()
-;	(setq ac-sources '(ac-source-octave)))
-;  (add-hook 'octave-mode-hook
-;			'(lambda ()
-;			   (own/hook-mark-todo)
-;			   (ac-octave-mode-setup))))
-#+end_src
-** HTML & CSS
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'html-mode-hook
-          (lambda()
-			(own/hook-mark-todo)
-            (setq sgml-basic-offset 4)
-            (setq indent-tabs-mode t)))
-(require 'zencoding-mode)
-(add-hook 'sgml-mode-hook 'zencoding-mode)
-
-(require 'flymake-css)
-(add-hook 'css-mode-hook 'flymake-css-load)
-#+end_src
-** Python
-#+begin_src emacs-lisp :tangle yes
-(setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
-
-;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-(setq py-autopep8-options '("--max-line-length=120"))
-
-(require 'projectile)
-(defun own/tabs-py-settings ()
-  (interactive)
-  (message "python: tabs")
-  (setq indent-tabs-mode t)
-  (setq python-indent 4)
-  (setq tab-width 4))
-(defun own/spaces-py-settings ()
-  (interactive)
-  (message "python: spaces")
-  (setq indent-tabs-mode nil)
-  (setq python-indent 4))
-(defun own/python-mode-config ()
-  (own/hook-mark-todo)
-  (pyenv-mode)
-  (if (member (projectile-project-name) own/py-spaces-projects)
-	  (own/spaces-py-settings)
-	(own/tabs-py-settings)))
-(add-hook 'python-mode-hook 'own/python-mode-config)
-;(add-hook 'python-mode-hook 'anaconda-mode)
-
-;(add-hook 'python-mode-hook 'eldoc-mode)
-#+end_src
-Support python virtualenvs
-#+begin_src emacs-lisp :tangle yes
-(require 'virtualenvwrapper)
-(venv-initialize-interactive-shells) ;; if you want interactive shell support
-(venv-initialize-eshell) ;; if you want eshell support
-(setq venv-location own/py-venvs)
-#+end_src
-Syntax checking with pyflakes but try to use
-the virtualenv pyflakes binary
-#+begin_src emacs-lisp :tangle yes
-(require 'flymake-python-pyflakes)
-
-(defun own/virtualenv-flymake ()
-  (interactive)
-  (setq virtualenv-exec (concat own/py-venvs "/" (projectile-project-name) "/bin/pyflakes"))
-  (message virtualenv-exec)
-  (if (file-exists-p virtualenv-exec)
-	  (setq flymake-python-pyflakes-executable virtualenv-exec)
-	(setq flymake-python-pyflakes-executable "pyflakes"))
-  (flymake-python-pyflakes-load))
-(add-hook 'python-mode-hook 'own/virtualenv-flymake)
-#+end_src
-*** Autocompletion
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:setup-keys t)                      ; optional
-(setq jedi:complete-on-dot t)                 ; optional
-#+end_src
-** Ruby
-Basic configuration
-#+begin_src emacs-lisp :tangle yes
-(setq-default indent-tabs-mode t)
-(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
-(autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
-(add-hook 'ruby-mode-hook (lambda () 
-							(setq indent-tabs-mode t)
-							(setq ruby-indent-level 4)
-							(setq tab-width 4)
-							(own/hook-mark-todo)
-							(local-set-key "\n" 'newline-and-indent)))
-#+end_src
-Ruby electric for easier source code manipulation
-#+begin_src emacs-lisp :tangle yes
-(require 'ruby-electric)
-(eval-after-load "ruby-mode" 
-  '(add-hook 'ruby-mode-hook 'ruby-electric-mode)) ; must have if you want brackets to wor
-#+end_src
-Fix for void symbol in ruby electric
-#+begin_src emacs-lisp :tangle yes
-(defun ruby-insert-end ()
-  (interactive)
-  (insert "end")
-  (ruby-indent-line t)
-  (end-of-line))
-#+end_src
-Linux configuration
-#+begin_src emacs-lisp :tangle yes
-(defun own/ruby-init ()
-  (require 'flymake-ruby)
-  (add-hook 'ruby-mode-hook 'flymake-ruby-load)
-
-;  (require 'inf-ruby)
-;  (setq rsense-home (expand-file-name "/opt/rsense-0.3"))
-;  (setq rsense-home "/opt/rsense-0.3")
-;  (add-to-list 'load-path (concat rsense-home "/etc"))
-;  (require 'rsense)
-
-  ;; AUTOCOMPLETE (with rsense)
-;  (add-hook 'ruby-mode-hook 'auto-complete-mode)
-;  (add-hook 'ruby-mode-hook
-;  		(lambda ()
-;  			  (add-to-list 'ac-sources 'ac-source-rsense-method)
-;  			  (add-to-list 'ac-sources 'ac-source-rsense-constant)))
-  )
-(if (eq system-type 'gnu/linux) (own/ruby-init))
-#+end_src
-** PHP
-Basic configuration and syntax checking
-#+begin_src emacs-lisp :tangle yes
-(require 'php-extras)
-(require 'php-completion) ; this sun of a bitch was missing
-(require 'flymake)
-(autoload 'php-mode "php-mode.el" "Php mode." t)
-(setq auto-mode-alist (append '(("/*.\.php[345]?$" . php-mode)) auto-mode-alist))
-
-(require 'flymake-php)
-(add-hook 'php-mode-hook 'flymake-php-load)
-#+end_src
-Source code configuration
-#+begin_src emacs-lisp :tangle yes
-(add-hook 'php-mode-hook 'own/php-mode-hook)
-(defun own/php-mode-hook ()
-  (own/hook-mark-todo)
-  ;; Autocomplete
-  (when (require 'auto-complete nil t)
-	(make-variable-buffer-local 'ac-sources)
-	(add-to-list 'ac-sources 'ac-source-php-completion)
-	;; if you like patial match,
-	;; use `ac-source-php-completion-patial' instead of `ac-source-php-completion'.
-	;; (add-to-list 'ac-sources 'ac-source-php-completion-patial)
-	(auto-complete-mode t))
-  ;; Tabs and indent  
-  (setq indent-tabs-mode t)
-  (setq-default indent-tabs-mode t)
-  ;; Set the tab width
-  (setq default-tab-width 4)
-  (setq tab-width 4)
-  (let ((my-tab-width 4))
-    (setq tab-width my-tab-width)
-    (setq c-basic-indent my-tab-width)
-    (set (make-local-variable 'tab-stop-list)
-         (number-sequence my-tab-width 200 my-tab-width))))
-#+end_src
-** Javascript
-#+begin_src emacs-lisp :tangle yes
-(require 'js2-refactor)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
-(setq js2-basic-offset 4)
-(setq js2-use-font-lock-faces t)
-(setq js2-mode-hook
-	  '(lambda ()
-		 (if (member (projectile-project-name) own/js-spaces-projects)
-			 (own/tabs-off)
-		   (own/tabs-on))
-		 (own/hook-mark-todo)
-		 (tern-mode t) ; install tern via npm ; TODO: check if this is the problem
-		 (auto-complete-mode nil)
-;		 (ac-js2-mode t)
-))
-#+end_src
-*** TERN
-Installation
-#+begin_src sh :tangle no
-sudo npm install tern
-cd /bin
-ln -s PATHTOTERN /bin/tern
-#+end_src
-Emacs initialization
-#+begin_src emacs-lisp :tangle yes
-(eval-after-load 'tern
-   '(progn
-      (require 'tern-auto-complete)
-      (tern-ac-setup)))
-#+end_src
-** GO
-#+begin_src emacs-lisp :tangle yes
-(eval-after-load "go-mode"
-  '(require 'flymake-go))
-
-(require 'go-autocomplete)
-
-(setq exec-path (cons "/usr/local/go/bin" exec-path))
-(add-to-list 'exec-path (concat own/go-path "/bin"))
-
-(add-hook 'go-mode-hook '(lambda ()
-						   (add-hook 'before-save-hook 'gofmt-before-save)
-										; Customize compile command to run go build
-						   (if (not (string-match "go" compile-command))
-							   (set (make-local-variable 'compile-command)
-									"go generate && go build -v && go test -v && go vet"))
-						   (local-set-key (kbd "M-.") 'godef-jump)))
-
-(add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
-(add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
-(require 'golint)
-
-#+end_src
-** YAML
-
-#+begin_src emacs-lisp :tangle yes
-(require 'yaml-mode)
-(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
-(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-(add-hook 'yaml-mode-hook
-    '(lambda ()
-       (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-
-
-(require 'flymake-yaml) ;; Not necessary if using ELPA package
-(add-hook 'yaml-mode-hook 'flymake-yaml-load)
+(add-hook 'ibuffer-hook
+		  (lambda ()
+			(ibuffer-vc-set-filter-groups-by-vc-root)
+			(unless (eq ibuffer-sorting-mode 'alphabetic)
+			  (ibuffer-do-sort-by-alphabetic))))
 #+end_src
 
 * Keybindings
@@ -1125,40 +689,21 @@ Emacs initialization
   ("u" ace-jump-zap-up-to-char "zap up to char")
   ("z" ace-jump-zap-to-char "zap to char")
   )
-(own/global-set-key "s-j" 'hydra-ace/body)
+(global-set-key (kbd "s-<") 'hydra-ace/body)
 
-(own/global-set-key "C-S-c C-S-c" 'mc/edit-lines)
-(own/global-set-key "C-S-s" 'mc/mark-next-like-this)
-(own/global-set-key "C-S-r" 'mc/mark-previous-like-this)
-(own/global-set-key "C-S-a" 'mc/mark-all-like-this)
-(own/global-set-key "C-S-<mouse-1>" 'mc/add-cursor-on-click)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-S-r") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-S-a") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
 
-;; PROJECT MANAGEMENT, VC AND SHELL
-;(own/global-set-key "C-x C-y" 'recentf-open-files)
-;(own/global-set-key "<f6>" 'multi-term)
-;(own/global-set-key "s-g c" 'git-messenger:popup-message)
-
-;; WINDOW RESIZING
-;(own/global-set-key "S-C-<left>" 'shrink-window-horizontally)
-;(own/global-set-key "S-C-<right>" 'enlarge-window-horizontally)
-;(own/global-set-key "S-C-<down>" 'shrink-window)
-;(own/global-set-key "S-C-<up>" 'enlarge-window)
-
-;; SELECTION
-(own/global-set-key "s-e" 'er/expand-region)
-
-(define-key global-map (kbd "C-c r") 'vr/replace)
-(define-key global-map (kbd "C-c q") 'vr/query-replace)
-;; if you use multiple-cursors, this is for you:
-(define-key global-map (kbd "C-S-c C-S-r") 'vr/mc-mark)
-
-;; JUMPING AROUND
-(own/global-set-key "s-." 'goto-last-change)
-(own/global-set-key "s-," 'goto-last-change-reverse)
-
-
+(global-set-key (kbd "<f8>")   'own/fd-switch-dictionary)
+(global-set-key (kbd "C-x C-k") 'own/delete-current-buffer-file)
+(global-set-key (kbd "C-x C-r") 'own/rename-current-buffer-file)
 #+end_src
-** Various functions
+** Text manipulation
+
+Lines
 #+begin_src emacs-lisp :tangle yes
 
 (defhydra hydra-lines ()
@@ -1168,18 +713,26 @@ Emacs initialization
   ("d" own/duplicate-line "duplicate")
   ("w" delete-blank-lines "delete blank lines around line")
   ("c" own/combine-lines "combine with next line"))
-(own/global-set-key "s-l" 'hydra-lines/body)
+(global-set-key (kbd "s-š") 'hydra-lines/body)
 
-(own/global-set-key "<f8>"   'own/fd-switch-dictionary)
-
-(own/global-set-key "C-x C-k" 'own/delete-current-buffer-file)
-(own/global-set-key "C-x C-r" 'own/rename-current-buffer-file)
 #+end_src
+
+Regions
+#+begin_src emacs-lisp :tangle yes
+
+;; SELECTION
+(defhydra hydra-regions ()
+  "Editing regions"
+  ("e" er/expand-region "Expand region")
+  ("w" delete-region "Delete region" :exit t)
+  ("i" indent-region "Indent region")
+  ("t" comment-or-uncomment-region "Comment / Uncomment" :exit t))
+(global-set-key (kbd "s-đ") 'hydra-regions/body)
+
+#+end_src
+
 ** Specific global and local major/minor modes
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "s-h s" 'howdoi-query-line-at-point-replace-by-code-snippet)
-(own/global-set-key "s-h q" 'howdoi-query)
-
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
@@ -1187,16 +740,11 @@ Emacs initialization
 #+end_src
 ** HELM
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "C-:" 'ac-complete-with-helm)
-(define-key ac-complete-mode-map (kbd "C-:") 'ac-complete-with-helm)
 
 (defhydra hydra-helm (:exit t)
   "Helms"
   ("i" helm-imenu "imenu")
   ("a" helm-mini "mini")
-  ("g" helm-google-suggest "google suggest")
-  ("s" own/helm-velocity "velocity")
-  ("q" helm-semantic-or-imenu "semantic or imenu")
   ("o" helm-occur "occur")
   ("y" helm-yas-complete "yas")
   ("k" helm-show-kill-ring "kill ring")
@@ -1204,40 +752,29 @@ Emacs initialization
   ("r" helm-recentf "recent files")
   ("b" helm-buffers-list "buffers")
   ("h" helm-helm-commands "helm commands")
-  ("t" helm-top "top")
-  ("d" helm-do-grep "do grep"))
-(own/global-set-key "s-a" 'hydra-helm/body)
+  ("t" helm-top "top"))
+(global-set-key (kbd "s-a") 'hydra-helm/body)
+
+
 
 #+end_src
 ** Programming
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "s-t" 'comment-or-uncomment-region)
-
-(define-key yas-minor-mode-map (kbd "s-SPC") 'yas-expand)
-
-(own/global-set-key "s-z" 'zencoding-expand-line)
+(define-key yas-minor-mode-map (kbd "s--") 'yas-expand)
+;(global-set-key "s-z" 'zencoding-expand-line)
 #+end_src
 ** Custom remapping of keybindings
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "M-ž" 'backward-paragraph)
-(own/global-set-key "C-ž" 'forward-paragraph)
-(own/global-set-key "M-đ" 'scroll-other-window)
-(own/global-set-key "C-đ" 'scroll-other-window-down)
+(global-set-key (kbd "s-č") 'undo)
 
-(own/global-set-key "s-w" 'delete-region)
-(own/global-set-key "s-i" 'indent-region)
-(own/global-set-key "s-u" 'undo)
-
-(own/global-set-key "s-k" 'kill-whole-line)
 #+end_src
 ** Custom shortcuts
 #+begin_src emacs-lisp :tangle yes
-(own/global-set-key "s-o" 'other-window)
-(own/global-set-key "C-s-u" 'repeat)
-(own/global-set-key "<f5>" 'rgrep)
-(own/global-set-key "<f7>" 'mu4e)
-(own/global-set-key "C-x C-b" 'ibuffer)
+(global-set-key (kbd "<f5>") 'rgrep)
+(global-set-key (kbd "<f7>") 'mu4e)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
+
 
 * After main INIT
 #+begin_src emacs-lisp :tangle yes
@@ -1252,11 +789,3 @@ Emacs initialization
 
 (message "Initialization finished sucessfully")
 #+end_src
-* Current TODO-s:
-** TODO Enable flycheck and flyspell everywhere where possible 
-   (elisp, octave)
-
-** TODO Enable ac everywhere - for example org mo
-
-
-
