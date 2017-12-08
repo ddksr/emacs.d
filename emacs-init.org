@@ -573,8 +573,6 @@ Highlight pastes and other things
 
 
 * Programming
-
-
 General
 
 #+begin_src emacs-lisp :tangle yes
@@ -666,7 +664,9 @@ General
 ;(setq flymake-jslint-args ())
 ;(add-hook 'js2-mode-hook 'flymake-jslint-load)
 
-(add-to-list 'company-backends 'company-tern)
+(eval-after-load "company"
+ '(add-to-list 'company-backends 'company-tern))
+
 #+end_src
 
 
