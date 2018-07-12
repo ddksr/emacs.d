@@ -56,7 +56,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
  'helm ; default helm
- 'helm-anything ; for compatibility for older packages
+; 'helm-anything ; for compatibility for older packages
  'helm-projectile ; search all files in the current project
  'helm-pydoc ; search python documentation
  'helm-c-yasnippet ; yasnippet with helm
@@ -75,6 +75,9 @@ Return a list of installed packages or nil for every skipped package."
  'anaconda-mode ; semantic autocomplete
  'company-anaconda ; semantic autocomplete
  'django-snippets
+ ;; PHP
+ 'php-mode
+ 'flymake-php
  ;; GO
  'go-mode
  'golint
@@ -82,6 +85,7 @@ Return a list of installed packages or nil for every skipped package."
  'go-snippets
  'company-go
  'golint
+ 'flymake-go
  ;; JavaScript
  'js2-mode
 ; 'flymake-jslint

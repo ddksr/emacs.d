@@ -20,6 +20,7 @@ Disable menu bar and toolbar and scrollbar for more prettier initialization
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (setq debug-on-error nil)
+(setf epa-pinentry-mode 'loopback)
 (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 #+END_SRC
 * Global variables and settings
@@ -537,7 +538,8 @@ Only use spaces with witdh 4
 #+begin_src emacs-lisp :tangle yes
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4
-	  tab-width 4) ;; use only tabs and no spaces
+	  tab-width 4
+      c-basic-offset 4) ;; use only tabs and no spaces
 #+end_src
 Delimiters (brackets, ...) with rainbow collors
 #+begin_src emacs-lisp :tangle yes
@@ -670,6 +672,18 @@ General
 #+end_src
 
 
+** PHP
+
+#+begin_src emacs-lisp :tangle yes
+(require 'flymake-php)
+(add-hook 'php-mode-hook 'flymake-php-load)
+
+(add-hook 'php-mode-hook
+         '(lambda ()
+            (require 'company-php)
+            (company-mode t)
+            (add-to-list 'company-backends 'company-ac-php-backend )))
+#+end_src
 
 * Major modes
 
@@ -741,7 +755,7 @@ IBUFFER
   ("u" ace-jump-zap-up-to-char "zap up to char")
   ("z" ace-jump-zap-to-char "zap to char")
   )
-(global-set-key (kbd "s-<") 'hydra-ace/body)
+(global-set-key (kbd "s-ž") 'hydra-ace/body)
 
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
