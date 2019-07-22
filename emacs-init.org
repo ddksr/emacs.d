@@ -606,6 +606,7 @@ General
 
 ;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq py-autopep8-options '("--max-line-length=120"))
+;(add-hook 'python-mode-hook 'blacken-mode)
 
 (require 'flymake-python-pyflakes)
 
@@ -650,7 +651,7 @@ General
 #+begin_src emacs-lisp :tangle yes
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
-(setq js2-basic-offset 4)
+(setq js2-basic-offset 2)
 (setq js2-use-font-lock-faces t)
 (setq js2-mode-hook
 	  '(lambda ()
@@ -671,6 +672,30 @@ General
 
 #+end_src
 
+** PHP
+#+begin_src emacs-lisp :tangle yes
+;(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
+(setq web-mode-engines-alist
+  '(("php"    . "\\.phtml\\'")
+    ("blade"  . "\\.blade\\."))
+)
+(setq-default indent-tabs-mode nil)
+(setq web-mode-code-indent-offset 4)
+(setq web-mode-indent-style 4)
+(eval-after-load 'php-mode
+  '(require 'php-ext))
+(add-hook 'php-mode-hook
+         '(lambda ()
+            (require 'company-php)
+            (company-mode t)
+            (add-to-list 'company-backends 'company-ac-php-backend )))
+(add-hook 'php-mode-hook 'php-enable-symfony2-coding-style)
+
+;(define-key php-mode-map (kbd "C-x t") 'phpunit-current-test)
+;(define-key php-mode-map (kbd "C-x c") 'phpunit-current-class)
+;(define-key php-mode-map (kbd "C-x p") 'phpunit-current-project)
+#+end_src
 
 ** PHP
 

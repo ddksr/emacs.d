@@ -78,6 +78,8 @@ Return a list of installed packages or nil for every skipped package."
 
  'django-snippets
 
+ 'blacken
+
  ;; PHP
  'php-mode
  'flymake-php
@@ -95,6 +97,12 @@ Return a list of installed packages or nil for every skipped package."
 ; 'flymake-jslint
  'tern
  'company-tern
+ ;; PHP
+ 'web-mode
+ 'php-mode
+ 'company-php
+ 'phpunit
+ 
  ;; Other
  'json-mode
  'less-css-mode
