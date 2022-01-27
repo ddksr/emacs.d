@@ -24,7 +24,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; Basic
  'auto-compile ; auto compile elisp files
  'flx-ido ; improve IDO minibuffer mode
- 'key-chord ; enable two-key commands
+; 'key-chord ; enable two-key commands
  'undo-tree ; enable undo-tree
  'multiple-cursors ; enable multiple cursors
  'ace-jump-mode ; enable jumping around in buffer
@@ -56,7 +56,9 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
  'helm ; default helm
+
 ; 'helm-anything ; for compatibility for older packages
+
  'helm-projectile ; search all files in the current project
  'helm-pydoc ; search python documentation
  'helm-c-yasnippet ; yasnippet with helm
@@ -68,6 +70,7 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;; Programming
  'yasnippet
  'flymake
+
  ;; Python
  'python-mode
  'py-autopep8 ; peeeeeep
@@ -75,6 +78,7 @@ Return a list of installed packages or nil for every skipped package."
  'anaconda-mode ; semantic autocomplete
  'company-anaconda ; semantic autocomplete
  'django-snippets
+
  ;; GO
  'go-mode
  'golint
@@ -84,9 +88,9 @@ Return a list of installed packages or nil for every skipped package."
  'golint
  ;; JavaScript
  'js2-mode
-; 'flymake-jslint
  'tern
  'company-tern
+
  ;; Other
  'json-mode
  'less-css-mode
