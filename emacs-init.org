@@ -227,6 +227,13 @@ Disable default features
 (global-unset-key (kbd "<C-down>"))
 #+end_src
 
+Search
+#+begin_src emacs-lisp :tangle yes
+(require 'rg)
+(grep-apply-setting 'grep-template "rg --no-heading -H -uu -g <F> <R> <D>")
+;(grep-apply-setting 'grep-find-template "find <D> <X> -type f <F> -exec rg --color auto --no-heading -H  <R> /dev/null {} +")
+#+end_src
+
 Other
 #+begin_src emacs-lisp :tangle yes
 (require 'expand-region) ; Expand selection region

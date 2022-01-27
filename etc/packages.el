@@ -39,6 +39,7 @@ Return a list of installed packages or nil for every skipped package."
  ;'doremi ; change things incrementally 
  'paradox ; improved package management
  'hydra ; keybinding management
+ 'rg ; ripgrep
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; File and project management
  'recentf ; recent projects and files
