@@ -8,7 +8,8 @@ Return a list of installed packages or nil for every skipped package."
          nil
        (package-install package)))
    packages)
-  (package-initialize))
+;  (package-initialize)
+  )
 
 ;; make sure to have downloaded archive description.
 ;; Or use package-archive-contents as suggested by Nicolas Dudebout
@@ -42,7 +43,7 @@ Return a list of installed packages or nil for every skipped package."
  'rg ; ripgrep
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; File and project management
- 'recentf ; recent projects and files
+ 'recentf
  'projectile ; simple project management
  'grizzl ; file completion system for projectile
  'flyspell-lazy ; check spelling
@@ -93,6 +94,8 @@ Return a list of installed packages or nil for every skipped package."
  'company-go
  'golint
  'flymake-go
+ 'go-complete
+ 
  ;; JavaScript
  'js2-mode
 ; 'flymake-jslint
@@ -103,6 +106,9 @@ Return a list of installed packages or nil for every skipped package."
  'php-mode
  'company-php
  'phpunit
+
+ ;; ELISP
+ 'paredit
  
  ;; Other
  'json-mode

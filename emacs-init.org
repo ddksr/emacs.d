@@ -9,7 +9,12 @@ mainly because of requrements).
 - tern
 - go, gofmt
 - github.com/golang/lint
+- github.com/nsf/gocode
+- github.com/rogpeppe/godef
+- golang.org/x/tools/cmd/goimports
 - pyflakes
+- aspell, aspell-en
+
 *** Optional
 - mu (email)
   - html2text
@@ -120,7 +125,7 @@ via package.el extension.
 #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
+;(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (own/etc-load "packages.el")
@@ -635,23 +640,41 @@ General
 ** GO
 
 #+begin_src emacs-lisp :tangle yes
-(eval-after-load "go-mode"
-  '(require 'flymake-go))
+  (setq gofmt-command "goimports")
+  (eval-after-load "go-mode"
+    '(require 'flymake-go))
 
-(setq exec-path (cons "/usr/local/go/bin" exec-path))
-(add-to-list 'exec-path (concat own/go-path "/bin"))
+  (setq exec-path (cons "/usr/local/go/bin" exec-path))
+  (add-to-list 'exec-path (concat own/go-path "/bin"))
 
-(add-hook 'go-mode-hook '(lambda ()
-						   (add-hook 'before-save-hook 'gofmt-before-save)
-										; Customize compile command to run go build
-						   (if (not (string-match "go" compile-command))
-							   (set (make-local-variable 'compile-command)
-									"go generate && go build -v && go test -v && go vet"))
-						   (local-set-key (kbd "M-.") 'godef-jump)))
+  (add-hook 'go-mode-hook '(lambda ()
+                             (setq tab-width 4)
+                             (add-hook 'before-save-hook 'gofmt-before-save)
+                                          ; Customize compile command to run go build
+                             (if (not (string-match "go" compile-command))
+                                 (set (make-local-variable 'compile-command)
+                                      "go generate && go build -v && go test -v && go vet"))
+                             (local-set-key (kbd "M-.") 'godef-jump)))
 
-(add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
-(add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
-(require 'golint)
+  (add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
+  (add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
+  (require 'golint)
+
+  (add-hook 'go-mode-hook (lambda () ))
+
+#+end_src
+
+** Lisp
+#+begin_src emacs-lisp :tangle yes
+
+    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+
 #+end_src
 
 ** Javascript
@@ -703,8 +726,6 @@ General
 ;(define-key php-mode-map (kbd "C-x c") 'phpunit-current-class)
 ;(define-key php-mode-map (kbd "C-x p") 'phpunit-current-project)
 #+end_src
-
-** PHP
 
 #+begin_src emacs-lisp :tangle yes
 (require 'flymake-php)
@@ -818,14 +839,16 @@ Lines
 Regions
 #+begin_src emacs-lisp :tangle yes
 
-;; SELECTION
-(defhydra hydra-regions ()
-  "Editing regions"
-  ("e" er/expand-region "Expand region")
-  ("w" delete-region "Delete region" :exit t)
-  ("i" indent-region "Indent region")
-  ("t" comment-or-uncomment-region "Comment / Uncomment" :exit t))
-(global-set-key (kbd "s-đ") 'hydra-regions/body)
+  ;; SELECTION
+  (defhydra hydra-regions ()
+    "Editing regions"
+    ("e" er/expand-region "Expand region")
+    ("w" delete-region "Delete region" :exit t)
+    ("i" indent-region "Indent region")
+    ("t" comment-or-uncomment-region "Comment / Uncomment" :exit t))
+  (global-set-key (kbd "s-đ") 'hydra-regions/body)
+  (global-set-key (kbd "s-e") 'er/expand-region)
+
 
 #+end_src
 
@@ -858,8 +881,26 @@ Regions
 #+end_src
 ** Programming
 #+begin_src emacs-lisp :tangle yes
-(define-key yas-minor-mode-map (kbd "s--") 'yas-expand)
-;(global-set-key "s-z" 'zencoding-expand-line)
+  (define-key yas-minor-mode-map (kbd "s--") 'yas-expand)
+                                          ;(global-set-key "s-z" 'zencoding-expand-line)
+
+  (defhydra hydra-paredit (:color blue
+                                  :columns 3
+                                  :idle 1.0)
+    "Paredit"
+    ("8" paredit-wrap-round "Wrap round")
+    ("f" paredit-wrap-square "Wrap square")
+    ("b" paredit-wrap-curly "Wrap curly")
+    ("s" paredit-splice-sexp "Splice")
+    ("S" paredit-split-sexp "Split")
+    ("j" paredit-join-sexps "Join")
+    ("J" paredit-join-with-next-list "Join next list")
+    ("M-J" paredit-join-with-previous-list "Join prev list")
+    ("C" paredit-convolute-sexp "Convolute")
+    ("M-c" paredit-copy-as-kill "Copy as kill")
+    ("r" paredit-raise-sexp "Raise s-expression"))
+  (global-set-key (kbd "s-p") 'hydra-paredit/body)
+
 #+end_src
 ** Custom remapping of keybindings
 #+begin_src emacs-lisp :tangle yes
