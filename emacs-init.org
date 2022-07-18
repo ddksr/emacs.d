@@ -6,32 +6,43 @@
 Works on GNU/Linux and also MS/Windows (but not everything, 
 mainly because of requrements). 
 ** System requirements
+- pyflakes
+- aspell, aspell-en
+*** Javascript
 - tern
+*** Go
 - go, gofmt
 - github.com/golang/lint
 - github.com/nsf/gocode
 - github.com/rogpeppe/godef
 - golang.org/x/tools/cmd/goimports
-- pyflakes
-- aspell, aspell-en
-
+*** Python
 *** Optional
 - mu (email)
   - html2text
+
 * Before main INIT
 Disable menu bar and toolbar and scrollbar for more prettier initialization
 #+BEGIN_SRC emacs-lisp :tangle yes
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-(setq debug-on-error nil)
-(setf epa-pinentry-mode 'loopback)
-(setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
+  (require 'org)
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (setq debug-on-error nil)
+;  (setf epa-pinentry-mode 'loopback)
+  (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 #+END_SRC
+
+GnuPG password entry. If using loopback, make sure to update gpg config ~/.gnupg/gpg-agent.conf with allow-loopback-entry
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setf epa-pinentry-mode 'loopback)
+#+END_SRC
+
 * Global variables and settings
 Global own variables
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (setq own/emacs-d-dirs '("lib/" "lib/ext/" "etc/themes/")
+  (setq own/emacs-d-dirs '("lib/" "lib/private/" "lib/ext/" "etc/themes/")
         own/mu4e-load-path "/usr/share/emacs/site-lisp/mu4e"
 
         own/nick ""
@@ -43,13 +54,20 @@ Global own variables
         own/enable-themes t
 
         own/org-docs-dir '("~")
-		own/org-directory "~/docs/org/"
-        
+        own/org-directory "~/docs/org/"
+
         own/spaces-projects '("proj1" "proj2")
         own/tabs-projects '("jsproj1")
 
         own/py-venvs "~/.virtualenvs"
-		own/go-path "~/env/go")
+        own/go-path "~/env/go"
+
+        own/enable-php t
+        own/enable-go t
+        own/enable-js nil
+        own/enable-python t
+  )
+
 #+END_SRC
 
 Mode configuration variables
@@ -59,36 +77,37 @@ Mode configuration variables
 
 Modeline shortcuts
 #+begin_src emacs-lisp :tangle yes
-(defvar own/mode-line-cleaner-alist
-  `((auto-complete-mode . " α")
-    (yas/minor-mode . "")
-	(yas-minor-mode . "")
-    (eldoc-mode . " eld")
-    (abbrev-mode . "")
-	(flymake-mode . " Φ")
-	(flyspell-mode . " φ")
-    (company-mode . " α")
-    (anaconda-mode . "")
-    (auto-revert-mode . "")
-	(git-gutter-mode . "")
-	(volatile-highlights-mode . "")
-	(tern-mode . " τ")
-	(skewer-mode . "")
-	(undo-tree-mode . "")
-	(multi-web-mode . "mwm")
-	(skewer-html-mode . "")
-	(zencoding-mode . " ζ")
-    ;; Major modes
-    (lisp-interaction-mode . "λ")
-    (python-mode . "py")
-	(html-mode . "w")
-	(js2-mode . "js")
-    (emacs-lisp-mode . "el"))
-  "Alist for `clean-mode-line'.
- 
-When you add a new element to the alist, keep in mind that you
-must pass the correct minor/major mode symbol and a string you
-want to use in the modeline *in lieu of* the original.")
+  (defvar own/mode-line-cleaner-alist
+    `((auto-complete-mode . " α")
+      (yas/minor-mode . "")
+      (yas-minor-mode . "")
+      (eldoc-mode . " eld")
+      (abbrev-mode . "")
+      (flymake-mode . " Φ")
+      (flyspell-mode . " φ")
+      (company-mode . " α")
+      (anaconda-mode . "")
+      (auto-revert-mode . "")
+      (git-gutter-mode . "")
+      (volatile-highlights-mode . "")
+      (tern-mode . " τ")
+      (skewer-mode . "")
+      (undo-tree-mode . "")
+      (multi-web-mode . "mwm")
+      (skewer-html-mode . "")
+      (zencoding-mode . " ζ")
+      (paredit-mode . " )(")
+      ;; Major modes
+      (lisp-interaction-mode . "λ")
+      (python-mode . "py")
+      (html-mode . "w")
+      (js2-mode . "js")
+      (emacs-lisp-mode . "el"))
+    "Alist for `clean-mode-line'.
+
+  When you add a new element to the alist, keep in mind that you
+  must pass the correct minor/major mode symbol and a string you
+  want to use in the modeline *in lieu of* the original.")
 #+end_src
 Global void configuration functions that can be overwritten via private
 #+begin_src emacs-lisp :tangle yes
@@ -105,11 +124,17 @@ Global void configuration functions that can be overwritten via private
 		  (load-file etc-path)
 		  t)
 	  nil)))
+(defun own/shutdown ()
+  "Save buffers, Quit, and Shutdown (kill) server"
+  (interactive)
+  (save-some-buffers)
+  (kill-emacs)
+  )
 #+end_src
 * Load path, privates and packages
 ** Add directories to load path
 #+BEGIN_SRC emacs-lisp :tangle yes
-(mapcar '(lambda (dir)
+(mapcar #'(lambda (dir)
 		   (add-to-list 'load-path (concat user-emacs-directory dir)))
 		own/emacs-d-dirs)
 #+END_SRC
@@ -125,8 +150,6 @@ via package.el extension.
 #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;(add-to-list 'package-archives '("marmalade" . "https://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (own/etc-load "packages.el")
 #+end_src
@@ -162,15 +185,11 @@ Recent files
 
 Projectile
 #+begin_src emacs-lisp :tangle yes
-(require 'projectile)
-
-(setq projectile-mode-line
-  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
-
-(setq projectile-completion-system 'grizzl) 
-(projectile-global-mode)
-(setq projectile-mode-line
-  '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+  (require 'projectile)
+  (setq projectile-mode-line
+    '(" " (:eval (format "π[%s]" (projectile-project-name)))))
+  (setq projectile-completion-system 'grizzl)
+  (projectile-global-mode)
 #+end_src
 
 ** Various
@@ -481,16 +500,16 @@ Buffer
 
 Git
 #+begin_src emacs-lisp :tangle yes
-(unless own/is-nox 
-	(require 'git-gutter-fringe)
-	(global-git-gutter-mode +1))
+  (unless own/is-nox
+    (require 'git-gutter-fringe)
+    (global-git-gutter-mode +1))
 #+end_src
 
 Unique buffer names
 
 #+begin_src emacs-lisp :tangle yes
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (require 'uniquify)
+  (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 #+end_src
 
 ** UX
@@ -530,7 +549,7 @@ TODO: revisit
 
 Syntax checking appearance
 #+begin_src emacs-lisp :tangle yes
-(defalias 'flymake-report-status 'own/flymake-report-status-slim)
+  (defalias 'flymake-report-status 'own/flymake-report-status-slim)
 #+end_src
 
 Buffers
@@ -557,7 +576,6 @@ Delimiters (brackets, ...) with rainbow collors
 #+begin_src emacs-lisp :tangle yes
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-;(global-rainbow-delimiters-mode)
 #+end_src
 Wrapping lines
 #+begin_src emacs-lisp :tangle yes
@@ -573,7 +591,7 @@ Wrapping lines
 ** Themes
 #+begin_src emacs-lisp :tangle yes
 (when own/enable-themes
-  (load-theme 'pastels-on-dark t)
+  (load-theme 'zenburn t)
 )
 #+end_src
 
@@ -590,152 +608,156 @@ Highlight pastes and other things
 General
 
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'prog-mode-hook 'own/hook-mark-todo)
+  (add-hook 'prog-mode-hook 'own/hook-mark-todo)
 #+end_src
 
 ** Yasnippet
 #+begin_src emacs-lisp :tangle yes
-(require 'yasnippet)
-(yas/global-mode 1)
+  (require 'yasnippet)
 
-(setq yas-snippet-dirs (append yas-snippet-dirs
-                         '("~/.emacs.d/snippets")))
-;; Disable TAB for yasnippets
-(define-key yas-minor-mode-map (kbd "<tab>") nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
+
+  (setq yas-snippet-dirs (append yas-snippet-dirs
+                                 '(
+                                   "~/.emacs.d/snippets"
+                                   "~/.emacs.d/private-snippets"
+                                   )))
+  (yas/global-mode 1)
+  ;; Disable TAB for yasnippets
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
 
 #+end_src
 
 ** Autocomplete
 #+begin_src emacs-lisp :tangle yes
-(add-hook 'after-init-hook 'global-company-mode)
+  (add-hook 'after-init-hook 'global-company-mode)
+  ;(add-to-list 'company-backends 'company-restclient)
 #+end_src
 
 ** Python
-
 #+begin_src emacs-lisp :tangle yes
-(setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
+(when own/enable-python
+  (setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
 
-;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-(setq py-autopep8-options '("--max-line-length=120"))
-;(add-hook 'python-mode-hook 'blacken-mode)
+  ;(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+  (setq py-autopep8-options '("--max-line-length=120"))
+  ;(add-hook 'python-mode-hook 'blacken-mode)
 
-(require 'flymake-python-pyflakes)
+  (require 'flymake-python-pyflakes)
 
-(defun own/virtualenv-flymake ()
-  (interactive)
-  (setq virtualenv-exec (concat own/py-venvs "/" (projectile-project-name) "/bin/pyflakes"))
-  (message virtualenv-exec)
-  (if (file-exists-p virtualenv-exec)
-	  (setq flymake-python-pyflakes-executable virtualenv-exec)
-	(setq flymake-python-pyflakes-executable "pyflakes"))
-  (flymake-python-pyflakes-load))
-(add-hook 'python-mode-hook 'own/virtualenv-flymake)
+  (defun own/virtualenv-flymake ()
+    (interactive)
+    (setq virtualenv-exec (concat own/py-venvs "/" (projectile-project-name) "/bin/pyflakes"))
+    (message virtualenv-exec)
+    (if (file-exists-p virtualenv-exec)
+	    (setq flymake-python-pyflakes-executable virtualenv-exec)
+	  (setq flymake-python-pyflakes-executable "pyflakes"))
+    (flymake-python-pyflakes-load))
+  (add-hook 'python-mode-hook 'own/virtualenv-flymake)
 
-(add-hook 'python-mode-hook 'anaconda-mode)
-(eval-after-load "company"
- '(add-to-list 'company-backends 'company-anaconda))
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (eval-after-load "company"
+   '(add-to-list 'company-backends 'company-anaconda)))
 #+end_src
 
 ** GO
 
 #+begin_src emacs-lisp :tangle yes
-  (setq gofmt-command "goimports")
-  (eval-after-load "go-mode"
-    '(require 'flymake-go))
+  (when own/enable-go
+    (setq gofmt-command "goimports")
+    (eval-after-load "go-mode"
+      '(require 'flymake-go))
 
-  (setq exec-path (cons "/usr/local/go/bin" exec-path))
-  (add-to-list 'exec-path (concat own/go-path "/bin"))
+    (setq exec-path (cons "/usr/local/go/bin" exec-path))
+    (add-to-list 'exec-path (concat own/go-path "/bin"))
 
-  (add-hook 'go-mode-hook '(lambda ()
-                             (setq tab-width 4)
-                             (add-hook 'before-save-hook 'gofmt-before-save)
-                                          ; Customize compile command to run go build
-                             (if (not (string-match "go" compile-command))
-                                 (set (make-local-variable 'compile-command)
-                                      "go generate && go build -v && go test -v && go vet"))
-                             (local-set-key (kbd "M-.") 'godef-jump)))
+    (add-hook 'go-mode-hook '(lambda ()
+                               (setq tab-width 4)
+                               (add-hook 'before-save-hook 'gofmt-before-save)
+                                            ; Customize compile command to run go build
+                               (if (not (string-match "go" compile-command))
+                                   (set (make-local-variable 'compile-command)
+                                        "go generate && go build -v && go test -v && go vet"))
+                               (local-set-key (kbd "M-.") 'godef-jump)))
 
-  (add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
-  (add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
-  (require 'golint)
-
-  (add-hook 'go-mode-hook (lambda () ))
-
+    (add-to-list 'load-path (concat own/go-path "/src/github.com/golang/lint/misc/emacs"))
+    (add-hook 'golint-setup-hook '(lambda () (getenv "PATH"))) ;; strange golint bugfix
+    (require 'golint)
+    ;(add-to-list 'company-backends 'company-go)
+    (add-hook 'go-mode-hook (lambda () )))
 #+end_src
 
 ** Lisp
 #+begin_src emacs-lisp :tangle yes
 
-    (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
-    (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
-    (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
+  (autoload 'enable-paredit-mode "paredit" "Turn on pseudo-structural editing of Lisp code." t)
+  (add-hook 'emacs-lisp-mode-hook       #'enable-paredit-mode)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook             #'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook #'enable-paredit-mode)
+  (add-hook 'scheme-mode-hook           #'enable-paredit-mode)
 
 #+end_src
 
 ** Javascript
 #+begin_src emacs-lisp :tangle yes
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
-(setq js2-basic-offset 2)
-(setq js2-use-font-lock-faces t)
-(setq js2-mode-hook
-	  '(lambda ()
-		 (if (member (projectile-project-name) own/js-spaces-projects)
-			 (own/tabs-off)
-		   (own/tabs-on))
-		 (own/hook-mark-todo)
-		 (tern-mode t) 
-;		 (ac-js2-mode t)
-))
+(when own/enable-js
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+  ;(add-to-list 'auto-mode-alist '("\\.js\\'" . tj-mode))
+  (setq js2-basic-offset 2)
+  (setq js2-use-font-lock-faces t)
+  (setq js2-mode-hook
+	    '(lambda ()
+		   (if (member (projectile-project-name) own/js-spaces-projects)
+			   (own/tabs-off)
+		     (own/tabs-on))
+		   (own/hook-mark-todo)
+		   (tern-mode t) 
+  ;		 (ac-js2-mode t)
+  ))
 
-;(require 'flymake-jslint) ;; Not necessary if using ELPA package
-;(setq flymake-jslint-args ())
-;(add-hook 'js2-mode-hook 'flymake-jslint-load)
+  ;(require 'flymake-jslint) ;; Not necessary if using ELPA package
+  ;(setq flymake-jslint-args ())
+  ;(add-hook 'js2-mode-hook 'flymake-jslint-load)
 
-(eval-after-load "company"
- '(add-to-list 'company-backends 'company-tern))
-
+  (eval-after-load "company"
+   '(add-to-list 'company-backends 'company-tern))
+)
 #+end_src
 
 ** PHP
 #+begin_src emacs-lisp :tangle yes
-;(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
-(setq web-mode-engines-alist
-  '(("php"    . "\\.phtml\\'")
-    ("blade"  . "\\.blade\\."))
-)
-(setq-default indent-tabs-mode nil)
-(setq web-mode-code-indent-offset 4)
-(setq web-mode-indent-style 4)
-(eval-after-load 'php-mode
-  '(require 'php-ext))
-(add-hook 'php-mode-hook
-         '(lambda ()
-            (require 'company-php)
-            (company-mode t)
-            (add-to-list 'company-backends 'company-ac-php-backend )))
-(add-hook 'php-mode-hook 'php-enable-symfony2-coding-style)
+  (when own/enable-php
+      (add-to-list 'auto-mode-alist '("\\.blade\\.php\\'" . web-mode))
+      (setq web-mode-engines-alist
+        '(("php"    . "\\.phtml\\'")
+          ("vue"    . "\\.vue\\'")
+          ("blade"  . "\\.blade\\."))
+      )
+      (setq-default indent-tabs-mode nil)
+      (setq web-mode-code-indent-offset 4)
+      (setq web-mode-indent-style 4)
 
-;(define-key php-mode-map (kbd "C-x t") 'phpunit-current-test)
-;(define-key php-mode-map (kbd "C-x c") 'phpunit-current-class)
-;(define-key php-mode-map (kbd "C-x p") 'phpunit-current-project)
+      (add-hook 'php-mode-hook
+               '(lambda ()
+                  (require 'company-php)
+                  (company-mode t)
+                  (add-to-list 'company-backends 'company-ac-php-backend )))
+      (add-hook 'php-mode-hook 'php-enable-symfony2-coding-style)
+      (require 'flymake-php)
+      (add-hook 'php-mode-hook 'flymake-php-load)
+
+      (add-hook 'php-mode-hook
+                '(lambda ()
+                   (require 'company-php)
+                   (company-mode t)
+                   (add-to-list 'company-backends 'company-ac-php-backend )))
+      )
 #+end_src
 
 #+begin_src emacs-lisp :tangle yes
-(require 'flymake-php)
-(add-hook 'php-mode-hook 'flymake-php-load)
 
-(add-hook 'php-mode-hook
-         '(lambda ()
-            (require 'company-php)
-            (company-mode t)
-            (add-to-list 'company-backends 'company-ac-php-backend )))
 #+end_src
 
 * Major modes
@@ -814,7 +836,7 @@ IBUFFER
 (global-set-key (kbd "C-S-s") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-S-r") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-S-a") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
+;(global-set-key (kbd "C-S-mouse-1") 'mc/add-cursor-on-click)
 
 (global-set-key (kbd "<f8>")   'own/fd-switch-dictionary)
 (global-set-key (kbd "C-x C-k") 'own/delete-current-buffer-file)
@@ -861,36 +883,30 @@ Regions
 #+end_src
 ** HELM
 #+begin_src emacs-lisp :tangle yes
-
-(defhydra hydra-helm (:exit t)
-  "Helms"
-  ("i" helm-imenu "imenu")
-  ("a" helm-mini "mini")
-  ("o" helm-occur "occur")
-  ("y" helm-yas-complete "yas")
-  ("k" helm-show-kill-ring "kill ring")
-  ("f" helm-projectile "projectile")
-  ("r" helm-recentf "recent files")
-  ("b" helm-buffers-list "buffers")
-  ("h" helm-helm-commands "helm commands")
-  ("t" helm-top "top"))
-(global-set-key (kbd "s-a") 'hydra-helm/body)
-
-
-
+  (defhydra hydra-helm (:exit t)
+    "Helms"
+    ("i" helm-imenu "imenu")
+    ("a" helm-mini "mini")
+    ("o" helm-occur "occur")
+    ("y" helm-yas-complete "yas")
+    ("k" helm-show-kill-ring "kill ring")
+    ("f" helm-projectile "projectile")
+    ("r" helm-recentf "recent files")
+    ("b" helm-buffers-list "buffers")
+    ("h" helm-helm-commands "helm commands")
+    ("t" helm-top "top"))
+  (global-set-key (kbd "s-a") 'hydra-helm/body)
 #+end_src
+
 ** Programming
 #+begin_src emacs-lisp :tangle yes
   (define-key yas-minor-mode-map (kbd "s--") 'yas-expand)
-                                          ;(global-set-key "s-z" 'zencoding-expand-line)
 
-  (defhydra hydra-paredit (:color blue
-                                  :columns 3
-                                  :idle 1.0)
+  (defhydra hydra-paredit (:exit t)
     "Paredit"
-    ("8" paredit-wrap-round "Wrap round")
-    ("f" paredit-wrap-square "Wrap square")
-    ("b" paredit-wrap-curly "Wrap curly")
+    ("(" paredit-wrap-round "Wrap round")
+    ("[" paredit-wrap-square "Wrap square")
+    ("{" paredit-wrap-curly "Wrap curly")
     ("s" paredit-splice-sexp "Splice")
     ("S" paredit-split-sexp "Split")
     ("j" paredit-join-sexps "Join")
@@ -899,7 +915,7 @@ Regions
     ("C" paredit-convolute-sexp "Convolute")
     ("M-c" paredit-copy-as-kill "Copy as kill")
     ("r" paredit-raise-sexp "Raise s-expression"))
-  (global-set-key (kbd "s-p") 'hydra-paredit/body)
+  (global-set-key (kbd "s-'") 'hydra-paredit/body)
 
 #+end_src
 ** Custom remapping of keybindings
@@ -910,7 +926,6 @@ Regions
 ** Custom shortcuts
 #+begin_src emacs-lisp :tangle yes
 (global-set-key (kbd "<f5>") 'rgrep)
-(global-set-key (kbd "<f7>") 'mu4e)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
 

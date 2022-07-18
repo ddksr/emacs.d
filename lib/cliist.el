@@ -1,21 +1,21 @@
 ;;; cliist.el --- Cliist calls in Emacs
-     
+
 ;; Copyright (C) 2014 Žiga Stopinšek
-     
+
 ;; Author: Žiga Stopinšek <sigi.kajzer@gmail.com>
 ;; Version: 0.1
 ;; Keywords: productiviry, todo
 ;; URL: http://github.com/ddksr/cliist
-     
+
 ;;; Commentary:
-     
+
 ;; This package provides some basic Todoist querying via commandline tool cliist.
 ;; You are required to install cliist ( http://github.com/ddksr/cliist )
-     
+
 ;;;###autoload
 
 (setq cliist/list-exec "cliist %s --format org"
-	  cliist/exec "cliist %s")
+      cliist/exec "cliist %s")
 
 (defun cliist/open-buffer-and-run-command (title cliist-command)
   (switch-to-buffer (get-buffer-create (format "*Cliist: %s*" title)))
@@ -27,9 +27,9 @@
 
 (defun cliist/project-list ()
   (mapcar '(lambda (x)
-			 (nth 1 (split-string x "#")))
-		  (split-string
-		   (shell-command-to-string (format cliist/list-exec "-P")) "\n")))
+	     (nth 1 (split-string x "#")))
+	  (split-string
+	   (shell-command-to-string (format cliist/list-exec "-P")) "\n")))
 
 (defun cliist/today-and-overdue ()
   (interactive)
@@ -38,11 +38,11 @@
 (defun cliist/query (query)
   (interactive "sQuery: \n")
   (cliist/open-buffer-and-run-command query (format "-q %s" query)))
-  
+
 (defun cliist/project (name)
   (interactive
    (list
-	(completing-read "Project: " (cliist/project-list))))
+    (completing-read "Project: " (cliist/project-list))))
   (cliist/open-buffer-and-run-command (format "#%s" name) (format "-p %s" name)))
 
 (defun cliist/view-all ()
@@ -52,15 +52,15 @@
 (defun cliist/completed (number &optional project)
   (interactive
    (list
-	(read-from-minibuffer "Number of items: " "30")
-	(completing-read "Project (leave empty for all): "
-					 (cliist/project-list))))
+    (read-from-minibuffer "Number of items: " "30")
+    (completing-read "Project (leave empty for all): "
+		     (cliist/project-list))))
   (cliist/open-buffer-and-run-command "Completed"
-									  (format "--archive --limit %s %s"
-											  number
-											  (if (= (length project) 0)
-												  ""
-												(concat "-p " project)))))
+				      (format "--archive --limit %s %s"
+					      number
+					      (if (= (length project) 0)
+						  ""
+						(concat "-p " project)))))
 
 (defun cliist/run (command)
   (interactive "sCommand: ")
@@ -72,11 +72,11 @@
   :global t
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "C-c c r") 'cliist/run)
-			(define-key map (kbd "C-c c t") 'cliist/today-and-overdue)
-			(define-key map (kbd "C-c c c") 'cliist/completed)
-			(define-key map (kbd "C-c c p") 'cliist/project)
-			(define-key map (kbd "C-c c q") 'cliist/query)
-			(define-key map (kbd "C-c c a") 'cliist/view-all)
+	    (define-key map (kbd "C-c c t") 'cliist/today-and-overdue)
+	    (define-key map (kbd "C-c c c") 'cliist/completed)
+	    (define-key map (kbd "C-c c p") 'cliist/project)
+	    (define-key map (kbd "C-c c q") 'cliist/query)
+	    (define-key map (kbd "C-c c a") 'cliist/view-all)
             map))
 
 (provide 'cliist)

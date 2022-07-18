@@ -1,26 +1,25 @@
-(defun own/ensure-package-installed (&rest packages)
+(defun own/install-package (package)
+  (if (listp package)
+      (if (car package)
+          (mapcar 'own/install-package (cdr package)))
+    (unless (package-installed-p package) (package-install package))))
+
+(defun own/ensure-packages-installed (&rest packages)
   "Assure every package is installed, ask for installation if it’s not.
 Return a list of installed packages or nil for every skipped package."
-  (mapcar
-   (lambda (package)
-     ;; (package-installed-p 'evil)
-     (if (package-installed-p package)
-         nil
-       (package-install package)))
-   packages)
-;  (package-initialize)
-  )
+  (mapcar 'own/install-package packages))
 
 ;; make sure to have downloaded archive description.
 ;; Or use package-archive-contents as suggested by Nicolas Dudebout
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
 
-(own/ensure-package-installed
+(own/ensure-packages-installed
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Libraries
  'async
  'dash
+ 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Basic
  'auto-compile ; auto compile elisp files
@@ -41,6 +40,7 @@ Return a list of installed packages or nil for every skipped package."
  'paradox ; improved package management
  'hydra ; keybinding management
  'rg ; ripgrep
+
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; File and project management
  'recentf
@@ -72,40 +72,38 @@ Return a list of installed packages or nil for every skipped package."
  'flymake
 
  ;; Python
- 'python-mode
- 'py-autopep8 ; peeeeeep
- 'flymake-python-pyflakes
- 'anaconda-mode ; semantic autocomplete
- 'company-anaconda ; semantic autocomplete
-
- 'django-snippets
-
- 'blacken
+ (list own/enable-python 
+       'python-mode
+       'py-autopep8 ; peeeeeep
+       'flymake-python-pyflakes
+       'anaconda-mode ; semantic autocomplete
+       'company-anaconda ; semantic autocomplete
+       'django-snippets
+       'blacken)
 
  ;; PHP
- 'php-mode
- 'flymake-php
+ (list own/enable-php
+       'php-mode
+       'web-mode
+       'flymake-php
+       'company-php)
 
  ;; GO
- 'go-mode
- 'golint
- 'go-playground
- 'go-snippets
- 'company-go
- 'golint
- 'flymake-go
- 'go-complete
+ (list own/enable-go
+       'go-mode
+       'golint
+       'go-playground
+       'go-snippets
+       'company-go
+       'golint
+       'flymake-go
+       'go-complete)
  
  ;; JavaScript
- 'js2-mode
-; 'flymake-jslint
- 'tern
- 'company-tern
- ;; PHP
- 'web-mode
- 'php-mode
- 'company-php
- 'phpunit
+ (list own/enable-js
+       'js2-mode
+       'tern
+       'company-tern)
 
  ;; ELISP
  'paredit
@@ -115,15 +113,9 @@ Return a list of installed packages or nil for every skipped package."
  'less-css-mode
  'yaml-mode
 
- ;; JavaScript
- 'js2-mode
- 'tern
- 'company-tern
-
- ;; Other
- 'json-mode
- 'less-css-mode
- 'yaml-mode
+ ;; Rest
+ 'restclient
+ 'company-restclient
 
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Appearance
@@ -134,9 +126,7 @@ Return a list of installed packages or nil for every skipped package."
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Themes
- ;'color-theme ; color theme helper package
- 'afternoon-theme
- 'pastels-on-dark-theme
+ 'zenburn-theme
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Applications and their additions
