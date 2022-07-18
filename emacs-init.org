@@ -55,9 +55,12 @@ Global own variables
 
         own/org-docs-dir '("~")
         own/org-directory "~/docs/org/"
+        own/org-agenda-files nil
 
         own/spaces-projects '("proj1" "proj2")
         own/tabs-projects '("jsproj1")
+        own/js-spaces-projects nil
+        own/py-spaces-projects nil
 
         own/py-venvs "~/.virtualenvs"
         own/go-path "~/env/go"
