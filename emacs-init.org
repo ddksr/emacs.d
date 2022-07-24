@@ -4,7 +4,7 @@
 #+OPTIONS: toc:3 num:nil ^:nil
 * Basic information
 Works on GNU/Linux and also MS/Windows (but not everything, 
-mainly because of requrements). 
+mainly because of requirements).
 ** System requirements
 - pyflakes
 - aspell, aspell-en
@@ -56,6 +56,7 @@ Global own variables
         own/org-docs-dir '("~")
         own/org-directory "~/docs/org/"
         own/org-agenda-files nil
+        own/org-roam-notes "~/notes/"
 
         own/spaces-projects '("proj1" "proj2")
         own/tabs-projects '("jsproj1")
@@ -210,24 +211,12 @@ Enable key chord mode TODO: revisit
 ;(key-chord-mode 1)
 #+end_src
 
-IDO
+SELECTRUM
 #+begin_src emacs-lisp :tangle yes
-(require 'flx-ido)
-(ido-mode 1)
-(ido-everywhere 1)
-(flx-ido-mode 1)
-(setq ido-use-faces nil) ;; disable ido faces to see flx highlights.
-#+end_src
+  (selectrum-prescient-mode +1)
+  (prescient-persist-mode +1)
+  (selectrum-mode +1)
 
-SMEX: IDO for elisp functions
-Overwrite default M-x with smex and store the default M-x into another Keybinding. This keybindings are not in the keybindings section because they overwrite default functionallity.
-
-#+begin_src emacs-lisp :tangle yes
-(smex-initialize)
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
 #+end_src
 
 UNDO
@@ -781,6 +770,14 @@ General
 
 #+end_src
 
+** ORG mode - ROAM
+#+begin_src emacs-lisp :tangle yes
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  ;(eval-after-load "company"
+  ;  '(add-to-list 'company-backends 'company-capf))
+  ;company-capf
+#+end_src
+
 ** MU
 #+begin_src emacs-lisp :tangle yes
 (when own/enable-email
@@ -877,6 +874,34 @@ Regions
 
 #+end_src
 
+** ORG
+
+Roam 
+#+begin_src emacs-lisp :tangle yes
+
+  ;; SELECTION
+  (defhydra hydra-org-roam (:exit t)
+    "ORG Roam shortcuts"
+    ("b" org-roam-buffer-toggle "Toggle")
+    ("f" org-roam-node-find "Find")
+    ("g" org-roam-graph "Graph")
+    ("i" org-roam-node-insert "Insert")
+    ("c" org-roam-capture "Capture")
+
+    ("t" org-roam-dailies-capture-today "Capture today")
+    ("t" org-roam-dailies-goto-today "Today notes")
+    ("j" org-roam-dailies-capture-tomorrow "Capture tomorrow")
+    ("J" org-roam-dailies-goto-tomorrow "Tomorrow notes")
+    ("y" org-roam-dailies-capture-yesterday "Capture yesterday")
+    ("Y" org-roam-dailies-goto-yesterday "Yesterday notes")
+    ("d" org-roam-dailies-capture-date "Capture date")
+    ("D" org-roam-dailies-goto-date "Daily notes")
+    )
+  (global-set-key (kbd "s-r") 'hydra-org-roam/body)
+
+
+#+end_src
+
 ** Specific global and local major/minor modes
 #+begin_src emacs-lisp :tangle yes
 (define-key global-map "\C-cl" 'org-store-link)
@@ -935,14 +960,17 @@ Regions
 
 * After main INIT
 #+begin_src emacs-lisp :tangle yes
-(if (fboundp 'menu-bar-mode) (menu-bar-mode t))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+  (if (fboundp 'menu-bar-mode) (menu-bar-mode t))
+  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 
-(own/etc-load "patches.el")
+  (own/etc-load "patches.el")
 
-(setq custom-file (concat user-emacs-directory "etc/custom.el"))
-(load custom-file)
+  (setq custom-file (concat user-emacs-directory "etc/custom.el"))
+  (load custom-file)
 
-(message "Initialization finished sucessfully")
+  (require 'org-roam)
+  (org-roam-setup) ; has to be after custom
+
+  (message "Initialization finished sucessfully")
 #+end_src

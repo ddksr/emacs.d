@@ -23,3 +23,6 @@ network-security.data
 anaconda-mode/
 lib/private/
 private-snippets/
+.org-id-locations
+bookmarks
+*.db

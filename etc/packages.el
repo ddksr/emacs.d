@@ -23,7 +23,9 @@ Return a list of installed packages or nil for every skipped package."
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; Basic
  'auto-compile ; auto compile elisp files
- 'flx-ido ; improve IDO minibuffer mode
+ 'selectrum ; replacing smex and ido
+ 'prescient ; improving selectrum
+ 'selectrum-prescient
 ; 'key-chord ; enable two-key commands
  'undo-tree ; enable undo-tree
  'multiple-cursors ; enable multiple cursors
@@ -33,10 +35,7 @@ Return a list of installed packages or nil for every skipped package."
  'ace-window ; enable jumping in windows
  'ace-isearch ; enable jumping in windows
  'ibuffer-vc ; organize ibuffer using version control
- 'smex ; ido for elisp interactive functions
  'expand-region ; expand region (s-e)
-; 'visual-regexp ; for better regexes
- ;'doremi ; change things incrementally 
  'paradox ; improved package management
  'hydra ; keybinding management
  'rg ; ripgrep
@@ -54,6 +53,7 @@ Return a list of installed packages or nil for every skipped package."
  'orglink
  'outorg
  'outshine
+ 'org-roam
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ;;;;;;;;; HELM - search anything
