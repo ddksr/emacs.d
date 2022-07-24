@@ -7,6 +7,9 @@
  '(blacken-line-length 120)
  '(custom-safe-themes
    '("f0ea6118d1414b24c2e4babdc8e252707727e7b4ff2e791129f240a2b3093e32" default))
+ '(free-keys-keys
+   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-=[]{};'\\:\"|,./<>?`~šđčćž")
+ '(free-keys-modifiers '("" "C" "M" "C-M" "s"))
  '(org-roam-directory "/home/sigi/notes/")
  '(package-selected-packages
    '(selectrum-prescient prescient selectrum org-roam sphinx-doc company-restclient paredit go-complete kotlin-mode scala-mode rg py-isort docker phpunit js-doc company-php ## blacken php-mode jekyll-modes markdown-mode+ ranger company-tern flymake-jslint tern django-snippets json-mode js2-mode golint company-go go-snippets go-playground company-anaconda anaconda-mode flymake python-mode company-mode yasnippet-bundle fullscreen-mode elpy free-keys flymake-less less-css-mode zencoding-mode yaml-mode web-mode volatile-highlights visual-regexp virtualenvwrapper undo-tree tern-auto-complete smex ruby-refactor ruby-electric restclient rainbow-delimiters pyenv-mode py-autopep8 prodigy powerline php-extras php-eldoc pastels-on-dark-theme paradox outshine orglink org2blog org-linkany org-ac multi-term move-text markdown-mode magit latex-extra key-chord js2-refactor jedi inf-ruby ibuffer-vc howdoi helm-pydoc helm-projectile helm-helm-commands helm-c-yasnippet helm-anything hackernews grizzl go-mode go-autocomplete git-timemachine git-messenger git-gutter-fringe gist flyspell-lazy flymake-yaml flymake-shell flymake-ruby flymake-python-pyflakes flymake-php flymake-go flymake-css flx-ido expand-region es-mode emr auto-complete-auctex auto-compile afternoon-theme ace-window ace-jump-zap ace-jump-buffer ace-isearch ac-octave ac-js2 ac-helm ac-c-headers ac-anaconda))
