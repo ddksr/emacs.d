@@ -486,7 +486,7 @@ Modeline
 Buffer
 #+begin_src emacs-lisp :tangle yes
 (global-linum-mode 1) ;; Line numbers
-(require 'magit) ;; disable line numbers in magit because its slower
+(require 'magit) ;; disable line numbTers in magit because its slower
 (add-hook 'magit-mode-hook '(lambda () (linum-mode 0)))
 #+end_src
 
@@ -860,7 +860,6 @@ Lines
 
 Regions
 #+begin_src emacs-lisp :tangle yes
-
   ;; SELECTION
   (defhydra hydra-regions ()
     "Editing regions"
@@ -870,8 +869,6 @@ Regions
     ("t" comment-or-uncomment-region "Comment / Uncomment" :exit t))
   (global-set-key (kbd "s-đ") 'hydra-regions/body)
   (global-set-key (kbd "s-e") 'er/expand-region)
-
-
 #+end_src
 
 ** ORG
@@ -889,14 +886,13 @@ Roam
     ("c" org-roam-capture "Capture")
 
     ("t" org-roam-dailies-capture-today "Capture today")
-    ("t" org-roam-dailies-goto-today "Today notes")
+    ("T" org-roam-dailies-goto-today "Today notes")
     ("j" org-roam-dailies-capture-tomorrow "Capture tomorrow")
     ("J" org-roam-dailies-goto-tomorrow "Tomorrow notes")
     ("y" org-roam-dailies-capture-yesterday "Capture yesterday")
     ("Y" org-roam-dailies-goto-yesterday "Yesterday notes")
     ("d" org-roam-dailies-capture-date "Capture date")
-    ("D" org-roam-dailies-goto-date "Daily notes")
-    )
+    ("D" org-roam-dailies-goto-date "Daily notes"))
   (global-set-key (kbd "s-r") 'hydra-org-roam/body)
 
 

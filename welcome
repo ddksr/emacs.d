@@ -1,0 +1,9 @@
+|------------+----------------------|
+| KEYBINDING | DESCRIPTION          |
+|------------+----------------------|
+| M-<f10>    | Maximize             |
+| C->        | Expand region        |
+| C-.        | Complete at point    |
+| C-S-a      | Mark all repetitions |
+|------------+----------------------|
+

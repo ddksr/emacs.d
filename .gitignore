@@ -26,3 +26,6 @@ private-snippets/
 .org-id-locations
 bookmarks
 *.db
+.cache/
+lsp-cache/
+.lsp-session*
