@@ -78,7 +78,8 @@ Local environment
         own/org-dir nil
         own/roam-dir "~/notes"
         own/py-venvs "~/.virtualenvs"
-        own/go-path "~/env/go")
+        own/go-path "~/env/go"
+        own/npm-path "~/.nvm/versions/node/v8.9.4/bin/")
 #+END_SRC
 
 Settings
@@ -684,6 +685,7 @@ go install golang.org/x/tools/gopls@latest
 #+begin_src emacs-lisp :tangle yes
   (use-package php-mode
     :mode "\\.php$"
+    :hook ((php-mode . php-enable-symfony2-coding-style))
     :if own/enable-php
     :ensure t)
 #+end_src
@@ -733,7 +735,8 @@ go install golang.org/x/tools/gopls@latest
   (with-eval-after-load 'hydra
     (defhydra hydra-actions (:exit t)
       "Common actions"
-      ("a" helm-mini "mini"))
+      ("a" helm-mini "mini")
+      ("p" helm-projectile "projectile"))
     (bind-key "s-a" 'hydra-actions/body)
     (defhydra hydra-buffer (:exit t)
       "Common actions"

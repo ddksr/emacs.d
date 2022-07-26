@@ -29,3 +29,4 @@ bookmarks
 .cache/
 lsp-cache/
 .lsp-session*
+package-lock.json
