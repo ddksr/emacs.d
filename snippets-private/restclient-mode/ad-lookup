@@ -1,0 +1,32 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Adlookup
+# group: restclient-mode
+# --
+
+:dc = ${1:$$(yas-choose-value '("b1h" "b1-euc1" "b1-use1" "b1-usw1" "b1-apac1"))}
+:slug = $2
+:ua = Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36
+:adlookup = z1?a=%2A&t=1&d=1&p=500&1z
+:page = http://localhost:9999/integrationExamples/zemanta.html
+
+POST http://:dc.zemanta.com/api/bidder/:slug/bid/
+Content-Type: application/json
+
+{
+  "id": "1b4daa10-e875-40f5-af52-030b0c8ac94f",
+  "site": {
+    "page": "",
+    "publisher": { "id": "publisher-id" }
+  },
+  "device": { "ua": ":ua :adlookup" },
+  "source": { "fd": 1 },
+  "cur": ["USD"],
+  "imp": [
+    {
+      "id": "1",
+      "native": {
+        "request": "{\"assets\":[{\"required\":1,\"id\":3,\"img\":{\"type\":3,\"w\":120,\"h\":100}},{\"required\":1,\"id\":0,\"title\":{}},{\"required\":0,\"id\":5,\"data\":{\"type\":1}}],\"eventtrackers\":[{\"event\":1,\"methods\":[1,2]}]}"
+      }
+    }
+  ]
+}

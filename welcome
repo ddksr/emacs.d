@@ -1,9 +1,23 @@
-|------------+----------------------|
-| KEYBINDING | DESCRIPTION          |
-|------------+----------------------|
-| M-<f10>    | Maximize             |
-| C->        | Expand region        |
-| C-.        | Complete at point    |
-| C-S-a      | Mark all repetitions |
-|------------+----------------------|
+
+|---------+----------------------|
+| GLOBAl  | Desc                 |
+|---------+----------------------|
+| M-<f10> | Maximize             |
+| C-<     | Expand region        |
+| C-.     | Complete at point    |
+| C-S-a   | Mark all repetitions |
+|---------+----------------------|
+| ORG     | Desc                 |
+|---------+----------------------|
+| C-c C-c | Tag heading          |
+| C-c C-t | Cycle TODO           |
+| <tab>   | Cycle currentheading |
+| S-<tab> | Global cycle heading |
+|---------+----------------------|
+| ROAM    |                      |
+|---------+----------------------|
+| C-đ C-đ | Today                |
+| C-đ C-š | Toggle roam buffer   |
+| C-š C-đ | Capture              |
+| C-š C-š | Node insert          |
 

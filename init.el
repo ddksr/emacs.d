@@ -23,13 +23,14 @@
       own/org-dir nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
-      own/go-path "~/env/go")
+      own/go-path "~/env/go"
+      own/npm-path "~/.nvm/versions/node/v8.9.4/bin/")
 
-(setq own/enable-themes t
-      own/enable-php t
-      own/enable-go t
+(setq own/enable-themes nil
+      own/enable-php nil
+      own/enable-go nil
       own/enable-js nil
-      own/enable-python t)
+      own/enable-python nil)
 
 (defun own/etc-load (file)
   (let ((etc-path (concat user-emacs-directory "etc/" file)))
@@ -240,6 +241,8 @@
   :ensure t)
 
 (use-package undo-tree
+  :custom
+  (undo-tree-auto-save-history nil)
   :init
   (global-undo-tree-mode)
   :ensure t)
@@ -250,7 +253,7 @@
   :ensure t)
 
 (use-package expand-region
-  :bind ("C->" . er/expand-region)
+  :bind ("C-<" . er/expand-region)
   :ensure t)
 
 (use-package git-gutter
@@ -315,22 +318,20 @@
   :bind ("C-x C-g" . magit-status)
   :ensure t)
 
-(use-package org
-  :mode ("\\.org$" . org-mode)
-  :bind ("s-q o a" . org-agenda)
-  :config
-  (setq org-log-done t
-        org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
-        org-directory own/org-dir
-        org-src-fontify-natively t)
-  :ensure t)
+(setq org-log-done t
+      org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
+      org-directory own/org-dir
+      org-src-fontify-natively t)
+;; (bind-key "s-q o a" 'org-agenda)
 
 (use-package org-roam
-  :after org
-  :if nil
   :custom
   (org-roam-directory (file-truename own/roam-dir))
-  :bind ("s-q n" . hydra-roam/body)
+  :bind (("s-x n" . hydra-roam/body)
+         ("C-đ C-đ" . org-roam-dailies-goto-today)
+         ("C-š C-š" . org-roam-node-insert)
+         ("C-đ C-š" . org-roam-buffer-toggle)
+         ("C-š C-đ" . org-roam-capture))
   :hydra (hydra-roam (:color blue :hint nil :exit t)
                      ("b" org-roam-buffer-toggle "Toggle")
                      ("f" org-roam-node-find "Find")
@@ -391,7 +392,7 @@
          (php-mode . lsp-deferred)
          (python-mode . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
-  :bind ("s-q l" . hydra-lsp/body)
+  :bind ("s-x l" . hydra-lsp/body)
   :hydra (hydra-lsp (:color blue :hint nil :exit t)
                     ("f" lsp-format-buffer "Format buffer")
                     ("d" lsp-ui-peek-find-definitions "Find definitions")
@@ -399,7 +400,6 @@
                     ("s" lsp-ui-peek-find-workspace-symbol "Find workspace symbol")
                     ("h" lsp-document-highlight "Document Highlight")
                     ("p" lsp-describe-thing-at-point "Describe @ p"))
-  :bind 
   :commands lsp lsp-deferred
   :ensure t)
 
@@ -412,15 +412,21 @@
 ;; (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
+(use-package lsp-pyright
+  :if own/enable-python
+  :config
+  (setq lsp-pyright-use-library-code-for-types t) ;; set this to nil if getting too many false positive type errors
+  (setq lsp-pyright-stub-path (concat (getenv "HOME") "/.emacs.d/.cache/python-stubs")) ;; example
+  :ensure t)
 (use-package python-mode
-  :mode "\\.py"
+  :mode "\\.py\\'"
   :if own/enable-python
   :config
   (setq py-autopep8-options '("--max-line-length=120"))
   :ensure t)
 
 (use-package go-mode
-  :mode "\\.go$"
+  :mode "\\.go\\'"
   :if own/enable-go
   :hook ((go-mode . (lambda ()
                       (add-hook 'before-save-hook #'lsp-format-buffer t t)
@@ -441,19 +447,22 @@
   (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
   :ensure t)
 
+
+
 (use-package php-mode
-  :mode "\\.php$"
+  :mode "\\.php\\'"
+  :hook ((php-mode . php-enable-symfony2-coding-style))
   :if own/enable-php
   :ensure t)
 
 (use-package json-mode
-  :mode "\\.json$"
+  :mode "\\.json\\'"
   :ensure t)
 (use-package less-css-mode
-  :mode "\\.less$"
+  :mode "\\.less\\'"
   :ensure t)
 (use-package yaml-mode
-  :mode "\\.ya?ml$"
+  :mode "\\.ya?ml\\'"
   :custom
   (yaml-indent-offset 4)
   :ensure t)
@@ -472,7 +481,8 @@
 (with-eval-after-load 'hydra
   (defhydra hydra-actions (:exit t)
     "Common actions"
-    ("a" helm-mini "mini"))
+    ("a" helm-mini "mini")
+    ("p" helm-projectile "projectile"))
   (bind-key "s-a" 'hydra-actions/body)
   (defhydra hydra-buffer (:exit t)
     "Common actions"
@@ -488,4 +498,3 @@
 (when (and own/initial-buffer (file-exists-p own/initial-buffer))
   (setq initial-buffer-choice own/initial-buffer))
 (message "Initialization finished sucessfully")
-

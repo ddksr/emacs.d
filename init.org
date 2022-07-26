@@ -29,7 +29,7 @@ M-x org-babel-tangle
 |-----------+------------------------------------------------------------------------|
 | s-y ###   | Buffer common actions                                                  |
 | s-a ###   | Editor common actions                                                  |
-| s-q # ##  | Groups of keybindings (often hydra)                                    |
+| s-x # ### | Mode hydras and shortcuts                                              |
 |-----------+------------------------------------------------------------------------|
 | C-###     | Text manipulation - needs to be quick and might be multi-pressed       |
 | s-###     | Other manipulation, that needs to be quick and might be multi-pressed. |
@@ -74,7 +74,7 @@ Local environment
   (setq own/initial-buffer "~/.emacs.d/welcome"
         own/is-nox nil ; if it's not run in tty
         own/emacs-d-dirs '("lib/")
-        own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/private-snippets")
+        own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/snippets-private")
         own/org-dir nil
         own/roam-dir "~/notes"
         own/py-venvs "~/.virtualenvs"
@@ -84,11 +84,11 @@ Local environment
 
 Settings
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (setq own/enable-themes t
-        own/enable-php t
-        own/enable-go t
+  (setq own/enable-themes nil
+        own/enable-php nil
+        own/enable-go nil
         own/enable-js nil
-        own/enable-python t)
+        own/enable-python nil)
 #+END_SRC
 
 * Basic functions
@@ -406,7 +406,7 @@ Better grep
 *** Expand region
 #+begin_src emacs-lisp :tangle yes
   (use-package expand-region
-    :bind ("C->" . er/expand-region)
+    :bind ("C-<" . er/expand-region)
     :ensure t)
 #+end_src
 
@@ -515,26 +515,25 @@ Using also diminish for minimalism (icons instead of names).
 #+end_src
 
 *** ORG
+Org is built-in now so no use-package.
 #+begin_src emacs-lisp :tangle yes
-  (use-package org
-    :mode ("\\.org$" . org-mode)
-    :bind ("s-q o a" . org-agenda)
-    :config
-    (setq org-log-done t
-          org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
-          org-directory own/org-dir
-          org-src-fontify-natively t)
-    :ensure t)
+  (setq org-log-done t
+        org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
+        org-directory own/org-dir
+        org-src-fontify-natively t)
+  ;; (bind-key "s-q o a" 'org-agenda)
 #+end_src
 
 *** ORG Roam
 #+begin_src emacs-lisp :tangle yes
   (use-package org-roam
-    :after org
-    :if nil
     :custom
     (org-roam-directory (file-truename own/roam-dir))
-    :bind ("s-q n" . hydra-roam/body)
+    :bind (("s-x n" . hydra-roam/body)
+           ("C-đ C-đ" . org-roam-dailies-goto-today)
+           ("C-š C-š" . org-roam-node-insert)
+           ("C-đ C-š" . org-roam-buffer-toggle)
+           ("C-š C-đ" . org-roam-capture))
     :hydra (hydra-roam (:color blue :hint nil :exit t)
                        ("b" org-roam-buffer-toggle "Toggle")
                        ("f" org-roam-node-find "Find")
@@ -616,7 +615,7 @@ Language Server Protocol
            (php-mode . lsp-deferred)
            (python-mode . lsp-deferred)
            (lsp-mode . lsp-enable-which-key-integration))
-    :bind ("s-q l" . hydra-lsp/body)
+    :bind ("s-x l" . hydra-lsp/body)
     :hydra (hydra-lsp (:color blue :hint nil :exit t)
                       ("f" lsp-format-buffer "Format buffer")
                       ("d" lsp-ui-peek-find-definitions "Find definitions")
@@ -624,7 +623,6 @@ Language Server Protocol
                       ("s" lsp-ui-peek-find-workspace-symbol "Find workspace symbol")
                       ("h" lsp-document-highlight "Document Highlight")
                       ("p" lsp-describe-thing-at-point "Describe @ p"))
-    :bind 
     :commands lsp lsp-deferred
     :ensure t)
 
@@ -640,10 +638,20 @@ Language Server Protocol
 #+end_src
 
 ** Python
-pac python-lsp-black
+
+Install stubs in cache:
+git clone https://github.com/microsoft/python-type-stubs ~/.emacs.d/.cache/python-stubs
+rm -r ~/.emacs.d/.cache/python-stubs/.git
+
 #+begin_src emacs-lisp :tangle yes
+  (use-package lsp-pyright
+    :if own/enable-python
+    :config
+    (setq lsp-pyright-use-library-code-for-types t) ;; set this to nil if getting too many false positive type errors
+    (setq lsp-pyright-stub-path (concat (getenv "HOME") "/.emacs.d/.cache/python-stubs")) ;; example
+    :ensure t)
   (use-package python-mode
-    :mode "\\.py"
+    :mode "\\.py\\'"
     :if own/enable-python
     :config
     (setq py-autopep8-options '("--max-line-length=120"))
@@ -655,7 +663,7 @@ go install golang.org/x/tools/gopls@latest
 
 #+begin_src emacs-lisp :tangle yes
   (use-package go-mode
-    :mode "\\.go$"
+    :mode "\\.go\\'"
     :if own/enable-go
     :hook ((go-mode . (lambda ()
                         (add-hook 'before-save-hook #'lsp-format-buffer t t)
@@ -681,25 +689,31 @@ go install golang.org/x/tools/gopls@latest
 #+end_src
 
 ** Javascript
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src
+
 ** PHP
 #+begin_src emacs-lisp :tangle yes
   (use-package php-mode
-    :mode "\\.php$"
+    :mode "\\.php\\'"
     :hook ((php-mode . php-enable-symfony2-coding-style))
     :if own/enable-php
     :ensure t)
 #+end_src
 
+** Web
+
 ** Everything else
 #+begin_src emacs-lisp :tangle yes
   (use-package json-mode
-    :mode "\\.json$"
+    :mode "\\.json\\'"
     :ensure t)
   (use-package less-css-mode
-    :mode "\\.less$"
+    :mode "\\.less\\'"
     :ensure t)
   (use-package yaml-mode
-    :mode "\\.ya?ml$"
+    :mode "\\.ya?ml\\'"
     :custom
     (yaml-indent-offset 4)
     :ensure t)
