@@ -19,8 +19,9 @@
 (setq own/initial-buffer "~/.emacs.d/welcome"
       own/is-nox nil ; if it's not run in tty
       own/emacs-d-dirs '("lib/")
-      own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/private-snippets")
+      own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/snippets-private")
       own/org-dir nil
+      own/org-dir-agenda nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
       own/go-path "~/env/go"
@@ -322,7 +323,7 @@
       org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
       org-directory own/org-dir
       org-src-fontify-natively t)
-;; (bind-key "s-q o a" 'org-agenda)
+(bind-key "s-x o a" 'org-agenda)
 
 (use-package org-roam
   :custom
@@ -391,6 +392,8 @@
   :hook ((go-mode . lsp-deferred)
          (php-mode . lsp-deferred)
          (python-mode . lsp-deferred)
+         (js2-mode . lsp-deferred)
+         (vue-mode . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
   :bind ("s-x l" . hydra-lsp/body)
   :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -400,6 +403,8 @@
                     ("s" lsp-ui-peek-find-workspace-symbol "Find workspace symbol")
                     ("h" lsp-document-highlight "Document Highlight")
                     ("p" lsp-describe-thing-at-point "Describe @ p"))
+  :config
+  (setq lsp-disabled-clients '(vls))
   :commands lsp lsp-deferred
   :ensure t)
 
@@ -447,7 +452,17 @@
   (add-hook 'eval-expression-minibuffer-setup-hook #'paredit-mode)
   :ensure t)
 
+(use-package js2-mode
+  :if own/enable-js
+  :mode "\\.js\\'"
+  :config
+  (setq js2-basic-offset 4)
+  :ensure t)
 
+(use-package vue-mode
+  :if own/enable-js
+  :mode "\\.vue\\'"
+  :ensure t)
 
 (use-package php-mode
   :mode "\\.php\\'"
