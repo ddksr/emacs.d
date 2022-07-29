@@ -22,7 +22,7 @@
       own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/snippets-private")
       own/project-dirs nil
       own/org-dir nil
-      own/org-dir-agenda nil
+      own/org-agenda-files nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
       own/go-path "~/env/go"
