@@ -1,0 +1,9 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: script-any
+# key: src
+# binding: direct-keybinding
+# group: org-mode
+# --
+#+BEGIN_SRC
+  $0
+#+END_SRC
