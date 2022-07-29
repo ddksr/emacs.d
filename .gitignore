@@ -22,7 +22,7 @@ smex-items
 network-security.data
 anaconda-mode/
 lib/private/
-private-snippets/
+snippets-private/
 .org-id-locations
 bookmarks
 *.db
