@@ -16,7 +16,7 @@
 ** Usage
 
 To compile, run:
-#+begin_src
+#+begin_src text
 M-x org-babel-tangle
 #+end_src
 
@@ -29,7 +29,7 @@ M-x org-babel-tangle
 |-----------+------------------------------------------------------------------------|
 | s-y ###   | Buffer common actions                                                  |
 | s-a ###   | Editor common actions                                                  |
-| s-x # ### | Mode hydras and shortcuts                                              |
+| s-x # ### | Other actions                                                          |
 |-----------+------------------------------------------------------------------------|
 | C-###     | Text manipulation - needs to be quick and might be multi-pressed       |
 | s-###     | Other manipulation, that needs to be quick and might be multi-pressed. |
@@ -38,7 +38,6 @@ M-x org-babel-tangle
 | C-M-###   | AVOID, since it's always connected to the OS.                          |
 |-----------+------------------------------------------------------------------------|
 | C-c ###   | Major mode specific key bindings                                       |
-
 
 * Essentials
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -75,6 +74,7 @@ Local environment
         own/is-nox nil ; if it's not run in tty
         own/emacs-d-dirs '("lib/")
         own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/snippets-private")
+        own/project-dirs nil
         own/org-dir nil
         own/org-dir-agenda nil
         own/roam-dir "~/notes"
@@ -111,23 +111,22 @@ Shutdown Emacs
     "Save buffers, Quit, and Shutdown (kill) server"
     (interactive)
     (save-some-buffers)
-    (kill-emacs)
-    )
+    (kill-emacs))
 #+end_src
 
 * Load path, privates and packages
 ** Add directories to load path
 #+BEGIN_SRC emacs-lisp :tangle yes
-(mapcar #'(lambda (dir)
-		   (add-to-list 'load-path (concat user-emacs-directory dir)))
-		own/emacs-d-dirs)
+  (mapcar #'(lambda (dir)
+              (add-to-list 'load-path (concat user-emacs-directory dir)))
+          own/emacs-d-dirs)
 #+END_SRC
 
 ** Load private configuration
 Load privates that will overwrite global variables
 #+begin_src emacs-lisp :tangle yes
-(unless (own/etc-load "private.el.gpg")
-  (own/etc-load "private.el"))
+  (unless (own/etc-load "private.el.gpg")
+    (own/etc-load "private.el"))
 #+end_src
 
 ** Load packages
@@ -152,16 +151,16 @@ Load privates that will overwrite global variables
 All use-package related packages that are used in all other configurations.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (eval-when-compile
-    (require 'use-package))
-  (use-package hydra
-    :ensure t)
-  (use-package diminish
-    :ensure t)
-  (use-package use-package-hydra
-    :after hydra
-    :ensure t)
-  (require 'diminish)
-  (require 'bind-key)
+    (require 'use-package)
+    (use-package hydra
+      :ensure t)
+    (use-package diminish
+      :ensure t)
+    (use-package use-package-hydra
+      :after hydra
+      :ensure t)
+    (require 'diminish)
+    (require 'bind-key))
 #+END_SRC
 
 * Basic configuration
@@ -181,7 +180,6 @@ Disable default features
   (global-unset-key [(prior)])
   (global-unset-key [(next)])
   (global-unset-key [(home)])
-  (global-unset-key [(next)])
   (global-unset-key (kbd "<C-left>"))
   (global-unset-key (kbd "<C-right>"))
   (global-unset-key (kbd "<C-up>"))
@@ -223,6 +221,7 @@ Don't use yes-or-no but y-or-n because it's faster !!
   (tooltip-mode -1)
   (setq tooltip-use-echo-area t)
 #+end_src
+
 Adjust whitespace mode
 - display whitespaces when using whitespace mode
 - use basic coloring
@@ -242,23 +241,23 @@ Adjust whitespace mode
 ** Spaces and tabs
 Only use spaces with witdh 4
 #+begin_src emacs-lisp :tangle yes
-(setq-default indent-tabs-mode nil)
-(setq default-tab-width 4
-	  tab-width 4
-      c-basic-offset 4) ;; use only tabs and no spaces
+  (setq-default indent-tabs-mode nil)
+  (setq default-tab-width 4
+            tab-width 4
+        c-basic-offset 4) ;; use only tabs and no spaces
 #+end_src
 
 ** Lines
 Wrapping lines
 #+begin_src emacs-lisp :tangle yes
-(setq truncate-lines nil)
-(setq fill-column 80)
-(add-hook 'text-mode-hook '(lambda ()
-    (setq truncate-lines nil
-          word-wrap t)))
-(add-hook 'prog-mode-hook '(lambda ()
-    (setq truncate-lines nil
-          word-wrap nil)))
+  (setq truncate-lines nil)
+  (setq fill-column 80)
+  (add-hook 'text-mode-hook '(lambda ()
+      (setq truncate-lines nil
+            word-wrap t)))
+  (add-hook 'prog-mode-hook '(lambda ()
+                               (setq truncate-lines nil
+                                     word-wrap nil)))
 #+end_src
 
 ** Themes
@@ -319,31 +318,31 @@ Wrapping lines
 
 ** External
 #+begin_src emacs-lisp :tangle yes
-(defun own/google-search ()
-  "Googles a query or region if any."
-  (interactive)
-  (browse-url
-   (concat
-    "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
-    (if mark-active
-        (buffer-substring (region-beginning) (region-end))
-      (read-string "Google: ")))))
-(defun own/goto-url ()
-  "Open browser"
-  (interactive)
-  (browse-url 
-	 (concat "http://" (read-string "URL: ") )))
+  (defun own/google-search ()
+    "Googles a query or region if any."
+    (interactive)
+    (browse-url
+     (concat
+      "http://www.google.com/search?ie=utf-8&oe=utf-8&q="
+      (if mark-active
+          (buffer-substring (region-beginning) (region-end))
+        (read-string "Google: ")))))
+  (defun own/goto-url ()
+    "Open browser"
+    (interactive)
+    (browse-url 
+           (concat "http://" (read-string "URL: ") )))
 #+end_src
 
 ** Misc
 
 #+begin_src emacs-lisp :tangle yes
-(defun own/flatten (mylist)
-  (cond
-   ((null mylist) nil)
-   ((atom mylist) (list mylist))
-   (t
-    (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
+  (defun own/flatten (mylist)
+    (cond
+     ((null mylist) nil)
+     ((atom mylist) (list mylist))
+     (t
+      (append (own/flatten (car mylist)) (own/flatten (cdr mylist))))))
 #+end_src
 
 * Hooks
@@ -355,6 +354,7 @@ Mark FIXME, SIGITODO, TODO and BUG
     (font-lock-add-keywords nil
                             '(("\\<\\(FIXME\\|SIGITODO\\|TODO\\|BUG\\):"
                                1 font-lock-warning-face t))))
+  (add-hook 'prog-mode-hook 'own/hook-mark-todo)
 
 #+end_src
 
@@ -469,9 +469,20 @@ Highlight pastes and other things
 Trying out doom modeline (instead of powerline).
 Using also diminish for minimalism (icons instead of names).
 
+Don't forget to install fonts with: M-x all-the-icons-install-fonts
+
 #+begin_src emacs-lisp :tangle yes
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :ensure t)
   (use-package doom-modeline
     :config
+    (setq doom-modeline-support-imenu t)
+    (setq doom-modeline-project-detection 'auto)
+    (setq doom-modeline-buffer-encoding t)
+    (setq doom-modeline-vcs-max-length 12)
+    (setq doom-modeline-lsp t)
+    (setq doom-modeline-env-version t)
     (doom-modeline-mode 1)
     :ensure t)
 #+end_src
@@ -498,16 +509,17 @@ Using also diminish for minimalism (icons instead of names).
 #+end_src
 
 ** Tools
-
 *** Projectile
 #+begin_src emacs-lisp :tangle yes
   (use-package projectile
     :config
+    (setq projectile-project-search-path own/project-dirs
+          projectile-mode-line-function '(lambda () (format " p[%s]" (projectile-project-name)))
+          projectile-sort-order 'modification-time)
     (projectile-mode +1)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     :ensure t)
 #+end_src
-
 *** Magit
 #+begin_src emacs-lisp :tangle yes
   (use-package magit
@@ -518,11 +530,24 @@ Using also diminish for minimalism (icons instead of names).
 *** ORG
 Org is built-in now so no use-package.
 #+begin_src emacs-lisp :tangle yes
+  (require 'org-indent)
   (setq org-log-done t
         org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
         org-directory own/org-dir
-        org-src-fontify-natively t)
+        org-src-fontify-natively t
+        org-ellipsis " ▾")
+
   (bind-key "s-x o a" 'org-agenda)
+#+end_src
+
+Org Design
+
+#+begin_src emacs-lisp :tangle yes
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
+    :ensure t)
 #+end_src
 
 *** ORG Roam
@@ -531,16 +556,25 @@ Org is built-in now so no use-package.
     :custom
     (org-roam-directory (file-truename own/roam-dir))
     :bind (("s-x n" . hydra-roam/body)
+
            ("C-đ C-đ" . org-roam-dailies-goto-today)
+           ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
+
+           ("M-đ M-đ" . org-roam-buffer-toggle)
+
            ("C-š C-š" . org-roam-node-insert)
-           ("C-đ C-š" . org-roam-buffer-toggle)
-           ("C-š C-đ" . org-roam-capture))
+           ("C-š C-đ" . org-roam-capture)
+
+           ("M-š M-š" . org-roam-node-find)
+           ("M-š M-đ" . org-roam-buffer-display-dedicated))
     :hydra (hydra-roam (:color blue :hint nil :exit t)
                        ("b" org-roam-buffer-toggle "Toggle")
-                       ("f" org-roam-node-find "Find")
                        ("g" org-roam-graph "Graph")
                        ("i" org-roam-node-insert "Insert")
                        ("c" org-roam-capture "Capture")
+
+                       ("f" org-roam-node-find "Find")
+                       ("x" org-roam-buffer-display-dedicated "Find connections for node")
 
                        ("t" org-roam-dailies-capture-today "Capture today")
                        ("T" org-roam-dailies-goto-today "Today notes")
@@ -594,6 +628,15 @@ Org is built-in now so no use-package.
   (use-package restclient
     :ensure t)
 #+end_src
+*** Esup
+Profiler
+#+begin_src emacs-lisp :tangle yes
+  (use-package esup
+    :config
+    (setq esup-depth 0)
+    :pin melpa
+    :ensure t)
+#+end_src
 
 * Programming
 Flycheck for syntax checking.
@@ -631,8 +674,12 @@ Language Server Protocol
     :commands lsp lsp-deferred
     :ensure t)
 
-  ;; optionally
-  (use-package lsp-ui :commands lsp-ui-mode :ensure t)
+  ;; UI
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-doc-position 'bottom)
+    :ensure t)
   ;; if you are helm user
   (use-package helm-lsp :commands helm-lsp-workspace-symbol :ensure t)
 
@@ -640,7 +687,7 @@ Language Server Protocol
   ;; (use-package dap-mode)
   ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
-#+end_src
+    #+end_src
 
 ** Python
 
@@ -730,6 +777,27 @@ LSP: iph
 
 ** Web
 
+#+begin_src emacs-lisp :tangle yes
+  (use-package web-mode
+    :mode (("\\.blade\\." . web-mode)
+           ("\\.html\\'" . web-mode))
+    :config
+    (setq web-mode-enable-block-face t)
+    (setq web-mode-enable-comment-keywords t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-enable-current-column-highlight t)   
+    (setq web-mode-script-padding 4)
+    (setq web-mode-style-padding 4)
+    (setq web-mode-comment-style 4)
+    (setq web-mode-code-indent-offset 4)
+    (setq web-mode-markup-indent-offset 4)
+    (setq web-mode-engines-alist
+          '(("php"    . "\\.phtml\\'")
+            ("blade"  . "\\.blade\\.")))
+    :ensure t)
+#+end_src
+
+
 ** Everything else
 #+begin_src emacs-lisp :tangle yes
   (use-package json-mode
@@ -745,12 +813,7 @@ LSP: iph
     :ensure t)
 #+end_src
 
-
 * Keybindings
-
-#+begin_src emacs-lisp :tangle yes
-  (require 'bind-key)
-#+end_src
 
 ** Buffers
 #+begin_src emacs-lisp :tangle yes

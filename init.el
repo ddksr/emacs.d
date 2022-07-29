@@ -20,6 +20,7 @@
       own/is-nox nil ; if it's not run in tty
       own/emacs-d-dirs '("lib/")
       own/yas-dirs '("~/.emacs.d/snippets" "~/.emacs.d/snippets-private")
+      own/project-dirs nil
       own/org-dir nil
       own/org-dir-agenda nil
       own/roam-dir "~/notes"
@@ -46,12 +47,11 @@
   "Save buffers, Quit, and Shutdown (kill) server"
   (interactive)
   (save-some-buffers)
-  (kill-emacs)
-  )
+  (kill-emacs))
 
 (mapcar #'(lambda (dir)
-		   (add-to-list 'load-path (concat user-emacs-directory dir)))
-		own/emacs-d-dirs)
+            (add-to-list 'load-path (concat user-emacs-directory dir)))
+        own/emacs-d-dirs)
 
 (unless (own/etc-load "private.el.gpg")
   (own/etc-load "private.el"))
@@ -68,16 +68,16 @@
   (package-install 'use-package))
 
 (eval-when-compile
-  (require 'use-package))
-(use-package hydra
-  :ensure t)
-(use-package diminish
-  :ensure t)
-(use-package use-package-hydra
-  :after hydra
-  :ensure t)
-(require 'diminish)
-(require 'bind-key)
+  (require 'use-package)
+  (use-package hydra
+    :ensure t)
+  (use-package diminish
+    :ensure t)
+  (use-package use-package-hydra
+    :after hydra
+    :ensure t)
+  (require 'diminish)
+  (require 'bind-key))
 
 (setq make-backup-files nil ; Disable backup files
       next-line-add-newlines t) ; Make newline at the bottom
@@ -89,7 +89,6 @@
 (global-unset-key [(prior)])
 (global-unset-key [(next)])
 (global-unset-key [(home)])
-(global-unset-key [(next)])
 (global-unset-key (kbd "<C-left>"))
 (global-unset-key (kbd "<C-right>"))
 (global-unset-key (kbd "<C-up>"))
@@ -133,7 +132,7 @@
 
 (setq-default indent-tabs-mode nil)
 (setq default-tab-width 4
-	  tab-width 4
+          tab-width 4
       c-basic-offset 4) ;; use only tabs and no spaces
 
 (setq truncate-lines nil)
@@ -142,8 +141,8 @@
     (setq truncate-lines nil
           word-wrap t)))
 (add-hook 'prog-mode-hook '(lambda ()
-    (setq truncate-lines nil
-          word-wrap nil)))
+                             (setq truncate-lines nil
+                                   word-wrap nil)))
 
 (use-package doom-themes
   :if own/enable-themes
@@ -207,7 +206,7 @@
   "Open browser"
   (interactive)
   (browse-url 
-	 (concat "http://" (read-string "URL: ") )))
+         (concat "http://" (read-string "URL: ") )))
 
 (defun own/flatten (mylist)
   (cond
@@ -221,6 +220,7 @@
   (font-lock-add-keywords nil
                           '(("\\<\\(FIXME\\|SIGITODO\\|TODO\\|BUG\\):"
                              1 font-lock-warning-face t))))
+(add-hook 'prog-mode-hook 'own/hook-mark-todo)
 
 (use-package auto-compile
   :init
@@ -291,8 +291,17 @@
   (volatile-highlights-mode t)
   :ensure t)
 
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :ensure t)
 (use-package doom-modeline
   :config
+  (setq doom-modeline-support-imenu t)
+  (setq doom-modeline-project-detection 'auto)
+  (setq doom-modeline-buffer-encoding t)
+  (setq doom-modeline-vcs-max-length 12)
+  (setq doom-modeline-lsp t)
+  (setq doom-modeline-env-version t)
   (doom-modeline-mode 1)
   :ensure t)
 
@@ -311,6 +320,9 @@
 
 (use-package projectile
   :config
+  (setq projectile-project-search-path own/project-dirs
+        projectile-mode-line-function '(lambda () (format " p[%s]" (projectile-project-name)))
+        projectile-sort-order 'modification-time)
   (projectile-mode +1)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   :ensure t)
@@ -319,26 +331,44 @@
   :bind ("C-x C-g" . magit-status)
   :ensure t)
 
+(require 'org-indent)
 (setq org-log-done t
       org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
       org-directory own/org-dir
-      org-src-fontify-natively t)
+      org-src-fontify-natively t
+      org-ellipsis " ▾")
+
 (bind-key "s-x o a" 'org-agenda)
+
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
+  :ensure t)
 
 (use-package org-roam
   :custom
   (org-roam-directory (file-truename own/roam-dir))
   :bind (("s-x n" . hydra-roam/body)
+
          ("C-đ C-đ" . org-roam-dailies-goto-today)
+         ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
+
+         ("M-đ M-đ" . org-roam-buffer-toggle)
+
          ("C-š C-š" . org-roam-node-insert)
-         ("C-đ C-š" . org-roam-buffer-toggle)
-         ("C-š C-đ" . org-roam-capture))
+         ("C-š C-đ" . org-roam-capture)
+
+         ("M-š M-š" . org-roam-node-find)
+         ("M-š M-đ" . org-roam-buffer-display-dedicated))
   :hydra (hydra-roam (:color blue :hint nil :exit t)
                      ("b" org-roam-buffer-toggle "Toggle")
-                     ("f" org-roam-node-find "Find")
                      ("g" org-roam-graph "Graph")
                      ("i" org-roam-node-insert "Insert")
                      ("c" org-roam-capture "Capture")
+
+                     ("f" org-roam-node-find "Find")
+                     ("x" org-roam-buffer-display-dedicated "Find connections for node")
 
                      ("t" org-roam-dailies-capture-today "Capture today")
                      ("T" org-roam-dailies-goto-today "Today notes")
@@ -380,6 +410,12 @@
 (use-package restclient
   :ensure t)
 
+(use-package esup
+  :config
+  (setq esup-depth 0)
+  :pin melpa
+  :ensure t)
+
 (use-package flycheck
   :config
   (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -393,7 +429,7 @@
          (php-mode . lsp-deferred)
          (python-mode . lsp-deferred)
          (js2-mode . lsp-deferred)
-         (vue-mode . lsp-deferred)
+         ;; (vue-mode . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
   :bind ("s-x l" . hydra-lsp/body)
   :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -408,8 +444,12 @@
   :commands lsp lsp-deferred
   :ensure t)
 
-;; optionally
-(use-package lsp-ui :commands lsp-ui-mode :ensure t)
+;; UI
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-doc-position 'bottom)
+  :ensure t)
 ;; if you are helm user
 (use-package helm-lsp :commands helm-lsp-workspace-symbol :ensure t)
 
@@ -470,6 +510,24 @@
   :if own/enable-php
   :ensure t)
 
+(use-package web-mode
+  :mode (("\\.blade\\." . web-mode)
+         ("\\.html\\'" . web-mode))
+  :config
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)   
+  (setq web-mode-script-padding 4)
+  (setq web-mode-style-padding 4)
+  (setq web-mode-comment-style 4)
+  (setq web-mode-code-indent-offset 4)
+  (setq web-mode-markup-indent-offset 4)
+  (setq web-mode-engines-alist
+        '(("php"    . "\\.phtml\\'")
+          ("blade"  . "\\.blade\\.")))
+  :ensure t)
+
 (use-package json-mode
   :mode "\\.json\\'"
   :ensure t)
@@ -481,8 +539,6 @@
   :custom
   (yaml-indent-offset 4)
   :ensure t)
-
-(require 'bind-key)
 
 (bind-key "C-x C-k" 'own/delete-current-buffer-file)
 (bind-key "C-x C-r" 'own/rename-current-buffer-file)

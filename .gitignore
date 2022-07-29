@@ -30,3 +30,4 @@ bookmarks
 lsp-cache/
 .lsp-session*
 package-lock.json
+games/
