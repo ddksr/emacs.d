@@ -508,6 +508,15 @@ Don't forget to install fonts with: M-x all-the-icons-install-fonts
     :ensure t)
 #+end_src
 
+** Enchancements
+
+Improved dired.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package dired
+    :custom ((dired-listing-switches "-agho --group-directories-first"))
+    :ensure nil)
+#+END_SRC
+
 ** Tools
 *** Projectile
 #+begin_src emacs-lisp :tangle yes
@@ -530,14 +539,16 @@ Don't forget to install fonts with: M-x all-the-icons-install-fonts
 *** ORG
 Org is built-in now so no use-package.
 #+begin_src emacs-lisp :tangle yes
-  (require 'org-indent)
-  (setq org-log-done t
+  (use-package org
+    :bind (("s-x o a" . org-agenda))
+    :config
+    ;; (require 'org-indent)
+    (setq org-log-done t
         org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
         org-directory own/org-dir
         org-src-fontify-natively t
         org-ellipsis " ▾")
-
-  (bind-key "s-x o a" 'org-agenda)
+    :ensure nil)
 #+end_src
 
 Org Design
