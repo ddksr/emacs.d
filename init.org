@@ -77,6 +77,8 @@ Local environment
         own/project-dirs nil
         own/org-dir nil
         own/org-agenda-files nil
+        own/org-agenda-custom-commands nil
+        own/org-tags nil
         own/roam-dir "~/notes"
         own/py-venvs "~/.virtualenvs"
         own/go-path "~/env/go"
@@ -540,14 +542,16 @@ Improved dired.
 Org is built-in now so no use-package.
 #+begin_src emacs-lisp :tangle yes
   (use-package org
-    :bind (("s-x o a" . org-agenda))
+    :bind (("s-q" . org-agenda))
     :config
     ;; (require 'org-indent)
     (setq org-log-done t
-        org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
-        org-directory own/org-dir
-        org-src-fontify-natively t
-        org-ellipsis " ▾")
+          org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
+          org-directory own/org-dir
+          org-src-fontify-natively t
+          org-tag-alist own/org-tags
+          org-agenda-custom-commands own/org-agenda-custom-commands
+          org-ellipsis " ▾")
     :ensure nil)
 #+end_src
 
