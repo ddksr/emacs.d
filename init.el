@@ -23,6 +23,8 @@
       own/project-dirs nil
       own/org-dir nil
       own/org-agenda-files nil
+      own/org-agenda-custom-commands nil
+      own/org-tags nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
       own/go-path "~/env/go"
@@ -318,6 +320,10 @@
          ("C-S-a" . mc/mark-all-like-this))
   :ensure t)
 
+(use-package dired
+  :custom ((dired-listing-switches "-agho --group-directories-first"))
+  :ensure nil)
+
 (use-package projectile
   :config
   (setq projectile-project-search-path own/project-dirs
@@ -331,14 +337,18 @@
   :bind ("C-x C-g" . magit-status)
   :ensure t)
 
-(require 'org-indent)
-(setq org-log-done t
-      org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
-      org-directory own/org-dir
-      org-src-fontify-natively t
-      org-ellipsis " ▾")
-
-(bind-key "s-x o a" 'org-agenda)
+(use-package org
+  :bind (("s-q" . org-agenda))
+  :config
+  ;; (require 'org-indent)
+  (setq org-log-done t
+        org-agenda-files (own/flatten (mapcar 'file-expand-wildcards (own/flatten own/org-agenda-files)))
+        org-directory own/org-dir
+        org-src-fontify-natively t
+        org-tag-alist own/org-tags
+        org-agenda-custom-commands own/org-agenda-custom-commands
+        org-ellipsis " ▾")
+  :ensure nil)
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -438,7 +448,7 @@
          (php-mode . lsp-deferred)
          (python-mode . lsp-deferred)
          (js2-mode . lsp-deferred)
-         ;; (vue-mode . lsp-deferred)
+         (vue-mode . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration))
   :bind ("s-x l" . hydra-lsp/body)
   :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -511,6 +521,8 @@
 (use-package vue-mode
   :if own/enable-js
   :mode "\\.vue\\'"
+  :custom
+  (vue-html-extra-indent 4)
   :ensure t)
 
 (use-package php-mode

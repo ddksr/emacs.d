@@ -686,7 +686,7 @@ Language Server Protocol
            (php-mode . lsp-deferred)
            (python-mode . lsp-deferred)
            (js2-mode . lsp-deferred)
-           ;; (vue-mode . lsp-deferred)
+           (vue-mode . lsp-deferred)
            (lsp-mode . lsp-enable-which-key-integration))
     :bind ("s-x l" . hydra-lsp/body)
     :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -788,6 +788,8 @@ LSP: volar-api
   (use-package vue-mode
     :if own/enable-js
     :mode "\\.vue\\'"
+    :custom
+    (vue-html-extra-indent 4)
     :ensure t)
 #+end_src
 
