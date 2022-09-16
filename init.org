@@ -698,6 +698,9 @@ Language Server Protocol
                       ("p" lsp-describe-thing-at-point "Describe @ p"))
     :config
     (setq lsp-disabled-clients '(vls))
+;;    :custom
+;;    (lsp-enable-indentation nil)
+;;    (lsp-html-format-enable nil)
     :commands lsp lsp-deferred
     :ensure t)
 
@@ -789,7 +792,8 @@ LSP: volar-api
     :if own/enable-js
     :mode "\\.vue\\'"
     :custom
-    (vue-html-extra-indent 4)
+    (vue-html-extra-indent 0)
+    (vue-html-tab-width 4)
     :ensure t)
 #+end_src
 

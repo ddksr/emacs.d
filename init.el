@@ -441,40 +441,43 @@
   :ensure t)
 
 (use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook ((go-mode . lsp-deferred)
-         (php-mode . lsp-deferred)
-         (python-mode . lsp-deferred)
-         (js2-mode . lsp-deferred)
-         (vue-mode . lsp-deferred)
-         (lsp-mode . lsp-enable-which-key-integration))
-  :bind ("s-x l" . hydra-lsp/body)
-  :hydra (hydra-lsp (:color blue :hint nil :exit t)
-                    ("f" lsp-format-buffer "Format buffer")
-                    ("d" lsp-ui-peek-find-definitions "Find definitions")
-                    ("r" lsp-ui-peek-find-references "Find references")
-                    ("s" lsp-ui-peek-find-workspace-symbol "Find workspace symbol")
-                    ("h" lsp-document-highlight "Document Highlight")
-                    ("p" lsp-describe-thing-at-point "Describe @ p"))
-  :config
-  (setq lsp-disabled-clients '(vls))
-  :commands lsp lsp-deferred
-  :ensure t)
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    :hook ((go-mode . lsp-deferred)
+           (php-mode . lsp-deferred)
+           (python-mode . lsp-deferred)
+           (js2-mode . lsp-deferred)
+           (vue-mode . lsp-deferred)
+           (lsp-mode . lsp-enable-which-key-integration))
+    :bind ("s-x l" . hydra-lsp/body)
+    :hydra (hydra-lsp (:color blue :hint nil :exit t)
+                      ("f" lsp-format-buffer "Format buffer")
+                      ("d" lsp-ui-peek-find-definitions "Find definitions")
+                      ("r" lsp-ui-peek-find-references "Find references")
+                      ("s" lsp-ui-peek-find-workspace-symbol "Find workspace symbol")
+                      ("h" lsp-document-highlight "Document Highlight")
+                      ("p" lsp-describe-thing-at-point "Describe @ p"))
+    :config
+    (setq lsp-disabled-clients '(vls))
+;;    :custom
+;;    (lsp-enable-indentation nil)
+;;    (lsp-html-format-enable nil)
+    :commands lsp lsp-deferred
+    :ensure t)
 
-;; UI
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :custom
-  (lsp-ui-doc-position 'bottom)
-  :ensure t)
-;; if you are helm user
-(use-package helm-lsp :commands helm-lsp-workspace-symbol :ensure t)
+  ;; UI
+  (use-package lsp-ui
+    :commands lsp-ui-mode
+    :custom
+    (lsp-ui-doc-position 'bottom)
+    :ensure t)
+  ;; if you are helm user
+  (use-package helm-lsp :commands helm-lsp-workspace-symbol :ensure t)
 
-;; optionally if you want to use debugger
-;; (use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+  ;; optionally if you want to use debugger
+  ;; (use-package dap-mode)
+  ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
 (use-package lsp-pyright
   :if own/enable-python
@@ -522,7 +525,8 @@
   :if own/enable-js
   :mode "\\.vue\\'"
   :custom
-  (vue-html-extra-indent 4)
+  (vue-html-extra-indent 0)
+  (vue-html-tab-width 4)
   :ensure t)
 
 (use-package php-mode
