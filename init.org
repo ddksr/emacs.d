@@ -570,12 +570,11 @@ Org Design
   (use-package org-roam
     :custom
     (org-roam-directory (file-truename own/roam-dir))
-    :bind (("s-x n" . hydra-roam/body)
-
-           ("C-đ C-đ" . org-roam-dailies-goto-today)
+    :bind (("C-đ C-đ" . org-roam-dailies-goto-today)
            ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
 
            ("M-đ M-đ" . org-roam-buffer-toggle)
+           ("M-đ M-š" . hydra-roam/body)
 
            ("C-š C-š" . org-roam-node-insert)
            ("C-š C-đ" . org-roam-capture)
