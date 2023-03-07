@@ -31,3 +31,4 @@ lsp-cache/
 .lsp-session*
 package-lock.json
 games/
+transient/history.el

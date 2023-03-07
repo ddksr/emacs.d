@@ -320,6 +320,11 @@
          ("C-S-a" . mc/mark-all-like-this))
   :ensure t)
 
+(use-package string-inflection
+  :ensure t
+  :bind (:map prog-mode-map
+              ("C-:" . string-inflection-all-cycle)))
+
 (use-package dired
   :custom ((dired-listing-switches "-agho --group-directories-first"))
   :ensure nil)
@@ -359,12 +364,11 @@
 (use-package org-roam
   :custom
   (org-roam-directory (file-truename own/roam-dir))
-  :bind (("s-x n" . hydra-roam/body)
-
-         ("C-đ C-đ" . org-roam-dailies-goto-today)
+  :bind (("C-đ C-đ" . org-roam-dailies-goto-today)
          ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
 
          ("M-đ M-đ" . org-roam-buffer-toggle)
+         ("M-đ M-š" . hydra-roam/body)
 
          ("C-š C-š" . org-roam-node-insert)
          ("C-š C-đ" . org-roam-capture)
@@ -448,7 +452,8 @@
          (php-mode . lsp-deferred)
          (python-mode . lsp-deferred)
          (js2-mode . lsp-deferred)
-         ;; (vue-mode . lsp-deferred)
+         (vue-mode . lsp-deferred)
+         (c-mode . lsp-deferred) ; clangd server, clang system package
          (lsp-mode . lsp-enable-which-key-integration))
   :bind ("s-x l" . hydra-lsp/body)
   :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -460,6 +465,9 @@
                     ("p" lsp-describe-thing-at-point "Describe @ p"))
   :config
   (setq lsp-disabled-clients '(vls))
+  ;;    :custom
+  ;;    (lsp-enable-indentation nil)
+  ;;    (lsp-html-format-enable nil)
   :commands lsp lsp-deferred
   :ensure t)
 
@@ -521,6 +529,11 @@
 (use-package vue-mode
   :if own/enable-js
   :mode "\\.vue\\'"
+  :custom
+  (vue-html-extra-indent 4)
+  (vue-html-tab-width 4)
+  :config
+  (setq sgml-basic-offset 4)
   :ensure t)
 
 (use-package php-mode

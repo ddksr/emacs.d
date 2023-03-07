@@ -510,6 +510,15 @@ Don't forget to install fonts with: M-x all-the-icons-install-fonts
     :ensure t)
 #+end_src
 
+*** Coding
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package string-inflection
+    :ensure t
+    :bind (:map prog-mode-map
+                ("C-:" . string-inflection-all-cycle)))
+#+END_SRC
+
 ** Enchancements
 
 Improved dired.
@@ -685,7 +694,8 @@ Language Server Protocol
            (php-mode . lsp-deferred)
            (python-mode . lsp-deferred)
            (js2-mode . lsp-deferred)
-           ;; (vue-mode . lsp-deferred)
+           (vue-mode . lsp-deferred)
+           (c-mode . lsp-deferred) ; clangd server, clang system package
            (lsp-mode . lsp-enable-which-key-integration))
     :bind ("s-x l" . hydra-lsp/body)
     :hydra (hydra-lsp (:color blue :hint nil :exit t)
@@ -697,6 +707,9 @@ Language Server Protocol
                       ("p" lsp-describe-thing-at-point "Describe @ p"))
     :config
     (setq lsp-disabled-clients '(vls))
+    ;;    :custom
+    ;;    (lsp-enable-indentation nil)
+    ;;    (lsp-html-format-enable nil)
     :commands lsp lsp-deferred
     :ensure t)
 
@@ -713,7 +726,7 @@ Language Server Protocol
   ;; (use-package dap-mode)
   ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
-    #+end_src
+#+end_src
 
 ** Python
 
@@ -787,6 +800,11 @@ LSP: volar-api
   (use-package vue-mode
     :if own/enable-js
     :mode "\\.vue\\'"
+    :custom
+    (vue-html-extra-indent 4)
+    (vue-html-tab-width 4)
+    :config
+    (setq sgml-basic-offset 4)
     :ensure t)
 #+end_src
 
