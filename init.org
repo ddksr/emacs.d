@@ -794,7 +794,7 @@ LSP: typescript-language-server (pacman)
 
 *** Vue
 https://azzamsa.com/n/vue-emacs/
-LSP: volar-api
+LSP: vue-semantic-server (old: volar-api)
 
 #+begin_src emacs-lisp :tangle yes
   (use-package vue-mode
