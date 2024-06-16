@@ -27,7 +27,7 @@
       own/org-tags nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
-      own/go-path "~/env/go"
+      own/go-path "~/go"
       own/npm-path "~/.nvm/versions/node/v8.9.4/bin/")
 
 (setq own/enable-themes nil
@@ -397,6 +397,7 @@
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   ;; If using org-roam-protocol
                                         ;(require 'org-roam-protocol)
+  (setq org-roam-dailies-directory own/roam-dir-dailies)
   (org-roam-setup)
   (org-roam-db-autosync-mode)
   :ensure t)
@@ -505,6 +506,7 @@
                       (add-hook 'before-save-hook #'lsp-organize-imports t t)
                       (setq tab-width 4))))
   :config
+  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/go/bin"))
   (setq exec-path (cons "/usr/local/go/bin" exec-path))
   (add-to-list 'exec-path (concat own/go-path "/bin"))
   :ensure t)
