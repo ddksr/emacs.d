@@ -535,7 +535,9 @@
   (vue-html-extra-indent 4)
   (vue-html-tab-width 4)
   :config
-  (setq sgml-basic-offset 4)
+  (add-hook 'html-mode-hook
+            (lambda ()
+              (set (make-local-variable 'sgml-basic-offset) 4)))
   :ensure t)
 
 (use-package php-mode
