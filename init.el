@@ -538,12 +538,16 @@
   (add-hook 'html-mode-hook
             (lambda ()
               (set (make-local-variable 'sgml-basic-offset) 4)))
+  (setq sgml-basic-offset 4)
+  (setq lsp-enabled-clients '(vue-semantic-server))
   :ensure t)
 
 (use-package php-mode
   :mode "\\.php\\'"
   :hook ((php-mode . php-enable-symfony2-coding-style))
   :if own/enable-php
+  :config
+  (setq lsp-enabled-clients '(iph))
   :ensure t)
 
 (use-package web-mode
