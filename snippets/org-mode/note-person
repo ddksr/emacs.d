@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: Person Note
+# key: notep
+# binding: direct-keybinding
+# group: org-mode
+# --
+
+#+startup: showall
+* About
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+blablabla
+* Tasks
+Blabla

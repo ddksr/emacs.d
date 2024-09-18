@@ -25,6 +25,7 @@
       own/org-agenda-files nil
       own/org-agenda-custom-commands nil
       own/org-tags nil
+      own/org-img-dir nil
       own/roam-dir "~/notes"
       own/py-venvs "~/.virtualenvs"
       own/go-path "~/go"
@@ -34,7 +35,8 @@
       own/enable-php nil
       own/enable-go nil
       own/enable-js nil
-      own/enable-python nil)
+      own/enable-python nil
+      own/enable-db-trino nil)
 
 (defun own/etc-load (file)
   (let ((etc-path (concat user-emacs-directory "etc/" file)))
@@ -307,7 +309,11 @@
   (doom-modeline-mode 1)
   :ensure t)
 
+(dolist (hook '(org-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(setq flyspell-issue-message-flag nil)
 (use-package flyspell-lazy
+  :if nil
   :config
   (flyspell-lazy-mode 1)
   (flyspell-mode 1) 
@@ -361,6 +367,11 @@
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
   :ensure t)
 
+(use-package org-download
+  :custom
+  (setq-default org-download-image-dir "~/Pictures/foo")
+  :ensure t)
+
 (use-package org-roam
   :custom
   (org-roam-directory (file-truename own/roam-dir))
@@ -409,6 +420,9 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t)
+  :ensure t)
+
+(use-package d2-mode
   :ensure t)
 
 (use-package undo-tree
@@ -578,6 +592,10 @@
   :mode "\\.ya?ml\\'"
   :custom
   (yaml-indent-offset 4)
+  :ensure t)
+
+(use-package sql-trino
+  :if own/enable-db-trino
   :ensure t)
 
 (bind-key "C-x C-k" 'own/delete-current-buffer-file)
