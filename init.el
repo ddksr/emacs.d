@@ -376,7 +376,7 @@
   :custom
   (org-roam-directory (file-truename own/roam-dir))
   :bind (("C-đ C-đ" . org-roam-dailies-goto-today)
-         ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
+         ("C-đ C-š" . org-roam-dailies-goto-date)
 
          ("M-đ M-đ" . org-roam-buffer-toggle)
          ("M-đ M-š" . hydra-roam/body)
@@ -581,6 +581,8 @@
         '(("php"    . "\\.phtml\\'")
           ("blade"  . "\\.blade\\.")))
   :ensure t)
+
+
 
 (use-package json-mode
   :mode "\\.json\\'"

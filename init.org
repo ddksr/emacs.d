@@ -595,7 +595,7 @@ Org Design
     :custom
     (org-roam-directory (file-truename own/roam-dir))
     :bind (("C-đ C-đ" . org-roam-dailies-goto-today)
-           ("C-đ C-š" . org-roam-dailies-goto-tomorrow)
+           ("C-đ C-š" . org-roam-dailies-goto-date)
 
            ("M-đ M-đ" . org-roam-buffer-toggle)
            ("M-đ M-š" . hydra-roam/body)
@@ -869,6 +869,11 @@ LSP: iph
             ("blade"  . "\\.blade\\.")))
     :ensure t)
 #+end_src
+
+** Copilot
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+#+END_SRC
 
 
 ** Everything else

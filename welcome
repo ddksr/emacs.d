@@ -20,7 +20,7 @@
            | ROAM         |                           |
            |--------------+---------------------------|
            | C-đ C-đ      | Today                     |
-           | C-đ C-š      | Tomorrow                  |
+           | C-đ C-š      | Pick date                 |
            | M-đ M-đ      | Roam buffer               |
            | C-š C-š      | Node insert               |
            | C-š C-đ      | Node capture              |
