@@ -45,6 +45,7 @@ M-x org-babel-tangle
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   (setq debug-on-error nil)
+  (setq native-comp-async-report-warnings-errors nil)
 
   (setf epa-pinentry-mode 'loopback)
   (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
@@ -554,10 +555,10 @@ Improved dired.
 #+end_src
 
 *** ORG
-Org is built-in now so no use-package.
+Org is built-in now so use-package shouldn't ensure.
 #+begin_src emacs-lisp :tangle yes
   (use-package org
-    :bind (("s-q" . org-agenda))
+    :bind (("s-," . org-agenda))
     :config
     ;; (require 'org-indent)
     (setq org-log-done t
@@ -630,18 +631,6 @@ Org Design
     (setq org-roam-dailies-directory own/roam-dir-dailies)
     (org-roam-setup)
     (org-roam-db-autosync-mode)
-    :ensure t)
-#+end_src
-
-**** ORG Roam UI
-#+begin_src emacs-lisp :tangle yes
-  (use-package org-roam-ui
-    :after org-roam
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t)
     :ensure t)
 #+end_src
 

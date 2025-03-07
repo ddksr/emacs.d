@@ -2,6 +2,7 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (setq debug-on-error nil)
+(setq native-comp-async-report-warnings-errors nil)
 
 (setf epa-pinentry-mode 'loopback)
 (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
@@ -349,7 +350,7 @@
   :ensure t)
 
 (use-package org
-  :bind (("s-q" . org-agenda))
+  :bind (("s-," . org-agenda))
   :config
   ;; (require 'org-indent)
   (setq org-log-done t
@@ -411,15 +412,6 @@
   (setq org-roam-dailies-directory own/roam-dir-dailies)
   (org-roam-setup)
   (org-roam-db-autosync-mode)
-  :ensure t)
-
-(use-package org-roam-ui
-  :after org-roam
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t)
   :ensure t)
 
 (use-package d2-mode

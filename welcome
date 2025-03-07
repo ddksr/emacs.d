@@ -16,6 +16,7 @@
            | M-<return>   | List item after item      |
            | S-M-<return> | Checkbox list item        |
            | C-'          | Cycle trough agenda files |
+           | s-,          | Agenda                    |
            |--------------+---------------------------|
            | ROAM         |                           |
            |--------------+---------------------------|
