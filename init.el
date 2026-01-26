@@ -7,6 +7,18 @@
 (setf epa-pinentry-mode 'loopback)
 (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 
+(setq confirm-kill-emacs 'y-or-n-p)
+
+(defconst IS-MAC (eq system-type 'darwin))
+(defconst IS-LINUX (eq system-type 'gnu/linux))
+
+(global-unset-key (kbd "s-x"))
+(global-unset-key (kbd "s-c"))
+(global-unset-key (kbd "s-v"))
+(setq mac-command-modifier 'meta) 
+(setq mac-option-modifier 'super)
+(setq mac-right-option-modifier nil)
+
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 (load custom-file)
 
@@ -310,15 +322,20 @@
   (doom-modeline-mode 1)
   :ensure t)
 
-(dolist (hook '(org-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
-(setq flyspell-issue-message-flag nil)
-(use-package flyspell-lazy
-  :if nil
-  :config
-  (flyspell-lazy-mode 1)
-  (flyspell-mode 1) 
-  :ensure t)
+(when IS-MAC
+  (setq ispell-program-name "/opt/homebrew/bin/enchant-2")
+  (setq ispell-list-command "list"))
+(when IS-LINUX
+  (dolist (hook '(org-mode-hook))
+    (add-hook hook (lambda () (flyspell-mode 1))))
+  (setq flyspell-issue-message-flag nil)
+  (use-package flyspell-lazy
+    :if nil
+    :config
+    (flyspell-lazy-mode 1)
+    (flyspell-mode 1) 
+    :ensure t)
+  )
 
 (use-package multiple-cursors
   :bind (("C-S-c C-S-c" . mc/edit-lines)
@@ -598,6 +615,7 @@
 (bind-key "C-x C-b" 'ibuffer)
 
 (bind-key "s-u" 'undo)
+(global-set-key (kbd "C-z") 'yank)
 
 (bind-key "<f5>" 'rgrep)
 
