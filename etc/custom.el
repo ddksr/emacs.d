@@ -6,21 +6,55 @@
  '(LaTeX-command "latex -synctex=1")
  '(blacken-line-length 120)
  '(custom-safe-themes
-   '("f0ea6118d1414b24c2e4babdc8e252707727e7b4ff2e791129f240a2b3093e32" default))
+   '("f0ea6118d1414b24c2e4babdc8e252707727e7b4ff2e791129f240a2b3093e32"
+     default))
  '(free-keys-keys
    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()-=[]{};'\\:\"|,./<>?`~šđčćž")
  '(free-keys-modifiers '("" "C" "M" "C-M" "s"))
  '(lsp-intelephense-php-version "8.1.0")
  '(package-selected-packages
-   '(editorconfig d2-mode flyspell-mode org-download sql-trino hydra string-inflection vue-mode typescript org-bullets all-the-icons esup font-lock-profiler lsp-pyright lsp-ui helm-lsp lsp-mode multiple-cursors helm projectile company yasnippet git-gutter flycheck which-key fullscreen doom-themes org doom-modeline auto-compile use-package-hydra diminish uniquify git-gutter-fringe2 use-package selectrum-prescient prescient selectrum org-roam sphinx-doc company-restclient paredit go-complete kotlin-mode scala-mode rg py-isort docker phpunit js-doc company-php ## blacken php-mode jekyll-modes markdown-mode+ ranger company-tern flymake-jslint tern django-snippets json-mode js2-mode golint company-go go-snippets go-playground company-anaconda anaconda-mode flymake python-mode company-mode yasnippet-bundle fullscreen-mode elpy free-keys flymake-less less-css-mode zencoding-mode yaml-mode web-mode volatile-highlights visual-regexp virtualenvwrapper undo-tree tern-auto-complete smex ruby-refactor ruby-electric restclient rainbow-delimiters pyenv-mode py-autopep8 prodigy powerline php-extras php-eldoc pastels-on-dark-theme paradox outshine orglink org2blog org-linkany org-ac multi-term move-text markdown-mode magit latex-extra key-chord js2-refactor jedi inf-ruby ibuffer-vc howdoi helm-pydoc helm-projectile helm-helm-commands helm-c-yasnippet helm-anything hackernews grizzl go-mode go-autocomplete git-timemachine git-messenger git-gutter-fringe gist flyspell-lazy flymake-yaml flymake-shell flymake-ruby flymake-python-pyflakes flymake-php flymake-go flymake-css flx-ido expand-region es-mode emr auto-complete-auctex afternoon-theme ace-window ace-jump-zap ace-jump-buffer ace-isearch ac-octave ac-js2 ac-helm ac-c-headers ac-anaconda))
+   '(## ac-anaconda ac-c-headers ac-helm ac-js2 ac-octave ace-isearch
+        ace-jump-buffer ace-jump-zap ace-window afternoon-theme
+        all-the-icons anaconda-mode auto-compile auto-complete-auctex
+        blacken company company-anaconda company-go company-mode
+        company-php company-restclient company-tern copilot d2-mode
+        diminish django-snippets docker doom-modeline doom-themes
+        editorconfig elpy emr es-mode esup expand-region flx-ido
+        flycheck flymake flymake-css flymake-go flymake-jslint
+        flymake-less flymake-php flymake-python-pyflakes flymake-ruby
+        flymake-shell flymake-yaml flyspell-lazy flyspell-mode
+        font-lock-profiler free-keys fullscreen fullscreen-mode gist
+        git-gutter git-gutter-fringe git-gutter-fringe2 git-messenger
+        git-timemachine go-autocomplete go-complete go-mode
+        go-playground go-snippets golint grizzl hackernews helm
+        helm-anything helm-c-yasnippet helm-helm-commands helm-lsp
+        helm-projectile helm-pydoc howdoi hydra ibuffer-vc inf-ruby
+        jedi jekyll-modes js-doc js2-mode js2-refactor json-mode
+        key-chord kotlin-mode latex-extra less-css-mode lsp-mode
+        lsp-pyright lsp-ui magit markdown-mode markdown-mode+
+        move-text multi-term multiple-cursors org org-ac org-bullets
+        org-download org-linkany org-roam org2blog orglink outshine
+        paradox paredit pastels-on-dark-theme php-eldoc php-extras
+        php-mode phpunit powerline prescient prodigy projectile
+        py-autopep8 py-isort pyenv-mode python-mode rainbow-delimiters
+        ranger restclient rg ruby-electric ruby-refactor scala-mode
+        selectrum selectrum-prescient smex sphinx-doc sql-trino
+        string-inflection tern tern-auto-complete typescript undo-tree
+        uniquify use-package use-package-hydra virtualenvwrapper
+        visual-regexp volatile-highlights vue-mode web-mode which-key
+        yaml-mode yasnippet yasnippet-bundle zencoding-mode))
  '(paradox-automatically-star t)
  '(safe-local-variable-values
-   '((python-shell-completion-string-code . "';'.join(get_ipython().Completer.all_completions('''%s'''))\12")
-     (python-shell-completion-module-string-code . "';'.join(module_completion('''%s'''))\12")
-     (python-shell-completion-setup-code . "from IPython.core.completerlib import module_completion")
+   '((python-shell-completion-string-code
+      . "';'.join(get_ipython().Completer.all_completions('''%s'''))\12")
+     (python-shell-completion-module-string-code
+      . "';'.join(module_completion('''%s'''))\12")
+     (python-shell-completion-setup-code
+      . "from IPython.core.completerlib import module_completion")
      (python-shell-prompt-output-regexp . "Out\\[[0-9]+\\]: ")
      (python-shell-prompt-regexp . "In \\[[0-9]+\\]: ")
-     (python-shell-interpreter-args . "/home/fgallina/Code/Projects/anue-site/anue/manage.py shell")
+     (python-shell-interpreter-args
+      . "/home/fgallina/Code/Projects/anue-site/anue/manage.py shell")
      (python-shell-interpreter . "python")))
  '(send-mail-function 'smtpmail-send-it)
  '(warning-suppress-types '((comp) (comp) (comp))))

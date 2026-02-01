@@ -49,6 +49,7 @@
       own/enable-go nil
       own/enable-js nil
       own/enable-python nil
+      own/enable-copilot nil
       own/enable-db-trino nil)
 
 (defun own/etc-load (file)
@@ -492,6 +493,20 @@
   ;;    :custom
   ;;    (lsp-enable-indentation nil)
   ;;    (lsp-html-format-enable nil)
+  (setq lsp-file-watch-threshold 5000)
+  (with-eval-after-load 'lsp-mode
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]vendor\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]storage\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bootstrap/cache\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.gradle\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]build\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]target\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.m2\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.settings\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.git\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]node_modules\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]bin\\'")
+    (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]pkg\\'"))
   :commands lsp lsp-deferred
   :ensure t)
 
@@ -591,7 +606,15 @@
           ("blade"  . "\\.blade\\.")))
   :ensure t)
 
-
+(use-package copilot
+  :vc (:url "https://github.com/copilot-emacs/copilot.el" :rev :newest)
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word))
+  :if own/enable-copilot)
 
 (use-package json-mode
   :mode "\\.json\\'"
