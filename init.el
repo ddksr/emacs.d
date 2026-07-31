@@ -15,9 +15,12 @@
 (global-unset-key (kbd "s-x"))
 (global-unset-key (kbd "s-c"))
 (global-unset-key (kbd "s-v"))
-(setq mac-command-modifier 'meta) 
-(setq mac-option-modifier 'super)
-(setq mac-right-option-modifier nil)
+(setq mac-option-key-is-meta nil)
+(setq mac-right-option-key-is-meta nil)
+(setq mac-command-modifier 'meta) ; caps is super
+(setq mac-right-command-modifier 'super) ; but keep the right one
+                                        ;  (setq mac-option-modifier 'super)
+                                        ;  (setq mac-right-option-modifier nil)
 
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 (load custom-file)
@@ -50,6 +53,7 @@
       own/enable-js nil
       own/enable-python nil
       own/enable-copilot nil
+      own/enable-claude nil
       own/enable-db-trino nil)
 
 (defun own/etc-load (file)
@@ -428,6 +432,11 @@
   ;; If using org-roam-protocol
                                         ;(require 'org-roam-protocol)
   (setq org-roam-dailies-directory own/roam-dir-dailies)
+  (setq org-roam-dailies-capture-templates
+    '(("d" "default" entry
+       "* %?"
+       :target (file+head "%<%Y-%m-%d>.org"
+                          "#+title: %<%Y-%m-%d>\n:PROPERTIES:\n:ID: %(org-id-new)\n:END:\n"))))
   (org-roam-setup)
   (org-roam-db-autosync-mode)
   :ensure t)
@@ -615,6 +624,8 @@
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word))
   :if own/enable-copilot)
+
+
 
 (use-package json-mode
   :mode "\\.json\\'"

@@ -41,29 +41,36 @@ M-x org-babel-tangle
 
 * Essentials
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-  (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (setq debug-on-error nil)
-  (setq native-comp-async-report-warnings-errors nil)
+    (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+    (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+    (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+    (setq debug-on-error nil)
+    (setq native-comp-async-report-warnings-errors nil)
 
-  (setf epa-pinentry-mode 'loopback)
-  (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
+    (setf epa-pinentry-mode 'loopback)
+    (setq byte-compile-warnings '(not free-vars mapcar suspicious obsolete))
 
-  (setq confirm-kill-emacs 'y-or-n-p)
+    (setq confirm-kill-emacs 'y-or-n-p)
 
-  (defconst IS-MAC (eq system-type 'darwin))
-  (defconst IS-LINUX (eq system-type 'gnu/linux))
+    (defconst IS-MAC (eq system-type 'darwin))
+    (defconst IS-LINUX (eq system-type 'gnu/linux))
 
-  (global-unset-key (kbd "s-x"))
-  (global-unset-key (kbd "s-c"))
-  (global-unset-key (kbd "s-v"))
-  (setq mac-command-modifier 'meta) 
-  (setq mac-option-modifier 'super)
-  (setq mac-right-option-modifier nil)
+    (global-unset-key (kbd "s-x"))
+    (global-unset-key (kbd "s-c"))
+    (global-unset-key (kbd "s-v"))
+    (setq mac-option-key-is-meta nil)
+    (setq mac-right-option-key-is-meta nil)
+    (setq mac-command-modifier 'meta) ; caps is super
+    (setq mac-right-command-modifier 'super) ; but keep the right one
+                                            ;  (setq mac-option-modifier 'super)
+                                            ;  (setq mac-right-option-modifier nil)
 
-  (setq custom-file (concat user-emacs-directory "etc/custom.el"))
-  (load custom-file)
+    (when IS-MAC
+      (setq ns-option-modifier 'meta)
+      (setq ns-right-option-modifier 'none))
+
+    (setq custom-file (concat user-emacs-directory "etc/custom.el"))
+    (load custom-file)
 #+END_SRC
 
 * TODO Identity
@@ -107,6 +114,7 @@ Settings
         own/enable-js nil
         own/enable-python nil
         own/enable-copilot nil
+        own/enable-claude nil
         own/enable-db-trino nil)
 #+END_SRC
 
@@ -647,6 +655,11 @@ Org Design
     ;; If using org-roam-protocol
                                           ;(require 'org-roam-protocol)
     (setq org-roam-dailies-directory own/roam-dir-dailies)
+    (setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :target (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n:PROPERTIES:\n:ID: %(org-id-new)\n:END:\n"))))
     (org-roam-setup)
     (org-roam-db-autosync-mode)
     :ensure t)
@@ -891,7 +904,8 @@ LSP: iph
     :ensure t)
 #+end_src
 
-** Copilot
+** AI
+*** Copilot
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package copilot
     :vc (:url "https://github.com/copilot-emacs/copilot.el" :rev :newest)
@@ -904,6 +918,10 @@ LSP: iph
     :if own/enable-copilot)
 #+END_SRC
 
+*** Claudecode
+#+BEGIN_SRC emacs-lisp :tangle yes
+  
+#+END_SRC
 
 ** Everything else
 #+begin_src emacs-lisp :tangle yes
