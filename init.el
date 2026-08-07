@@ -22,6 +22,10 @@
                                         ;  (setq mac-option-modifier 'super)
                                         ;  (setq mac-right-option-modifier nil)
 
+(when IS-MAC
+  (setq ns-option-modifier 'meta)
+  (setq ns-right-option-modifier 'none))
+
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 (load custom-file)
 
@@ -103,6 +107,8 @@
 
 (setq make-backup-files nil ; Disable backup files
       next-line-add-newlines t) ; Make newline at the bottom
+
+(global-so-long-mode 1)
 
 (global-unset-key [(up)])
 (global-unset-key [(down)])

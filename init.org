@@ -197,6 +197,11 @@ Remove backup files and add an new empty line at the end of each file.
         next-line-add-newlines t) ; Make newline at the bottom
 #+end_src
 
+Make sure Emacs doesn't hang on large files.
+#+begin_src emacs-lisp :tangle yes
+  (global-so-long-mode 1)
+#+end_src
+
 Disable default features
 #+begin_src emacs-lisp :tangle yes
   (global-unset-key [(up)])
